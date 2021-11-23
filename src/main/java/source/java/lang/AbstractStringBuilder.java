@@ -107,6 +107,7 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * @param   minimumCapacity   the minimum desired capacity.
      */
     public void ensureCapacity(int minimumCapacity) {
+        //判断minimumCapacity必须是大于零才会有操作
         if (minimumCapacity > 0)
             ensureCapacityInternal(minimumCapacity);
     }
@@ -120,8 +121,12 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      */
     private void ensureCapacityInternal(int minimumCapacity) {
         // overflow-conscious code
+        //同样的溢出判断
+        //只有当当前容量大于现在数组的长度时才会进行操作
         if (minimumCapacity - value.length > 0) {
+            //将新数组复制给原来的数组
             value = Arrays.copyOf(value,
+                    //扩容操作
                     newCapacity(minimumCapacity));
         }
     }
@@ -136,8 +141,10 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
 
     /**
      * Returns a capacity at least as large as the given minimum capacity.
+     * 首先至少返回回当前设定的最小的容量
      * Returns the current capacity increased by the same amount + 2 if
      * that suffices.
+     * 如果当前容量在增加一倍后加2能满足条件直接返回
      * Will not return a capacity greater than {@code MAX_ARRAY_SIZE}
      * unless the given minimum capacity is greater than that.
      *
@@ -147,19 +154,29 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      */
     private int newCapacity(int minCapacity) {
         // overflow-conscious code
+        //首先扩容为原来的两倍+2
         int newCapacity = (value.length << 1) + 2;
+
+        //如果此时容量还比设定的最小量小
         if (newCapacity - minCapacity < 0) {
+            //直接将最小量设置成新容量
             newCapacity = minCapacity;
         }
+        //如果新容量小于等于0或者当前新容量比MAX_ARRAY_SIZE还大,则调用hugeCapacity(int minCapacity)
+        //否则就直接是新容量
         return (newCapacity <= 0 || MAX_ARRAY_SIZE - newCapacity < 0)
             ? hugeCapacity(minCapacity)
             : newCapacity;
     }
 
     private int hugeCapacity(int minCapacity) {
+        //如果当前新容量超过int最大值
+        //直接抛出异常
         if (Integer.MAX_VALUE - minCapacity < 0) { // overflow
             throw new OutOfMemoryError();
         }
+        //如果没有超过
+        //则放回当前minCapacity和MAX_ARRAY_SIZE的最大值
         return (minCapacity > MAX_ARRAY_SIZE)
             ? minCapacity : MAX_ARRAY_SIZE;
     }
@@ -170,6 +187,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * characters, then it may be resized to become more space efficient.
      * Calling this method may, but is not required to, affect the value
      * returned by a subsequent call to the {@link #capacity()} method.
+     * 如果存在维护的数组value的长度比已经使用的容量大
+     * 那么直接建一个新的数组长度和count一样
+     * 并赋值给原来的value字节数组
      */
     public void trimToSize() {
         if (count < value.length) {
@@ -197,6 +217,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * <p>
      * The {@code newLength} argument must be greater than or equal
      * to {@code 0}.
+     *1.首先会对传进来的长度判负,直接抛异常
+     * 2.如果当前长度大于新的长度,那么直接按照新的长度来赋值
+     * 3,如果当前长度小于新的长度,那么按照新的长度,不够的直接用null来代替
      *
      * @param      newLength   the new length
      * @throws     IndexOutOfBoundsException  if the
@@ -230,6 +253,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * @return     the {@code char} value at the specified index.
      * @throws     IndexOutOfBoundsException  if {@code index} is
      *             negative or greater than or equal to {@code length()}.
+     *  1.返回当前指定下标的字节char值
+     *  2.若超过实际数组下标范围会直接抛异常
+     *
      */
     @Override
     public char charAt(int index) {
@@ -258,6 +284,8 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * @exception  IndexOutOfBoundsException  if the {@code index}
      *             argument is negative or not less than the length of this
      *             sequence.
+     *  1.同样的当所给的下标索引超过实际数组范围 抛出异常
+     *  2.返回指定下标处字符的代码点
      */
     public int codePointAt(int index) {
         if ((index < 0) || (index >= count)) {
@@ -286,6 +314,8 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * @exception IndexOutOfBoundsException if the {@code index}
      *            argument is less than 1 or greater than the length
      *            of this sequence.
+     *  1.同样的当所给的下标索引前一个超过实际数组范围 抛出异常
+     *   2.返回指定下标处前一个字符的代码点
      */
     public int codePointBefore(int index) {
         int i = index - 1;
@@ -314,6 +344,8 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * {@code beginIndex} is negative, or {@code endIndex}
      * is larger than the length of this sequence, or
      * {@code beginIndex} is larger than {@code endIndex}.
+     * 1.返回给定范围内的代码点的数量
+     * 2.超过边界或者后面那个数字大于前面那个数字都会抛出异常
      */
     public int codePointCount(int beginIndex, int endIndex) {
         if (beginIndex < 0 || endIndex > count || beginIndex > endIndex) {
@@ -340,6 +372,8 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      *   or if {@code codePointOffset} is negative and the subsequence
      *   before {@code index} has fewer than the absolute value of
      *   {@code codePointOffset} code points.
+     *   1.超过边界的位置的位置会抛出异常
+     *   2.返回给定索引偏移量位置的索引值
      */
     public int offsetByCodePoints(int index, int codePointOffset) {
         if (index < 0 || index > count) {
@@ -376,6 +410,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      *             <li>{@code dstBegin+srcEnd-srcBegin} is greater than
      *             {@code dst.length}
      *             </ul>
+     *  1.确定边界条件,首先开始和结束都不能是负数,其次结束的值必须大于实际长度count
+     *  ,最后结束的值要大于开始的值,违反以上情况都会抛出异常
+     *  2.将当前的值赋值到指定的dst字节数组中
      */
     public void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin)
     {
@@ -401,6 +438,8 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * @param      ch      the new character.
      * @throws     IndexOutOfBoundsException  if {@code index} is
      *             negative or greater than or equal to {@code length()}.
+     *  1.判断给定索引的值是否超过范围边界,否则抛出异常
+     *  2.将指定索引的char值更换为ch
      */
     public void setCharAt(int index, char ch) {
         if ((index < 0) || (index >= count))
@@ -750,6 +789,9 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * @throws     StringIndexOutOfBoundsException  if {@code start}
      *             is negative, greater than {@code length()}, or
      *             greater than {@code end}.
+     *  1.判断边界条件,不符合要求的直接抛异常,这里有一点,当end值超过count时,
+     *  直接被count赋值,意味着移除索引值不得超过实际长度
+     *  2.移除给定范围的字符后,放回当前的值
      */
     public AbstractStringBuilder delete(int start, int end) {
         if (start < 0)
@@ -784,6 +826,7 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * @return  a reference to this object.
      * @exception IllegalArgumentException if the specified
      * {@code codePoint} isn't a valid Unicode code point
+     * 向原来的值中添加一个代码点
      */
     public AbstractStringBuilder appendCodePoint(int codePoint) {
         final int count = this.count;
@@ -818,6 +861,8 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * @throws      StringIndexOutOfBoundsException  if the {@code index}
      *              is negative or greater than or equal to
      *              {@code length()}.
+     * 1.不符合边界调节的索引值直接抛异常
+     * 2.删除掉指定索引的char值,返回当前值
      */
     public AbstractStringBuilder deleteCharAt(int index) {
         if ((index < 0) || (index >= count))
@@ -847,6 +892,7 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      *             greater than {@code end}.
      */
     public AbstractStringBuilder replace(int start, int end, String str) {
+        //判断边界
         if (start < 0)
             throw new StringIndexOutOfBoundsException(start);
         if (start > count)
@@ -854,14 +900,22 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
         if (start > end)
             throw new StringIndexOutOfBoundsException("start > end");
 
+        //如果指定尾索引超过原来数组实际值,直接被原来该值覆盖
         if (end > count)
             end = count;
+        //需要加入的字符长度
         int len = str.length();
+        //记录新的实际长度
         int newCount = count + len - (end - start);
+        //进行扩容
         ensureCapacityInternal(newCount);
-
+        //对数组复制
         System.arraycopy(value, end, value, start + len, count - end);
+
+        //将str插入数组指定位置
         str.getChars(value, start);
+
+        //更新实际长度值
         count = newCount;
         return this;
     }
@@ -1363,6 +1417,8 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      *          within this object, then the index of the first character of
      *          the last such substring is returned. If it does not occur as
      *          a substring, {@code -1} is returned.
+     *          若str有多个存在,则返回最后一个str的开头的索引值
+     *          否则返回-1
      */
     public int lastIndexOf(String str) {
         return lastIndexOf(str, count);
@@ -1408,28 +1464,44 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
      * a valid surrogate pair.
      *
      * @return  a reference to this object.
+     * 将当前字符串反转
+     *
      */
     public AbstractStringBuilder reverse() {
+
+        //判断是否存在代理
         boolean hasSurrogates = false;
         int n = count - 1;
+        //遍历所有数组
+        //对半遍历,中间的保持不变
+        //https://blog.csdn.net/qq_28038487/article/details/101783744?ops_request_misc=&request_id=&biz_id=102&utm_term=%20public%20AbstractStringBuilder%20&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-3-101783744.first_rank_v2_pc_rank_v29&spm=1018.2226.3001.4187
         for (int j = (n-1) >> 1; j >= 0; j--) {
+
+            //k所对应的索引值n-j
             int k = n - j;
+
+            //互换j和k的值
             char cj = value[j];
             char ck = value[k];
             value[j] = ck;
             value[k] = cj;
+            //判断是否存在代理对
             if (Character.isSurrogate(cj) ||
                 Character.isSurrogate(ck)) {
                 hasSurrogates = true;
             }
         }
+        //如果存在代理
         if (hasSurrogates) {
+            //对代理配进行有效的反转
             reverseAllValidSurrogatePairs();
         }
+        //
         return this;
     }
 
     /** Outlined helper method for reverse() */
+    //反转有效的所有代理配
     private void reverseAllValidSurrogatePairs() {
         for (int i = 0; i < count - 1; i++) {
             char c2 = value[i];

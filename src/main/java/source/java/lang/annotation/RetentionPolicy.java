@@ -37,6 +37,7 @@ package java.lang.annotation;
 public enum RetentionPolicy {
     /**
      * Annotations are to be discarded by the compiler.
+     * 注解在被编译时被抛弃
      */
     SOURCE,
 
@@ -44,13 +45,15 @@ public enum RetentionPolicy {
      * Annotations are to be recorded in the class file by the compiler
      * but need not be retained by the VM at run time.  This is the default
      * behavior.
+     * 被保留在class文件中,但不需要在运行时被虚拟机保留
+     * 这是默认的保留策略
      */
     CLASS,
 
     /**
      * Annotations are to be recorded in the class file by the compiler and
      * retained by the VM at run time, so they may be read reflectively.
-     *
+     *一直保留在运行时,而且可以被反射获取
      * @see java.lang.reflect.AnnotatedElement
      */
     RUNTIME

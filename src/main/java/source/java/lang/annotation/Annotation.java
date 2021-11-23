@@ -31,6 +31,7 @@ package java.lang.annotation;
  * an annotation type.  Also note that this interface does not itself
  * define an annotation type.
  *
+ * 更多信息可以在java语言规范9.6节中找到
  * More information about annotation types can be found in section 9.6 of
  * <cite>The Java&trade; Language Specification</cite>.
  *
