@@ -45,6 +45,10 @@ import java.io.IOException;
  * <p> Since this interface may be implemented by existing classes
  * with different styles of error handling there is no guarantee that
  * errors will be propagated to the invoker.
+ *      * 实现该接口的类是为了添加字符序列和值
+ *      * 如果某个类的实例打算接收Formatter的格式化输出,那么必须实现该接口
+ *      * 实现该接口之后,对于多线程的时候,会导致线程安全问题
+ *      * 如果这个接口必须实现,那么无法保证一些错误的方式会传递给调用者 
  *
  * @since 1.5
  */
@@ -57,7 +61,7 @@ public interface Appendable {
      * <tt>csq</tt>, the entire sequence may not be appended.  For
      * instance, if <tt>csq</tt> is a {@link java.nio.CharBuffer} then
      * the subsequence to append is defined by the buffer's position and limit.
-     *
+     *  添加字符序列到尾部
      * @param  csq
      *         The character sequence to append.  If <tt>csq</tt> is
      *         <tt>null</tt>, then the four characters <tt>"null"</tt> are
@@ -71,6 +75,7 @@ public interface Appendable {
     Appendable append(CharSequence csq) throws IOException;
 
     /**
+     * 添加指定字符序列的子序列
      * Appends a subsequence of the specified character sequence to this
      * <tt>Appendable</tt>.
      *
@@ -108,7 +113,7 @@ public interface Appendable {
 
     /**
      * Appends the specified character to this <tt>Appendable</tt>.
-     *
+     *添加字符到尾部
      * @param  c
      *         The character to append
      *

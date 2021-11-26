@@ -46,18 +46,20 @@ public final class Boolean implements java.io.Serializable,
     /**
      * The {@code Boolean} object corresponding to the primitive
      * value {@code true}.
+     * 此成员变量维护了原始类型的true值
      */
     public static final Boolean TRUE = new Boolean(true);
 
     /**
      * The {@code Boolean} object corresponding to the primitive
      * value {@code false}.
+     * 此成员变量维护了原始类型的false值
      */
     public static final Boolean FALSE = new Boolean(false);
 
     /**
      * The Class object representing the primitive type boolean.
-     *
+     *表示基本类型布尔值的Class对象
      * @since   JDK1.1
      */
     @SuppressWarnings("unchecked")
@@ -65,23 +67,26 @@ public final class Boolean implements java.io.Serializable,
 
     /**
      * The value of the Boolean.
-     *
+     *  初始化时会赋值给value(要么为true,要么false)
      * @serial
      */
     private final boolean value;
 
     /** use serialVersionUID from JDK 1.0.2 for interoperability */
+    //序列值
     private static final long serialVersionUID = -3665804199014368530L;
 
     /**
      * Allocates a {@code Boolean} object representing the
      * {@code value} argument.
-     *
+     * 直接通过boolean类型赋值
+     *  将传入的参数value赋值给成员变量value(要么为true,要么false)
      * <p><b>Note: It is rarely appropriate to use this constructor.
      * Unless a <i>new</i> instance is required, the static factory
      * {@link #valueOf(boolean)} is generally a better choice. It is
      * likely to yield significantly better space and time performance.</b>
-     *
+     *  注明:很少去使用这个构造函数,除非是有要求,但是静态工厂方法(valueOf)会更好,
+     *  因为它会有更明显的空间和时间效率
      * @param   value   the value of the {@code Boolean}.
      */
     public Boolean(boolean value) {
@@ -98,6 +103,9 @@ public final class Boolean implements java.io.Serializable,
      * that represents {@code true}.<br>
      * {@code new Boolean("yes")} produces a {@code Boolean} object
      * that represents {@code false}.
+     * 将String(不能为空) 的值解析为true和false
+     * 只有输入"true"时为true,其他都会false
+     *
      *
      * @param   s   the string to be converted to a {@code Boolean}.
      */
@@ -112,7 +120,8 @@ public final class Boolean implements java.io.Serializable,
      * {@code "true"}. <p>
      * Example: {@code Boolean.parseBoolean("True")} returns {@code true}.<br>
      * Example: {@code Boolean.parseBoolean("yes")} returns {@code false}.
-     *
+     *  将字符串解析为一个布尔值,如果输入的字符串是true(忽略大小写),则会放回true
+     *  其他情况都是false
      * @param      s   the {@code String} containing the boolean
      *                 representation to be parsed
      * @return     the boolean represented by the string argument
@@ -123,6 +132,7 @@ public final class Boolean implements java.io.Serializable,
     }
 
     /**
+     * 返回成员变量value(布尔类型)的值
      * Returns the value of this {@code Boolean} object as a boolean
      * primitive.
      *
@@ -141,7 +151,10 @@ public final class Boolean implements java.io.Serializable,
      * should generally be used in preference to the constructor
      * {@link #Boolean(boolean)}, as this method is likely to yield
      * significantly better space and time performance.
-     *
+     *  1.静态工厂方法,放回一个封装的boolean值Boolean
+     *  2.如果是true,则返回Boolean(true)
+     *  3.如果是false,则返回Boolean(false)
+     *  4.这个方法更有效率,更省空间
      * @param  b a boolean value.
      * @return a {@code Boolean} instance representing {@code b}.
      * @since  1.4
@@ -155,7 +168,9 @@ public final class Boolean implements java.io.Serializable,
      * specified string.  The {@code Boolean} returned represents a
      * true value if the string argument is not {@code null}
      * and is equal, ignoring case, to the string {@code "true"}.
-     *
+     *  将字符串转化为boolean的包装类Boolean
+     *  判断依据:将字符串解析为一个布尔值,如果输入的字符串是true(忽略大小写),则会放回true
+     * 其他情况都是false
      * @param   s   a string.
      * @return  the {@code Boolean} value represented by the string.
      */
@@ -168,6 +183,7 @@ public final class Boolean implements java.io.Serializable,
      * boolean.  If the specified boolean is {@code true}, then
      * the string {@code "true"} will be returned, otherwise the
      * string {@code "false"} will be returned.
+     *  将传进的boolean转化为String字符串("true"或"false")
      *
      * @param b the boolean to be converted
      * @return the string representation of the specified {@code boolean}
@@ -217,7 +233,8 @@ public final class Boolean implements java.io.Serializable,
      * Returns {@code true} if and only if the argument is not
      * {@code null} and is a {@code Boolean} object that
      * represents the same {@code boolean} value as this object.
-     *
+     *  将传入的非空对象与value值比对,如果是Boolean值类型,则比对是否相等,相等为true,不相等为false
+    *   若非空对象Boolean类型,则直接返回false
      * @param   obj   the object to compare with.
      * @return  {@code true} if the Boolean objects represent the
      *          same value; {@code false} otherwise.
@@ -238,9 +255,11 @@ public final class Boolean implements java.io.Serializable,
      * through {@code getProperty}, a method defined by the
      * {@code System} class.
      * <p>
+     *  1.此方法是返回某个系统的属性是否存在,返回true的情况只有当前以参数命名的系统属性存在,并且
+     *  等于字符串"true"的时候,才会放回true
      * If there is no property with the specified name, or if the specified
      * name is empty or null, then {@code false} is returned.
-     *
+     *  2.其他情况都会返回flase
      * @param   name   the system property name.
      * @return  the {@code boolean} value of the system property.
      * @throws  SecurityException for the same reasons as
@@ -259,7 +278,9 @@ public final class Boolean implements java.io.Serializable,
 
     /**
      * Compares this {@code Boolean} instance with another.
-     *
+     *  1.比较传入的Boolean是否与当前相等
+     *  2.相等传0,返回正值表明,传入的参数为false,返回负值表示传入的参数为true
+     *  3.该参数传null,会报NullPointerException
      * @param   b the {@code Boolean} instance to be compared
      * @return  zero if this object represents the same boolean value as the
      *          argument; a positive value if this object represents true
@@ -300,6 +321,9 @@ public final class Boolean implements java.io.Serializable,
      * @return the logical AND of {@code a} and {@code b}
      * @see java.util.function.BinaryOperator
      * @since 1.8
+     * 逻辑判断:
+     *  当且仅当传入的双方都是true时,才会返回true
+     *   其他情况都为false
      */
     public static boolean logicalAnd(boolean a, boolean b) {
         return a && b;
@@ -314,6 +338,9 @@ public final class Boolean implements java.io.Serializable,
      * @return the logical OR of {@code a} and {@code b}
      * @see java.util.function.BinaryOperator
      * @since 1.8
+     * 逻辑判断:
+     *      *  当且仅当传入的双方都是false时,才会返回false
+     *      *   其他情况都为true
      */
     public static boolean logicalOr(boolean a, boolean b) {
         return a || b;
@@ -328,6 +355,9 @@ public final class Boolean implements java.io.Serializable,
      * @return  the logical XOR of {@code a} and {@code b}
      * @see java.util.function.BinaryOperator
      * @since 1.8
+     *  逻辑判断:
+     *        当且仅当传入的双方都不同时,才会返回true
+     *        其他情况都为false
      */
     public static boolean logicalXor(boolean a, boolean b) {
         return a ^ b;

@@ -30,11 +30,12 @@ package java.lang;
  * classes representing numeric values that are convertible to the
  * primitive types {@code byte}, {@code double}, {@code float}, {@code
  * int}, {@code long}, and {@code short}.
+ * 1.Number是平台的超类,表示可转化为原始类型的数值,包括:byte,double,float,int,long,short
  *
  * The specific semantics of the conversion from the numeric value of
  * a particular {@code Number} implementation to a given primitive
  * type is defined by the {@code Number} implementation in question.
- *
+ *  2.Number给实现他的子类相互转换定义一些基础的操作
  * For platform classes, the conversion is often analogous to a
  * narrowing primitive conversion or a widening primitive conversion
  * as defining in <cite>The Java&trade; Language Specification</cite>
@@ -42,6 +43,7 @@ package java.lang;
  * lose information about the overall magnitude of a numeric value, may
  * lose precision, and may even return a result of a different sign
  * than the input.
+ * 3.在实现的子类之间相互转化可能会导致与原来的值不一致,或者失去原来的精度
  *
  * See the documentation of a given {@code Number} implementation for
  * conversion details.
@@ -54,9 +56,10 @@ package java.lang;
  */
 public abstract class Number implements java.io.Serializable {
     /**
+     *
      * Returns the value of the specified number as an {@code int},
      * which may involve rounding or truncation.
-     *
+     *返回当前值的int值(可能涉及到四舍五入,和截断)
      * @return  the numeric value represented by this object after conversion
      *          to type {@code int}.
      */
@@ -65,7 +68,7 @@ public abstract class Number implements java.io.Serializable {
     /**
      * Returns the value of the specified number as a {@code long},
      * which may involve rounding or truncation.
-     *
+     *  返回当前值的long值(可能涉及到四舍五入,和截断)
      * @return  the numeric value represented by this object after conversion
      *          to type {@code long}.
      */
@@ -74,7 +77,7 @@ public abstract class Number implements java.io.Serializable {
     /**
      * Returns the value of the specified number as a {@code float},
      * which may involve rounding.
-     *
+     *返回当前值的float值(可能涉及到四舍五入,和截断)
      * @return  the numeric value represented by this object after conversion
      *          to type {@code float}.
      */
@@ -83,7 +86,7 @@ public abstract class Number implements java.io.Serializable {
     /**
      * Returns the value of the specified number as a {@code double},
      * which may involve rounding.
-     *
+     *返回当前值的double值(可能涉及到四舍五入,和截断)
      * @return  the numeric value represented by this object after conversion
      *          to type {@code double}.
      */
@@ -92,7 +95,8 @@ public abstract class Number implements java.io.Serializable {
     /**
      * Returns the value of the specified number as a {@code byte},
      * which may involve rounding or truncation.
-     *
+     *  返回当前值的byte值(可能涉及到四舍五入,和截断)
+     *  该实现就是直接调用intValue(),将返回的int值强转为byte
      * <p>This implementation returns the result of {@link #intValue} cast
      * to a {@code byte}.
      *
@@ -110,6 +114,8 @@ public abstract class Number implements java.io.Serializable {
      *
      * <p>This implementation returns the result of {@link #intValue} cast
      * to a {@code short}.
+     * 返回当前值的byte值(可能涉及到四舍五入,和截断)
+     * 该实现就是直接调用intValue(),将返回的int值强转为short
      *
      * @return  the numeric value represented by this object after conversion
      *          to type {@code short}.

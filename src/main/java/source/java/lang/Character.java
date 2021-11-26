@@ -35,12 +35,15 @@ import java.util.Locale;
  * type {@code char} in an object. An object of type
  * {@code Character} contains a single field whose type is
  * {@code char}.
+ * 1.Character是原始类型char的包装类,内部维护了一个char类型的字段
  * <p>
  * In addition, this class provides several methods for determining
  * a character's category (lowercase letter, digit, etc.) and for converting
  * characters from uppercase to lowercase and vice versa.
+ * 2.该类提供了一些方法,来确定char的类型(小写字母,数字等),以及在大小写之间相互转化
  * <p>
  * Character information is based on the Unicode Standard, version 6.2.0.
+ * 3.字符信息是基于Unicode标准
  * <p>
  * The methods and data of class {@code Character} are defined by
  * the information in the <i>UnicodeData</i> file that is part of the
@@ -48,6 +51,8 @@ import java.util.Locale;
  * Consortium. This file specifies various properties including name
  * and general category for every defined Unicode code point or
  * character range.
+ * 3.Character类中方法和数据是有UnicodeData文件中的信息定义,改文件是Unicode Consortium维护的
+ * Unicode字符数据库的一部分,该文件为每个定义的Unicode代码点或字符范围指定了各种属性,包括名称和一般类别
  * <p>
  * The file and its description are available from the Unicode Consortium at:
  * <ul>
@@ -67,6 +72,8 @@ import java.util.Locale;
  * href="http://www.unicode.org/reports/tr27/#notation"><i>
  * definition</i></a> of the U+<i>n</i> notation in the Unicode
  * Standard.)
+ *  4.char数据类型和Character包装类,是基于原始的Unicode规范,该规范character为16个字节,
+ *  该Unicode标准已经更改为允许表示超过16位字符,现在核发的代码点的范围是U+0000到U+10FFFF
  *
  * <p><a name="BMP">The set of characters from U+0000 to U+FFFF</a> is
  * sometimes referred to as the <em>Basic Multilingual Plane (BMP)</em>.
@@ -78,6 +85,9 @@ import java.util.Locale;
  * of {@code char} values, the first from the <em>high-surrogates</em>
  * range, (&#92;uD800-&#92;uDBFF), the second from the
  * <em>low-surrogates</em> range (&#92;uDC00-&#92;uDFFF).
+ * 5.U+0000到U+10FFFF 的char有时被称为基本多文种平面(BMP),Character中超过U+FFFF的字符被称为补充字符
+ * 6.Java平台在char数组和String,StringBuffer类中使用UTF-16来表示,在这种表示中,补充字符表示一对char值,
+ * 第一个来自高代理范围,第二个来自低代理范围
  *
  * <p>A {@code char} value, therefore, represents Basic
  * Multilingual Plane (BMP) code points, including the surrogate
@@ -89,6 +99,9 @@ import java.util.Locale;
  * Unless otherwise specified, the behavior with respect to
  * supplementary characters and surrogate {@code char} values is
  * as follows:
+ * 7.一个char值,代表着基本多文种平面代码点.包括代理代码点或者UTF-16编码的代码单位
+ * (一个int值,代表所有的代码点,包括补充代码点)
+ * 8.int值的低21位是用于表示Unicode代码点,高11位必须为零
  *
  * <ul>
  * <li>The methods that only accept a {@code char} value cannot support
@@ -97,6 +110,7 @@ import java.util.Locale;
  * {@code Character.isLetter('\u005CuD840')} returns {@code false}, even though
  * this specific value if followed by any low-surrogate value in a string
  * would represent a letter.
+ * 9.char值不能支持补充字符,他们将代理范围称为未定义字符
  *
  * <li>The methods that accept an {@code int} value support all
  * Unicode characters, including supplementary characters. For
@@ -104,14 +118,14 @@ import java.util.Locale;
  * {@code true} because the code point value represents a letter
  * (a CJK ideograph).
  * </ul>
- *
+ *  10.int值支持所有的编码字符,包括补充字符
  * <p>In the Java SE API documentation, <em>Unicode code point</em> is
  * used for character values in the range between U+0000 and U+10FFFF,
  * and <em>Unicode code unit</em> is used for 16-bit
  * {@code char} values that are code units of the <em>UTF-16</em>
  * encoding. For more information on Unicode terminology, refer to the
  * <a href="http://www.unicode.org/glossary/">Unicode Glossary</a>.
- *
+ * 11.在JavaSE API文档中,Unicode代码点字符的使用范围是U+0000 and U+10FFFF,Unicode代码但愿是用于作为UTF-16代码单元的16位
  * @author  Lee Boynton
  * @author  Guy Steele
  * @author  Akira Tanaka
@@ -127,7 +141,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * for the radix argument in radix-conversion methods such as the
      * {@code digit} method, the {@code forDigit} method, and the
      * {@code toString} method of class {@code Integer}.
-     *
+     *  可用于与字符串相互转化的最小基数(进制数)
      * @see     Character#digit(char, int)
      * @see     Character#forDigit(int, int)
      * @see     Integer#toString(int, int)
@@ -141,7 +155,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * for the radix argument in radix-conversion methods such as the
      * {@code digit} method, the {@code forDigit} method, and the
      * {@code toString} method of class {@code Integer}.
-     *
+     *  可用于与字符串相互转换的最大基数(进制数)
      * @see     Character#digit(char, int)
      * @see     Character#forDigit(int, int)
      * @see     Integer#toString(int, int)
@@ -154,13 +168,14 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * {@code char}, {@code '\u005Cu0000'}.
      *
      * @since   1.0.2
+     * 该字段是char类型的最小值
      */
     public static final char MIN_VALUE = '\u0000';
 
     /**
      * The constant value of this field is the largest value of type
      * {@code char}, {@code '\u005CuFFFF'}.
-     *
+     *  该字段是char类型的最大值
      * @since   1.0.2
      */
     public static final char MAX_VALUE = '\uFFFF';
@@ -168,7 +183,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * The {@code Class} instance representing the primitive type
      * {@code char}.
-     *
+     *  原始类型char的Class对象
      * @since   1.1
      */
     @SuppressWarnings("unchecked")
@@ -364,6 +379,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Error flag. Use int (code point) to avoid confusion with U+FFFF.
+     * 错误标记,使用int的代码点,避免和U+FFFF混淆
      */
     static final int ERROR = 0xFFFFFFFF;
 
@@ -371,6 +387,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Undefined bidirectional character type. Undefined {@code char}
      * values have undefined directionality in the Unicode specification.
+     * Unicode规范中的强双向字符
      * @since 1.4
      */
     public static final byte DIRECTIONALITY_UNDEFINED = -1;
@@ -495,7 +512,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Unicode high-surrogate code unit</a>
      * in the UTF-16 encoding, constant {@code '\u005CuD800'}.
      * A high-surrogate is also known as a <i>leading-surrogate</i>.
-     *
+     *  最小的高代理
      * @since 1.5
      */
     public static final char MIN_HIGH_SURROGATE = '\uD800';
@@ -506,7 +523,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Unicode high-surrogate code unit</a>
      * in the UTF-16 encoding, constant {@code '\u005CuDBFF'}.
      * A high-surrogate is also known as a <i>leading-surrogate</i>.
-     *
+     *  最大的高代理
      * @since 1.5
      */
     public static final char MAX_HIGH_SURROGATE = '\uDBFF';
@@ -517,7 +534,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Unicode low-surrogate code unit</a>
      * in the UTF-16 encoding, constant {@code '\u005CuDC00'}.
      * A low-surrogate is also known as a <i>trailing-surrogate</i>.
-     *
+     *  最小的低代理
      * @since 1.5
      */
     public static final char MIN_LOW_SURROGATE  = '\uDC00';
@@ -528,7 +545,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Unicode low-surrogate code unit</a>
      * in the UTF-16 encoding, constant {@code '\u005CuDFFF'}.
      * A low-surrogate is also known as a <i>trailing-surrogate</i>.
-     *
+     *  最大的高代理
      * @since 1.5
      */
     public static final char MAX_LOW_SURROGATE  = '\uDFFF';
@@ -536,7 +553,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * The minimum value of a Unicode surrogate code unit in the
      * UTF-16 encoding, constant {@code '\u005CuD800'}.
-     *
+     *  将最小的高代理赋值给字段MIN_SURROGATE
      * @since 1.5
      */
     public static final char MIN_SURROGATE = MIN_HIGH_SURROGATE;
@@ -544,7 +561,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * The maximum value of a Unicode surrogate code unit in the
      * UTF-16 encoding, constant {@code '\u005CuDFFF'}.
-     *
+     *  将最大的低代理赋值给字段MAX_SURROGATE
      * @since 1.5
      */
     public static final char MAX_SURROGATE = MAX_LOW_SURROGATE;
@@ -553,7 +570,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * The minimum value of a
      * <a href="http://www.unicode.org/glossary/#supplementary_code_point">
      * Unicode supplementary code point</a>, constant {@code U+10000}.
-     *
+     *  最小的补充代码点
      * @since 1.5
      */
     public static final int MIN_SUPPLEMENTARY_CODE_POINT = 0x010000;
@@ -562,7 +579,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * The minimum value of a
      * <a href="http://www.unicode.org/glossary/#code_point">
      * Unicode code point</a>, constant {@code U+0000}.
-     *
+     *  最小的代码点
      * @since 1.5
      */
     public static final int MIN_CODE_POINT = 0x000000;
@@ -571,7 +588,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * The maximum value of a
      * <a href="http://www.unicode.org/glossary/#code_point">
      * Unicode code point</a>, constant {@code U+10FFFF}.
-     *
+     *  最大的代码点
      * @since 1.5
      */
     public static final int MAX_CODE_POINT = 0X10FFFF;
@@ -583,16 +600,20 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * {@code Character} class is {@link Character.UnicodeBlock}.
      * Other portions of the Java API may define other subsets for their
      * own purposes.
+     * 1.此类的实例表示Unicode字符集的特定子集
+     * 2.Character类中定义的唯一子集是Character.UnicodeBlock,
+     * java API的其他部分可能会为它们自己的目的定义其他子集
      *
      * @since 1.2
      */
     public static class Subset  {
 
+        //子集的名称
         private String name;
 
         /**
          * Constructs a new {@code Subset} instance.
-         *
+         *  创建一个新的实例,如果name为null会抛出NullPointerException
          * @param  name  The name of this subset
          * @exception NullPointerException if name is {@code null}
          */
@@ -609,6 +630,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
          * {@code this} and the argument refer to the same
          * object; since this method is {@code final}, this
          * guarantee holds for all subclasses.
+         * 比较两个子集是否相等
          */
         public final boolean equals(Object obj) {
             return (this == obj);
@@ -620,6 +642,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
          * is {@code final} in order to ensure that the
          * {@code equals} and {@code hashCode} methods will
          * be consistent in all subclasses.
+         * 返回标准的Object方法中的哈希值,
+         * 此方法是为了保证所有的子类中的此方法保持一致
          */
         public final int hashCode() {
             return super.hashCode();
@@ -627,6 +651,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
         /**
          * Returns the name of this subset.
+         * 返回此子集的名字
          */
         public final String toString() {
             return name;
@@ -641,6 +666,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Unicode specification. Character blocks generally define characters
      * used for a specific script or purpose. A character is contained by
      * at most one Unicode block.
+     * 1.代表Unicode规范中的字符块字符子集族
+     * 2.字符块通常定义用于特定脚本或目的的字符,一个字符至少包含在一个字符块中
      *
      * @since 1.2
      */
@@ -651,6 +678,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
         /**
          * Creates a UnicodeBlock with the given identifier name.
          * This name must be the same as the block identifier.
+         *  使用给定的标识符名称创建一个UnicodeBlock,此名称必须与块标识符相同
          */
         private UnicodeBlock(String idName) {
             super(idName);
@@ -660,6 +688,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
         /**
          * Creates a UnicodeBlock with the given identifier name and
          * alias name.
+         *  使用给定的标识符和别名创建一个UnicodeBlock
          */
         private UnicodeBlock(String idName, String alias) {
             this(idName);
@@ -669,6 +698,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
         /**
          * Creates a UnicodeBlock with the given identifier name and
          * alias names.
+         * 使用给定的标识符和别名(别名可为多个)创建一个UnicodeBlock
          */
         private UnicodeBlock(String idName, String... aliases) {
             this(idName);
@@ -3190,7 +3220,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * {@link Character.UnicodeScript#INHERITED Inherited},
      * {@link Character.UnicodeScript#COMMON Common} or
      * {@link Character.UnicodeScript#UNKNOWN Unknown}.
-     *
+     *  一系列字符子集脚本
      * @since 1.7
      */
     public static enum UnicodeScript {
@@ -4519,7 +4549,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * The value of the {@code Character}.
-     *
+     *  Character的char值
      * @serial
      */
     private final char value;
@@ -4530,7 +4560,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Constructs a newly allocated {@code Character} object that
      * represents the specified {@code char} value.
-     *
+     *  创建一个新分配的Character对象,表示指定的char值
      * @param  value   the value to be represented by the
      *                  {@code Character} object.
      */
@@ -4538,13 +4568,15 @@ class Character implements java.io.Serializable, Comparable<Character> {
         this.value = value;
     }
 
+    //内部维护了一个Character的缓存数组
     private static class CharacterCache {
         private CharacterCache(){}
-
+        //长度为128的Character数组
         static final Character cache[] = new Character[127 + 1];
 
         static {
             for (int i = 0; i < cache.length; i++)
+                //值是从0-127
                 cache[i] = new Character((char)i);
         }
     }
@@ -4557,7 +4589,9 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * {@link #Character(char)}, as this method is likely to yield
      * significantly better space and time performance by caching
      * frequently requested values.
-     *
+     * 1.返回一个char值为c的Character对象.
+     * 2.如果并不要求是一个新的对象,那么这个方法优先于构造方法使用,因为他会有更明显的空间和时间效率
+     * 3.调用这个方法时只有当char值小于等于127才会使用CharacterCache的缓存数组
      * This method will always cache values in the range {@code
      * '\u005Cu0000'} to {@code '\u005Cu007F'}, inclusive, and may
      * cache other values outside of this range.
@@ -4577,6 +4611,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Returns the value of this {@code Character} object.
      * @return  the primitive {@code char} value represented by
      *          this object.
+     *          返回当前对象的char值
      */
     public char charValue() {
         return value;
@@ -4585,6 +4620,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Returns a hash code for this {@code Character}; equal to the result
      * of invoking {@code charValue()}.
+     * 放回当前对象的哈希值(直接强转为int),
      *
      * @return a hash code value for this {@code Character}
      */
@@ -4598,7 +4634,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * {@code Character.hashCode()}.
      *
      * @since 1.8
-     *
+     *放回当前对象的哈希值(直接强转为int),
      * @param value The {@code char} for which to return a hash code.
      * @return a hash code value for a {@code char} value.
      */
@@ -4611,6 +4647,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * The result is {@code true} if and only if the argument is not
      * {@code null} and is a {@code Character} object that
      * represents the same {@code char} value as this object.
+     *1.将此对象与指定对象比较
+     * 2.仅当此对象是Character类型,同时起char值相等返回true,其他返回false
      *
      * @param   obj   the object to compare with.
      * @return  {@code true} if the objects are the same;
@@ -4629,10 +4667,11 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * length 1 whose sole component is the primitive
      * {@code char} value represented by this
      * {@code Character} object.
-     *
+     *  将Character值转为String
      * @return  a string representation of this object.
      */
     public String toString() {
+        //把Character的value值fangruchar数组,调用String.valueOf()
         char buf[] = {value};
         return String.valueOf(buf);
     }
@@ -4641,6 +4680,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Returns a {@code String} object representing the
      * specified {@code char}.  The result is a string of length
      * 1 consisting solely of the specified {@code char}.
+     *  将指定的char值转为String
      *
      * @param c the {@code char} to be converted
      * @return the string representation of the specified {@code char}
@@ -4654,7 +4694,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Determines whether the specified code point is a valid
      * <a href="http://www.unicode.org/glossary/#code_point">
      * Unicode code point value</a>.
-     *
+     *  确定指定的代码点是一个有效的Unicode代码点值
      * @param  codePoint the Unicode code point to be tested
      * @return {@code true} if the specified code point value is between
      *         {@link #MIN_CODE_POINT} and
@@ -4673,7 +4713,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Determines whether the specified character (Unicode code point)
      * is in the <a href="#BMP">Basic Multilingual Plane (BMP)</a>.
      * Such code points can be represented using a single {@code char}.
-     *
+     *  确定指定的字符(Unicode代码点)是否在基本多文种平面中
+     *  此类代码点可以使用单个的char值来表示
      * @param  codePoint the character (Unicode code point) to be tested
      * @return {@code true} if the specified code point is between
      *         {@link #MIN_VALUE} and {@link #MAX_VALUE} inclusive;
@@ -4691,7 +4732,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Determines whether the specified character (Unicode code point)
      * is in the <a href="#supplementary">supplementary character</a> range.
-     *
+     *确定指定的字符(Unicode代码点)是否在补充字符范围内
      * @param  codePoint the character (Unicode code point) to be tested
      * @return {@code true} if the specified code point is between
      *         {@link #MIN_SUPPLEMENTARY_CODE_POINT} and
@@ -4709,11 +4750,12 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * <a href="http://www.unicode.org/glossary/#high_surrogate_code_unit">
      * Unicode high-surrogate code unit</a>
      * (also known as <i>leading-surrogate code unit</i>).
-     *
+     *  1.确定指定的char值是都为高代理代码单元
      * <p>Such values do not represent characters by themselves,
      * but are used in the representation of
      * <a href="#supplementary">supplementary characters</a>
      * in the UTF-16 encoding.
+     *  2.这些值本身并不是代表字符,而是用于UTF-16编码中的补充字符表示
      *
      * @param  ch the {@code char} value to be tested.
      * @return {@code true} if the {@code char} value is between
@@ -4734,12 +4776,12 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * <a href="http://www.unicode.org/glossary/#low_surrogate_code_unit">
      * Unicode low-surrogate code unit</a>
      * (also known as <i>trailing-surrogate code unit</i>).
-     *
+     *  1.确定指定的char值是都为低代理代码单元
      * <p>Such values do not represent characters by themselves,
      * but are used in the representation of
      * <a href="#supplementary">supplementary characters</a>
      * in the UTF-16 encoding.
-     *
+     *  2.这些值本身并不是代表字符,而是用于UTF-16编码中的补充字符表示
      * @param  ch the {@code char} value to be tested.
      * @return {@code true} if the {@code char} value is between
      *         {@link #MIN_LOW_SURROGATE} and
@@ -4755,12 +4797,12 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Determines if the given {@code char} value is a Unicode
      * <i>surrogate code unit</i>.
-     *
+     *1.确定指定的char值是都为代理代码单元
      * <p>Such values do not represent characters by themselves,
      * but are used in the representation of
      * <a href="#supplementary">supplementary characters</a>
      * in the UTF-16 encoding.
-     *
+     *2.这些值本身并不是代表字符,而是用于UTF-16编码中的补充字符表示
      * <p>A char value is a surrogate code unit if and only if it is either
      * a {@linkplain #isLowSurrogate(char) low-surrogate code unit} or
      * a {@linkplain #isHighSurrogate(char) high-surrogate code unit}.
@@ -4781,7 +4823,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * values is a valid
      * <a href="http://www.unicode.org/glossary/#surrogate_pair">
      * Unicode surrogate pair</a>.
-
+        确定指定的char值对是否是有效的Unicode代理对
      * <p>This method is equivalent to the expression:
      * <blockquote><pre>{@code
      * isHighSurrogate(high) && isLowSurrogate(low)
@@ -4803,11 +4845,14 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * represent the specified character (Unicode code point). If the
      * specified character is equal to or greater than 0x10000, then
      * the method returns 2. Otherwise, the method returns 1.
-     *
+     *  1.确定指定字符(Unicode代码点)所需要的char值数量,如果指定字符等于或大于0x10000,
+     *  则方法返回2,否则该方法返回1
      * <p>This method doesn't validate the specified character to be a
      * valid Unicode code point. The caller must validate the
      * character value using {@link #isValidCodePoint(int) isValidCodePoint}
      * if necessary.
+     * 2.此方法不会将指定的字符验证为有效的Unicode代码点,如果有必要,
+     * 调用者必须使用isValidCodePoint验证
      *
      * @param   codePoint the character (Unicode code point) to be tested.
      * @return  2 if the character is a valid supplementary character; 1 otherwise.
@@ -4823,7 +4868,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * point value. This method does not validate the specified
      * surrogate pair. The caller must validate it using {@link
      * #isSurrogatePair(char, char) isSurrogatePair} if necessary.
-     *
+     *  将特殊的代理对转化为补充代码点值,该方法不会验证这对char值是否是代理对,如有需要,直接调用
+     *  isSurrogatePair验证
      * @param  high the high-surrogate code unit
      * @param  low the low-surrogate code unit
      * @return the supplementary code point composed from the
@@ -4850,7 +4896,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * low-surrogate range, then the supplementary code point
      * corresponding to this surrogate pair is returned. Otherwise,
      * the {@code char} value at the given index is returned.
-     *
+     *  1.返回CharSequence值中给定索引位置的代码点
+     *  2.如果CharSequence中给定索引的char值处于高代理范围内,则后面的索引小于CharSequence
+     *  的长度,并且后面索引的char值处于第代理范围内,则返回与该代理对对应的补充代码点.
+     *  否则,返回给定索引出的char值
      * @param seq a sequence of {@code char} values (Unicode code
      * units)
      * @param index the index to the {@code char} values (Unicode
@@ -4883,7 +4932,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * low-surrogate range, then the supplementary code point
      * corresponding to this surrogate pair is returned. Otherwise,
      * the {@code char} value at the given index is returned.
-     *
+     *  1.返回指定char数组索引下的代码点
+     *  2.如果CharSequence中给定索引的char值处于高代理范围内,则后面的索引小于CharSequence
+     * 的长度,并且后面索引的char值处于第代理范围内,则返回与该代理对对应的补充代码点.
+     * 否则,返回给定索引出的char值
      * @param a the {@code char} array
      * @param index the index to the {@code char} values (Unicode
      * code units) in the {@code char} array to be converted
@@ -4910,6 +4962,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * corresponding to this surrogate pair is returned. Otherwise,
      * the {@code char} value at the given index is returned.
      *
+     *  1.返回指定char数组索引下的代码点,其中只能使用索引小于limit的元素
+     *  2.如果CharSequence中给定索引的char值处于高代理范围内,则后面的索引小于CharSequence
+     *的长度,并且后面索引的char值处于第代理范围内,则返回与该代理对对应的补充代码点.
+     * 否则,返回给定索引出的char值
      * @param a the {@code char} array
      * @param index the index to the {@code char} values (Unicode
      * code units) in the {@code char} array to be converted
@@ -4953,6 +5009,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * corresponding to this surrogate pair is returned. Otherwise,
      * the {@code char} value at {@code (index - 1)} is
      * returned.
+     * 1.返回CharSequence值中给定索引位置前一个的代码点
+     * 2.如果CharSequence中给定索引前一个的char值处于高代理范围内,则后面的索引小于CharSequence
+     * 的长度,并且后面索引的char值处于第代理范围内,则返回与该代理对对应的补充代码点.
+     * 否则,返回给定索引前一个出的char值
      *
      * @param seq the {@code CharSequence} instance
      * @param index the index following the code point that should be returned
@@ -4985,7 +5045,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * corresponding to this surrogate pair is returned. Otherwise,
      * the {@code char} value at {@code (index - 1)} is
      * returned.
-     *
+     *  1.返回指定char数组索引前一个下的代码点
+     *  2.如果CharSequence中给定索引前一个的char值处于高代理范围内,则后面的索引小于CharSequence
+     * 的长度,并且后面索引的char值处于第代理范围内,则返回与该代理对对应的补充代码点.
+     * 否则,返回给定索引前一个出的char值
      * @param a the {@code char} array
      * @param index the index following the code point that should be returned
      * @return the Unicode code point value before the given index.
@@ -5012,7 +5075,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * corresponding to this surrogate pair is returned. Otherwise,
      * the {@code char} value at {@code (index - 1)} is
      * returned.
-     *
+     *  1.返回指定char数组索引前一个下的代码点,索引start开始
+     *  2.如果CharSequence中给定索引前一个的char值处于高代理范围内,则后面的索引小于CharSequence
+     * 的长度,并且后面索引的char值处于第代理范围内,则返回与该代理对对应的补充代码点.
+     * 否则,返回给定索引前一个出的char值
      * @param a the {@code char} array
      * @param index the index following the code point that should be returned
      * @param start the index of the first array element in the
@@ -5056,7 +5122,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * is not a
      * <a href="Character.html#supplementary">supplementary character</a>,
      * an unspecified {@code char} is returned.
-     *
+     *  1.返回代理对的前导代理(高代理代码单元)(UTF-16编码中指定的补充字符).
+     *  如果指定的字符不是补充字符,则返回未指定的char
      * <p>If
      * {@link #isSupplementaryCodePoint isSupplementaryCodePoint(x)}
      * is {@code true}, then
@@ -5085,7 +5152,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * is not a
      * <a href="Character.html#supplementary">supplementary character</a>,
      * an unspecified {@code char} is returned.
-     *
+     *   1.返回代理对的尾随代理(低代理代码单元)(UTF-16编码中指定的补充字符).
+     *  如果指定的字符不是补充字符,则返回未指定的char
      * <p>If
      * {@link #isSupplementaryCodePoint isSupplementaryCodePoint(x)}
      * is {@code true}, then
@@ -5111,7 +5179,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * surrogate values are stored in {@code dst[dstIndex]}
      * (high-surrogate) and {@code dst[dstIndex+1]}
      * (low-surrogate), and 2 is returned.
-     *
+     *  1.将指定的字符(Unicode代码点)转化其UTF-16表示.如果指定的代码点是BMP值,
+     *  则相同的值存储在指定的char数组中指定的索引位置,并返回1
+     *  2.如果指定代码点是增补字符,则其代理值存在索引值位置的char数组内()高代理和索引位置+1的char数组位置(低代理),
+     *  并返回2
      * @param  codePoint the character (Unicode code point) to be converted.
      * @param  dst an array of {@code char} in which the
      * {@code codePoint}'s UTF-16 value is stored.
@@ -5153,7 +5224,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * the same value as {@code codePoint}. If the specified code
      * point is a supplementary code point, the resulting
      * {@code char} array has the corresponding surrogate pair.
-     *
+     *  1.将指定的字符（Unicode 代码点）转换为其存储在 char 数组中的 UTF-16 表示。
+     *  如果指定的代码点是 BMP（基本多语言平面或平面 0）值，
+     *  则生成的 char 数组与 codePoint 具有相同的值。
+     *  2.如果指定的代码点是补充代码点，则生成的  char数组具有相应的代理对
      * @param  codePoint a Unicode code point
      * @return a {@code char} array having
      *         {@code codePoint}'s UTF-16 representation.
@@ -5187,7 +5261,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * length (in {@code char}s) of the text range is
      * {@code endIndex-beginIndex}. Unpaired surrogates within
      * the text range count as one code point each.
-     *
+     *1.返回指定字符序列的文本范围内的 Unicode 代码点数。
+     * 2.文本范围从指定的 beginIndex开始，并扩展到索引endIndex - 1处的  char。
+     * 3.因此文本范围的长度是endIndex-beginIndex。
+     * 4.文本范围内未配对的代理每个都算作一个代码点
      * @param seq the char sequence
      * @param beginIndex the index to the first {@code char} of
      * the text range.
@@ -5225,7 +5302,9 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * subarray and the {@code count} argument specifies the
      * length of the subarray in {@code char}s. Unpaired
      * surrogates within the subarray count as one code point each.
-     *
+     *1.返回 {@code char} 数组参数的子数组中的 Unicode 代码点数。
+     * 2.offset 参数是子数组char的索引，count 参数指定子数组的长度。
+     * 3.子阵列中未配对的代理每个都算作一个代码点
      * @param a the {@code char} array
      * @param offset the index of the first {@code char} in the
      * given {@code char} array
@@ -5263,7 +5342,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * code points. Unpaired surrogates within the text range given by
      * {@code index} and {@code codePointOffset} count as
      * one code point each.
-     *
+     *1.返回给定字符序列中的索引，该索引从给定的 index偏移 codePointOffset代码点。
+     * 2.index和 codePointOffset给出的文本范围内的未配对代理每个都算作一个代码点
      * @param seq the char sequence
      * @param index the index to be offset
      * @param codePointOffset the offset in code points
@@ -5321,7 +5401,9 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * subarray of the {@code char} array. Unpaired surrogates
      * within the text range given by {@code index} and
      * {@code codePointOffset} count as one code point each.
-     *
+     * 1.返回给定 子数组中的索引，该索引从给定的 index偏移  codePointOffset代码点。
+     * 2.start和 count参数指定 数组的子数组。
+     * 3.index和 codePointOffset给出的文本范围内的未配对代理每个都算作一个代码点
      * @param a the {@code char} array
      * @param start the index of the first {@code char} of the
      * subarray
@@ -5387,12 +5469,15 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Determines if the specified character is a lowercase character.
+     * 1.判断字符是否是小写字符
      * <p>
      * A character is lowercase if its general category type, provided
      * by {@code Character.getType(ch)}, is
      * {@code LOWERCASE_LETTER}, or it has contributory property
      * Other_Lowercase as defined by the Unicode Standard.
      * <p>
+     * 2.如果一个字符由Character.getType(ch) 提供的则是一般类别类型为LOWERCASE_LETTER，
+     * 2.或者它具有由 Unicode 标准定义的贡献属性 Other_Lowercase，则该字符为小写
      * The following are examples of lowercase characters:
      * <blockquote><pre>
      * a b c d e f g h i j k l m n o p q r s t u v w x y z
@@ -5407,7 +5492,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
      * the {@link #isLowerCase(int)} method.
-     *
+     *3.此方法无法处理补充字符,要支持所有 Unicode 字符，包括增补字符，isLowerCase(int)方法
      * @param   ch   the character to be tested.
      * @return  {@code true} if the character is lowercase;
      *          {@code false} otherwise.
@@ -5455,10 +5540,13 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Determines if the specified character is an uppercase character.
+     * 1.确定指定字符是否为大写字符
      * <p>
      * A character is uppercase if its general category type, provided by
      * {@code Character.getType(ch)}, is {@code UPPERCASE_LETTER}.
      * or it has contributory property Other_Uppercase as defined by the Unicode Standard.
+     * 2.如果由 Character.getType(ch)提供的一般类别类型为UPPERCASE_LETTER，则该字符为大写。
+     * 3.或者它具有由 Unicode 标准定义的贡献属性 Other_Uppercase
      * <p>
      * The following are examples of uppercase characters:
      * <blockquote><pre>
@@ -5474,6 +5562,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
      * the {@link #isUpperCase(int)} method.
+     * 4.此方法无法处理补充字符。要支持所有 Unicode 字符，包括增补字符，请使用 isUpperCase(int) 方法
      *
      * @param   ch   the character to be tested.
      * @return  {@code true} if the character is uppercase;
@@ -5521,16 +5610,21 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Determines if the specified character is a titlecase character.
+     * 1.确定指定的字符是否是标题字符
      * <p>
      * A character is a titlecase character if its general
      * category type, provided by {@code Character.getType(ch)},
      * is {@code TITLECASE_LETTER}.
+     * 2.如果由 Character.getType(ch) 提供的一般类别类型为 TITLECASE_LETTER，则该字符是标题字符
      * <p>
      * Some characters look like pairs of Latin letters. For example, there
      * is an uppercase letter that looks like "LJ" and has a corresponding
      * lowercase letter that looks like "lj". A third form, which looks like "Lj",
      * is the appropriate form to use when rendering a word in lowercase
      * with initial capitals, as for a book title.
+     * 3.有些字符看起来像成对的拉丁字母。
+     * 例如，有一个大写字母看起来像“LJ”，而对应的小写字母看起来像“lj”。
+     * 第三种形式，看起来像“Lj”，是在呈现首字母大写的小写单词时使用的适当形式，如书名
      * <p>
      * These are some of the Unicode characters for which this method returns
      * {@code true}:
@@ -5546,7 +5640,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
      * the {@link #isTitleCase(int)} method.
-     *
+     *  4.此方法无法处理补充字符<a>。要支持所有 Unicode 字符，包括增补字符，isTitleCase(int)方法
      * @param   ch   the character to be tested.
      * @return  {@code true} if the character is titlecase;
      *          {@code false} otherwise.
@@ -5562,10 +5656,12 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Determines if the specified character (Unicode code point) is a titlecase character.
+     * 1.确定指定的字符（Unicode 代码点）是否是标题字符
      * <p>
      * A character is a titlecase character if its general
      * category type, provided by {@link Character#getType(int) getType(codePoint)},
      * is {@code TITLECASE_LETTER}.
+     * 2.如果由 Character.getType(ch) 提供的一般类别类型为 TITLECASE_LETTER，则该字符是标题字符
      * <p>
      * Some characters look like pairs of Latin letters. For example, there
      * is an uppercase letter that looks like "LJ" and has a corresponding
@@ -5598,10 +5694,12 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Determines if the specified character is a digit.
+     * 1.确定指定字符是否为数字
      * <p>
      * A character is a digit if its general category type, provided
      * by {@code Character.getType(ch)}, is
      * {@code DECIMAL_DIGIT_NUMBER}.
+     * 2.如果由 Character.getType(ch)提供的一般类别类型为 DECIMAL_DIGIT_NUMBER，则该字符为数字
      * <p>
      * Some Unicode character ranges that contain digits:
      * <ul>
@@ -5623,6 +5721,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
      * the {@link #isDigit(int)} method.
+     * 3.此方法无法处理补充字符。要支持所有 Unicode 字符，包括增补字符，请使用 isDigit(int)方法
      *
      * @param   ch   the character to be tested.
      * @return  {@code true} if the character is a digit;
@@ -5637,10 +5736,12 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Determines if the specified character (Unicode code point) is a digit.
+     * 1.确定指定的字符（Unicode 代码点）是否为数字
      * <p>
      * A character is a digit if its general category type, provided
      * by {@link Character#getType(int) getType(codePoint)}, is
      * {@code DECIMAL_DIGIT_NUMBER}.
+     * 2.如果由CharactergetType(int) getType(codePoint)提供的一般类别类型为DECIMAL_DIGIT_NUMBER，则字符为数字
      * <p>
      * Some Unicode character ranges that contain digits:
      * <ul>
@@ -5671,13 +5772,15 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Determines if a character is defined in Unicode.
+     * 1.确定字符是否以 Unicode 定义
      * <p>
      * A character is defined if at least one of the following is true:
      * <ul>
      * <li>It has an entry in the UnicodeData file.
      * <li>It has a value in a range defined by the UnicodeData file.
      * </ul>
-     *
+     *2.为true的条件只要满足其一,第一它在 UnicodeData 文件中有一个条目
+     * 第二它的值在 UnicodeData 文件定义的范围内
      * <p><b>Note:</b> This method cannot handle <a
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
@@ -5724,6 +5827,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Determines if the specified character is a letter.
+     * 1.确定指定的字符是否为字母
      * <p>
      * A character is considered to be a letter if its general
      * category type, provided by {@code Character.getType(ch)},
@@ -5738,12 +5842,12 @@ class Character implements java.io.Serializable, Comparable<Character> {
      *
      * Not all letters have case. Many characters are
      * letters but are neither uppercase nor lowercase nor titlecase.
-     *
+     *2.并非所有字母都有大小写。许多字符是字母但既不是大写也不是小写也不是标题
      * <p><b>Note:</b> This method cannot handle <a
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
      * the {@link #isLetter(int)} method.
-     *
+     *3.此方法无法处理补充字符。要支持所有 Unicode 字符，包括增补字符，请使用isLetter(int) 方法
      * @param   ch   the character to be tested.
      * @return  {@code true} if the character is a letter;
      *          {@code false} otherwise.
@@ -5763,6 +5867,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Determines if the specified character (Unicode code point) is a letter.
+     * 确定指定的字符（Unicode 代码点）是否为字母
      * <p>
      * A character is considered to be a letter if its general
      * category type, provided by {@link Character#getType(int) getType(codePoint)},
@@ -5801,6 +5906,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Determines if the specified character is a letter or digit.
+     * 确定指定的字符是字母或者数字
      * <p>
      * A character is considered to be a letter or digit if either
      * {@code Character.isLetter(char ch)} or
@@ -5922,6 +6028,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Determines if the specified character (Unicode code point) is an alphabet.
+     * 确定指定的字符（Unicode 代码点）是否为字母表
      * <p>
      * A character is considered to be alphabetic if its general category type,
      * provided by {@link Character#getType(int) getType(codePoint)}, is any of
@@ -5956,7 +6063,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Determines if the specified character (Unicode code point) is a CJKV
      * (Chinese, Japanese, Korean and Vietnamese) ideograph, as defined by
      * the Unicode Standard.
-     *
+     *确定指定的字符（Unicode 代码点）是否是 Unicode 标准定义的 CJKV（中文、日语、韩语和越南语）表意文字
      * @param   codePoint the character (Unicode code point) to be tested.
      * @return  <code>true</code> if the character is a Unicode ideograph
      *          character, <code>false</code> otherwise.
@@ -5969,6 +6076,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Determines if the specified character is
      * permissible as the first character in a Java identifier.
+     * 确定指定的字符是否允许作为 Java 标识符中的第一个字符
      * <p>
      * A character may start a Java identifier if and only if
      * one of the following conditions is true:
@@ -6029,6 +6137,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Determines if the specified character may be part of a Java
      * identifier as other than the first character.
+     * 确定指定的字符是否可以作为第一个字符以外的 Java 标识符的一部分
      * <p>
      * A character may be part of a Java identifier if any of the following
      * are true:
@@ -6099,6 +6208,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Determines if the specified character is permissible as the
      * first character in a Unicode identifier.
+     * 确定指定的字符是否允许作为 Unicode 标识符中的第一个字符
      * <p>
      * A character may start a Unicode identifier if and only if
      * one of the following conditions is true:
@@ -6128,6 +6238,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Determines if the specified character (Unicode code point) is permissible as the
      * first character in a Unicode identifier.
+     * 确定指定的字符（Unicode 代码点）是否允许作为 Unicode 标识符中的第一个字符
      * <p>
      * A character may start a Unicode identifier if and only if
      * one of the following conditions is true:
@@ -6152,6 +6263,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Determines if the specified character may be part of a Unicode
      * identifier as other than the first character.
+     * 确定指定的字符是否可以作为 Unicode 标识符的一部分而不是第一个字符
      * <p>
      * A character may be part of a Unicode identifier if and only if
      * one of the following statements is true:
@@ -6187,6 +6299,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Determines if the specified character (Unicode code point) may be part of a Unicode
      * identifier as other than the first character.
+     * 确定指定的字符（Unicode 代码点）是否可以作为第一个字符以外的 Unicode 标识符的一部分
      * <p>
      * A character may be part of a Unicode identifier if and only if
      * one of the following statements is true:
@@ -6216,6 +6329,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Determines if the specified character should be regarded as
      * an ignorable character in a Java identifier or a Unicode identifier.
+     * 确定指定的字符是否应被视为 Java 标识符或 Unicode 标识符中的可忽略字符
      * <p>
      * The following Unicode characters are ignorable in a Java identifier
      * or a Unicode identifier:
@@ -6251,6 +6365,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Determines if the specified character (Unicode code point) should be regarded as
      * an ignorable character in a Java identifier or a Unicode identifier.
+     * 确定指定的字符（Unicode 代码点）是否应被视为 Java 标识符或 Unicode 标识符中的可忽略字符
      * <p>
      * The following Unicode characters are ignorable in a Java identifier
      * or a Unicode identifier:
@@ -6281,11 +6396,13 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Converts the character argument to lowercase using case
      * mapping information from the UnicodeData file.
+     * 1使用来自 UnicodeData 文件的大小写映射信息将字符参数转换为小写
      * <p>
      * Note that
      * {@code Character.isLowerCase(Character.toLowerCase(ch))}
      * does not always return {@code true} for some ranges of
      * characters, particularly those that are symbols or ideographs.
+     * 2.请注意此方法并不总是为某些范围的字符返回 true，尤其是那些符号或表意文字
      *
      * <p>In general, {@link String#toLowerCase()} should be used to map
      * characters to lowercase. {@code String} case mapping methods
@@ -6293,6 +6410,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * {@code String} case mapping methods can perform locale-sensitive
      * mappings, context-sensitive mappings, and 1:M character mappings, whereas
      * the {@code Character} case mapping methods cannot.
+     * 3.通常，应该使用StringtoLowerCase()将字符映射到小写。
+     * String大小写映射方法比 Character 大小写映射方法有几个优点:
+     * String大小写映射方法可以执行区域设置敏感映射、上下文敏感映射和 1:M 字符映射，
+     * 而 Character大小写映射方法不能
      *
      * <p><b>Note:</b> This method cannot handle <a
      * href="#supplementary"> supplementary characters</a>. To support
@@ -6313,7 +6434,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Converts the character (Unicode code point) argument to
      * lowercase using case mapping information from the UnicodeData
      * file.
-     *
+     *使用来自 UnicodeData 文件的大小写映射信息将字符（Unicode 代码点）参数转换为小写
      * <p> Note that
      * {@code Character.isLowerCase(Character.toLowerCase(codePoint))}
      * does not always return {@code true} for some ranges of
@@ -6341,6 +6462,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Converts the character argument to uppercase using case mapping
      * information from the UnicodeData file.
+     * 使用来自 UnicodeData 文件的大小写映射信息将字符参数转换为大写
      * <p>
      * Note that
      * {@code Character.isUpperCase(Character.toUpperCase(ch))}
@@ -6373,6 +6495,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Converts the character (Unicode code point) argument to
      * uppercase using case mapping information from the UnicodeData
      * file.
+     * 使用来自 UnicodeData 文件的大小写映射信息将字符（Unicode 代码点）参数转换为大写
      *
      * <p>Note that
      * {@code Character.isUpperCase(Character.toUpperCase(codePoint))}
@@ -6407,6 +6530,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * {@code char} argument is already a titlecase
      * {@code char}, the same {@code char} value will be
      * returned.
+     * 使用来自 UnicodeData 文件的大小写映射信息将字符参数转换为 titlecase。
+     * 如果一个字符没有明确的 titlecase 映射，并且根据 UnicodeData 本身不是 titlecase 字符，
+     * 那么大写映射将作为等效的 titlecase 映射返回。如果 char参数已经是 titlecase ，
+     * 则将返回相同的 char 值
      * <p>
      * Note that
      * {@code Character.isTitleCase(Character.toTitleCase(ch))}
@@ -6439,6 +6566,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * character argument is already a titlecase
      * character, the same character value will be
      * returned.
+     * 使用来自 UnicodeData 文件的大小写映射信息将字符（Unicode 代码点）参数转换为 titlecase。
+     * 如果一个字符没有明确的 titlecase 映射，并且根据 UnicodeData 本身不是 titlecase 字符，
+     * 那么大写映射将作为等效的 titlecase 映射返回。如果字符参数已经是 titlecase 字符，
+     * 则将返回相同的字符值
      *
      * <p>Note that
      * {@code Character.isTitleCase(Character.toTitleCase(codePoint))}
@@ -6460,6 +6591,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Returns the numeric value of the character {@code ch} in the
      * specified radix.
+     * 返回指定基数中字符{@code ch}的数值
+     *
      * <p>
      * If the radix is not in the range {@code MIN_RADIX} &le;
      * {@code radix} &le; {@code MAX_RADIX} or if the
@@ -6494,6 +6627,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      *     In this case, {@code ch - '\u005CuFF41' + 10}
      *     is returned.
      * </ul>
+     * 如果基数不在 MIN_RADIX≤ radix ≤ MAX_RADIX范围内，
+     * ch的值不是指定基数中的有效数字，则-1  返回
      *
      * <p><b>Note:</b> This method cannot handle <a
      * href="#supplementary"> supplementary characters</a>. To support
@@ -6514,7 +6649,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Returns the numeric value of the specified character (Unicode
      * code point) in the specified radix.
-     *
+     *返回指定基数中指定字符（Unicode 代码点）的数值。
      * <p>If the radix is not in the range {@code MIN_RADIX} &le;
      * {@code radix} &le; {@code MAX_RADIX} or if the
      * character is not a valid digit in the specified
@@ -6568,6 +6703,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * character represents. For example, the character
      * {@code '\u005Cu216C'} (the roman numeral fifty) will return
      * an int with a value of 50.
+     * 返回指定的 Unicode 字符表示的 int值。
+     * 例如，字符 '\u005Cu216C'（罗马数字五十）将返回一个值为 50 的 int
      * <p>
      * The letters A-Z in their uppercase ({@code '\u005Cu0041'} through
      * {@code '\u005Cu005A'}), lowercase
@@ -6606,6 +6743,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * character (Unicode code point) represents. For example, the character
      * {@code '\u005Cu216C'} (the Roman numeral fifty) will return
      * an {@code int} with a value of 50.
+     * 返回指定字符（Unicode 代码点）表示的 int 值。
+     * 例如，字符 '\u005Cu216C'（罗马数字 50）将返回值为 50 的  int
      * <p>
      * The letters A-Z in their uppercase ({@code '\u005Cu0041'} through
      * {@code '\u005Cu005A'}), lowercase
@@ -6680,11 +6819,12 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * <li> {@code LINE_SEPARATOR}
      * <li> {@code PARAGRAPH_SEPARATOR}
      * </ul>
-     *
+     *1.确定指定的字符是否为 Unicode 空格字符。当且仅当 Unicode 标准将字符指定为空格字符时，才认为该字符是空格字符
      * <p><b>Note:</b> This method cannot handle <a
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
      * the {@link #isSpaceChar(int)} method.
+     * 2.此方法无法处理补充字符,要支持所有 Unicode 字符，包括增补字符，请使用 isSpaceChar(int) 方法
      *
      * @param   ch      the character to be tested.
      * @return  {@code true} if the character is a space character;
@@ -6708,7 +6848,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * <li> {@link #LINE_SEPARATOR}
      * <li> {@link #PARAGRAPH_SEPARATOR}
      * </ul>
-     *
+     *1.确定指定的字符（Unicode 代码点）是否为 Unicode 空格字符。当且仅当 Unicode 标准将字符指定为空格字符时，才认为该字符是空格字符。
      * @param   codePoint the character (Unicode code point) to be tested.
      * @return  {@code true} if the character is a space character;
      *          {@code false} otherwise.
@@ -6741,12 +6881,12 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * <li> It is {@code '\u005Cu001E'}, U+001E RECORD SEPARATOR.
      * <li> It is {@code '\u005Cu001F'}, U+001F UNIT SEPARATOR.
      * </ul>
-     *
+     *1.根据Java判断指定字符是否为空格
      * <p><b>Note:</b> This method cannot handle <a
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
      * the {@link #isWhitespace(int)} method.
-     *
+     *2.此方法无法处理补充字符。要支持所有 Unicode 字符，包括增补字符，请使用 isWhitespace(int) 方法
      * @param   ch the character to be tested.
      * @return  {@code true} if the character is a Java whitespace
      *          character; {@code false} otherwise.
@@ -6778,7 +6918,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * <li> It is {@code '\u005Cu001F'}, U+001F UNIT SEPARATOR.
      * </ul>
      * <p>
-     *
+     *根据 Java 确定指定的字符（Unicode 代码点）是否为空格
      * @param   codePoint the character (Unicode code point) to be tested.
      * @return  {@code true} if the character is a Java whitespace
      *          character; {@code false} otherwise.
@@ -6795,7 +6935,9 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * character if its code is in the range {@code '\u005Cu0000'}
      * through {@code '\u005Cu001F'} or in the range
      * {@code '\u005Cu007F'} through {@code '\u005Cu009F'}.
-     *
+     * 1.确定指定的字符是否为 ISO 控制字符。
+     * 如果一个字符的代码在  '\u005Cu0000' 到 '\u005Cu001F'范围内或在  '\u005Cu007F' 到 范围内，
+     * 则该字符被认为是 ISO 控制字符'\u005Cu009F'
      * <p><b>Note:</b> This method cannot handle <a
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
@@ -6819,6 +6961,9 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * character if its code is in the range {@code '\u005Cu0000'}
      * through {@code '\u005Cu001F'} or in the range
      * {@code '\u005Cu007F'} through {@code '\u005Cu009F'}.
+     * 1.确定指定的字符是否为 ISO 控制字符。
+     *      * 如果一个字符的代码在  '\u005Cu0000' 到 '\u005Cu001F'范围内或在  '\u005Cu007F' 到 范围内，
+     *      * 则该字符被认为是 ISO 控制字符'\u005Cu009F'
      *
      * @param   codePoint the character (Unicode code point) to be tested.
      * @return  {@code true} if the character is an ISO control character;
@@ -6837,12 +6982,13 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Returns a value indicating a character's general category.
-     *
+     *1.返回一个值，指示字符的一般类别
      * <p><b>Note:</b> This method cannot handle <a
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
      * the {@link #getType(int)} method.
-     *
+     *2.此方法无法处理补充字符。
+     * 要支持所有 Unicode 字符，包括增补字符，请使用 {@link getType(int)} 方法
      * @param   ch      the character to be tested.
      * @return  a value of type {@code int} representing the
      *          character's general category.
@@ -6884,7 +7030,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Returns a value indicating a character's general category.
-     *
+     *返回一个值，指示字符的一般类别。
      * @param   codePoint the character (Unicode code point) to be tested.
      * @return  a value of type {@code int} representing the
      *          character's general category.
@@ -6930,6 +7076,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * valid radix, or the value of {@code digit} is not a valid
      * digit in the specified radix, the null character
      * ({@code '\u005Cu0000'}) is returned.
+     * 1.确定指定基数中特定数字的字符表示。
+     * 如果 radix的值不是有效基数，或者 digit的值不是指定基数中的有效数字，则返回空字符 '\u005Cu0000'
      * <p>
      * The {@code radix} argument is valid if it is greater than or
      * equal to {@code MIN_RADIX} and less than or equal to
@@ -6955,9 +7103,12 @@ class Character implements java.io.Serializable, Comparable<Character> {
         if ((radix < Character.MIN_RADIX) || (radix > Character.MAX_RADIX)) {
             return '\0';
         }
+        //小于10
         if (digit < 10) {
+
             return (char)('0' + digit);
         }
+        //大于10
         return (char)('a' - 10 + digit);
     }
 
@@ -6966,12 +7117,14 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * character.  Character directionality is used to calculate the
      * visual ordering of text. The directionality value of undefined
      * {@code char} values is {@code DIRECTIONALITY_UNDEFINED}.
-     *
+     *1.返回给定字符的 Unicode 方向性属性。
+     * 字符方向性用于计算文本的视觉顺序。未定义的  char值的方向性值为  DIRECTIONALITY_UNDEFINED
      * <p><b>Note:</b> This method cannot handle <a
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
      * the {@link #getDirectionality(int)} method.
-     *
+     *2.此方法无法处理补充字符。
+     * 要支持所有 Unicode 字符，包括增补字符，请使用 getDirectionality(int)方法
      * @param  ch {@code char} for which the directionality property
      *            is requested.
      * @return the directionality property of the {@code char} value.
@@ -7008,7 +7161,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * used to calculate the visual ordering of text. The
      * directionality value of undefined character is {@link
      * #DIRECTIONALITY_UNDEFINED}.
-     *
+     *返回给定字符（Unicode 代码点）的 Unicode 方向性属性。字符方向性用于计算文本的视觉顺序
      * @param   codePoint the character (Unicode code point) for which
      *          the directionality property is requested.
      * @return the directionality property of the character.
@@ -7047,12 +7200,17 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * PARENTHESIS is semantically defined to be an <i>opening
      * parenthesis</i>.  This will appear as a "(" in text that is
      * left-to-right but as a ")" in text that is right-to-left.
+     * 确定字符是否根据 Unicode 规范进行镜像。
+     * 当以从右到左的文本显示时，镜像字符的字形应该水平镜像。
+     * 例如，'\u005Cu0028' LEFT PARENTHESIS 在语义上定义为 左括号。
+     * 这将在从左到右的文本中显示为“（”，但在从右到左的文本中显示为“）
      *
      * <p><b>Note:</b> This method cannot handle <a
      * href="#supplementary"> supplementary characters</a>. To support
      * all Unicode characters, including supplementary characters, use
      * the {@link #isMirrored(int)} method.
-     *
+     此方法无法处理补充字符
+     要支持所有 Unicode 字符，包括增补字符，请使用 isMirrored(int) 方法     *
      * @param  ch {@code char} for which the mirrored property is requested
      * @return {@code true} if the char is mirrored, {@code false}
      *         if the {@code char} is not mirrored or is not defined.
@@ -7071,6 +7229,10 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * defined to be an <i>opening parenthesis</i>.  This will appear
      * as a "(" in text that is left-to-right but as a ")" in text
      * that is right-to-left.
+     * 确定指定的字符（Unicode 代码点）是否根据 Unicode 规范进行镜像。
+     * 当以从右到左的文本显示时，镜像字符的字形应该水平镜像。
+     * 例如，'\u005Cu0028' LEFT PARENTHESIS 在语义上定义为 左括号。
+     * 这将在从左到右的文本中显示为“（”，但在从右到左的文本中显示为“）”
      *
      * @param   codePoint the character (Unicode code point) to be tested.
      * @return  {@code true} if the character is mirrored, {@code false}
@@ -7083,7 +7245,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Compares two {@code Character} objects numerically.
-     *
+     *以数字方式比较两个 Character 对象
      * @param   anotherCharacter   the {@code Character} to be compared.
 
      * @return  the value {@code 0} if the argument {@code Character}
@@ -7102,6 +7264,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
 
     /**
      * Compares two {@code char} values numerically.
+     * 以数字方式比较两个  char 值。
      * The value returned is identical to what would be returned by:
      * <pre>
      *    Character.valueOf(x).compareTo(Character.valueOf(y))
@@ -7121,6 +7284,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Converts the character (Unicode code point) argument to uppercase using
      * information from the UnicodeData file.
+     * 使用来自 UnicodeData 文件的信息将字符（Unicode 代码点）参数转换为大写
      * <p>
      *
      * @param   codePoint   the character (Unicode code point) to be converted.
@@ -7144,6 +7308,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * specification. If a character has no explicit uppercase
      * mapping, then the {@code char} itself is returned in the
      * {@code char[]}.
+     * 使用来自 Unicode 规范中的 SpecialCasing 文件的大小写映射信息将字符（Unicode 代码点）参数转换为大写。
+     * 如果字符没有显式大写映射，则 char 本身在  char[]中返回
      *
      * @param   codePoint   the character (Unicode code point) to be converted.
      * @return a {@code char[]} with the uppercased character.
@@ -7158,7 +7324,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * The number of bits used to represent a <tt>char</tt> value in unsigned
      * binary form, constant {@code 16}.
-     *
+     *  用以无符号的二进制表示的char的位数
      * @since 1.5
      */
     public static final int SIZE = 16;
@@ -7166,7 +7332,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * The number of bytes used to represent a {@code char} value in unsigned
      * binary form.
-     *
+     *  用于以无符号二进制形式表示的char的字节数
      * @since 1.8
      */
     public static final int BYTES = SIZE / Byte.SIZE;
@@ -7174,6 +7340,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
     /**
      * Returns the value obtained by reversing the order of the bytes in the
      * specified <tt>char</tt> value.
+     * 返回通过反转指定char值中的字节顺序获得的值
      *
      * @param ch The {@code char} of which to reverse the byte order.
      * @return the value obtained by reversing (or, equivalently, swapping)
@@ -7188,12 +7355,15 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * Returns the Unicode name of the specified character
      * {@code codePoint}, or null if the code point is
      * {@link #UNASSIGNED unassigned}.
+     * 1.返回指定字符  codePoint 的 Unicode 名称，
+     * 如果代码点为 UNASSIGNED unassigned，则返回 null
      * <p>
      * Note: if the specified character is not assigned a name by
      * the <i>UnicodeData</i> file (part of the Unicode Character
      * Database maintained by the Unicode Consortium), the returned
      * name is the same as the result of expression.
-     *
+     *2.如果UnicodeData文件（Unicode Consortium维护的Unicode字符数据库的一部分）
+     * 没有为指定的字符指定名称，则返回的名称与表达式的结果相同
      * <blockquote>{@code
      *     Character.UnicodeBlock.of(codePoint).toString().replace('_', ' ')
      *     + " "
