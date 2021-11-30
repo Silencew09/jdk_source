@@ -27,6 +27,7 @@ package java.lang.reflect;
 
 /**
  * A common interface for all entities that declare type variables.
+ * 所有声明类型变量的实体的通用接口
  *
  * @since 1.5
  */

@@ -44,6 +44,9 @@ import sun.reflect.annotation.AnnotationType;
  * serializable. The arrays returned by methods of this interface may be modified
  * by callers without affecting the arrays returned to other callers.
  *
+ * 表示当前在此 VM 中运行的程序的带注释元素。
+ * 该接口允许以反射方式读取注释。此接口中的方法返回的所有注释都是不可变和可序列化的。
+ * 此接口的方法返回的数组可以被调用者修改，而不会影响返回给其他调用者的数组
  * <p>The {@link #getAnnotationsByType(Class)} and {@link
  * #getDeclaredAnnotationsByType(Class)} methods support multiple
  * annotations of the same type on an element. If the argument to

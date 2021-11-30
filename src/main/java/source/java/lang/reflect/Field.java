@@ -44,7 +44,7 @@ import sun.reflect.annotation.TypeAnnotationParser;
  * A {@code Field} provides information about, and dynamic access to, a
  * single field of a class or an interface.  The reflected field may
  * be a class (static) field or an instance field.
- *
+ * 1.{@code Field} 提供有关类或接口的单个字段的信息和动态访问。反射字段可以是类（静态）字段或实例字段
  * <p>A {@code Field} permits widening conversions to occur during a get or
  * set access operation, but throws an {@code IllegalArgumentException} if a
  * narrowing conversion would occur.
