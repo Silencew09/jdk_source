@@ -39,6 +39,9 @@ import static java.lang.ClassValue.ClassValueMap.probeBackupLocations;
  * table for each class encountered at a message send call site,
  * it can use a {@code ClassValue} to cache information needed to
  * perform the message send quickly, for each class encountered.
+ * 延迟地将计算值与（可能）每种类型相关联。
+ * 例如，如果动态语言需要为在消息发送调用站点遇到的每个类构建一个消息调度表，
+ * 它可以使用 ClassValue来缓存为遇到的每个类快速执行消息发送所需的信息。
  * @author John Rose, JSR 292 EG
  * @since 1.7
  */
@@ -46,23 +49,27 @@ public abstract class ClassValue<T> {
     /**
      * Sole constructor.  (For invocation by subclass constructors, typically
      * implicit.)
+     * 唯一的构造函数。 （对于子类构造函数的调用，通常是隐式的。）
      */
     protected ClassValue() {
     }
 
     /**
      * Computes the given class's derived value for this {@code ClassValue}.
+     * 1.计算此 {@code ClassValue} 的给定类的派生值
      * <p>
      * This method will be invoked within the first thread that accesses
      * the value with the {@link #get get} method.
+     * 2.此方法将在使用 get 方法访问该值的第一个线程中调用
      * <p>
      * Normally, this method is invoked at most once per class,
      * but it may be invoked again if there has been a call to
      * {@link #remove remove}.
+     * 3.通常，每个类最多调用一次此方法，但如果已调用 remove,则可能会再次调用它
      * <p>
      * If this method throws an exception, the corresponding call to {@code get}
      * will terminate abnormally with that exception, and no class value will be recorded.
-     *
+     * 4.如果此方法抛出异常，相应的get调用将因该异常异常终止，并且不会记录任何类值
      * @param type the type whose class value must be computed
      * @return the newly computed value associated with this {@code ClassValue}, for the given class or interface
      * @see #get
@@ -74,12 +81,15 @@ public abstract class ClassValue<T> {
      * Returns the value for the given class.
      * If no value has yet been computed, it is obtained by
      * an invocation of the {@link #computeValue computeValue} method.
+     * 1.返回给定类的值。如果尚未计算任何值，则通过调用computeValue方法获得
      * <p>
      * The actual installation of the value on the class
      * is performed atomically.
+     * 2.类上值的实际安装是原子执行的。
      * At that point, if several racing threads have
      * computed values, one is chosen, and returned to
      * all the racing threads.
+     * 3.在这一点上，如果多个竞速线程有计算值，则选择一个，并将其返回给所有竞速线程
      * <p>
      * The {@code type} parameter is typically a class, but it may be any type,
      * such as an interface, a primitive type (like {@code int.class}), or {@code void.class}.
@@ -194,6 +204,7 @@ public abstract class ClassValue<T> {
     }
 
     /** Initial, one-element, empty cache used by all Class instances.  Must never be filled. */
+    //所有 Class 实例使用的初始、单元素、空缓存。绝对不能填满
     private static final Entry<?>[] EMPTY_CACHE = { null };
 
     /**
@@ -246,19 +257,24 @@ public abstract class ClassValue<T> {
     }
 
     /** Internal hash code for accessing Class.classValueMap.cacheArray. */
+    //用于访问 Class.classValueMap.cacheArray 的内部哈希码。
     final int hashCodeForCache = nextHashCode.getAndAdd(HASH_INCREMENT) & HASH_MASK;
 
     /** Value stream for hashCodeForCache.  See similar structure in ThreadLocal. */
+    //hashCodeForCache 的值流。请参阅 ThreadLocal 中的类似结构
     private static final AtomicInteger nextHashCode = new AtomicInteger();
 
     /** Good for power-of-two tables.  See similar structure in ThreadLocal. */
+    //适用于 2 的幂表。请参阅 ThreadLocal 中的类似结构
     private static final int HASH_INCREMENT = 0x61c88647;
 
     /** Mask a hash code to be positive but not too large, to prevent wraparound. */
+    //将哈希码屏蔽为正数但不要太大，以防止回绕。
     static final int HASH_MASK = (-1 >>> 2);
 
     /**
      * Private key for retrieval of this object from ClassValueMap.
+     * //用于从 ClassValueMap 检索此对象的私钥
      */
     static class Identity {
     }
@@ -267,6 +283,9 @@ public abstract class ClassValue<T> {
      * The main object {@code ClassValue.this} is incorrect since
      * subclasses may override {@code ClassValue.equals}, which
      * could confuse keys in the ClassValueMap.
+     * //这个 ClassValue 的标识，表示为一个不透明的对象。
+     * 主对象 ClassValue.this不正确，因为子类可能会覆盖 ClassValue.equals，
+     * 这可能会混淆 ClassValueMap 中的键
      */
     final Identity identity = new Identity();
 
@@ -277,6 +296,10 @@ public abstract class ClassValue<T> {
      * A version change invalidates all cache entries for the affected ClassValue,
      * by marking them as stale.  Stale cache entries do not force another call
      * to computeValue, but they do require a synchronized visit to a backing map.
+     * 1.用于从缓存中检索此类值的当前版本
+     * 2.可以与一个版本相关联地缓存任意数量的 computeValue 调用，但是当执行删除（在任何类型上）时，版本会发生变化。
+     * 3.通过将受影响的 ClassValue 的所有缓存条目标记为过时，版本更改使它们无效
+     * 4.陈旧的缓存条目不会强制再次调用计算值，但它们确实需要对支持映射的同步访问
      * <p>
      * All user-visible state changes on the ClassValue take place under
      * a lock inside the synchronized methods of ClassValueMap.
@@ -284,6 +307,9 @@ public abstract class ClassValue<T> {
      * when this.version is bumped to a new token.
      * This variable must be volatile so that an unsynchronized reader
      * will receive the notification without delay.
+     * 5.ClassValue 上所有用户可见的状态更改都在 ClassValueMap 的同步方法内的锁定下发生
+     * 6.当 this.version 遇到一个新的令牌时，（ClassValue.get 的）读者会收到这种状态变化的通知
+     * 7.这个变量必须是可变的，以便未同步的读者可以毫不延迟地收到通知
      * <p>
      * If version were not volatile, one thread T1 could persistently hold onto
      * a stale value this.value == V1, while while another thread T2 advances
@@ -291,11 +317,18 @@ public abstract class ClassValue<T> {
      * but if T1 and T2 interact causally via some other channel, such that
      * T1's further actions are constrained (in the JMM) to happen after
      * the V2 event, then T1's observation of V1 will be an error.
+     * 8.如果版本不是易失性的，一个线程 T1 可以持久地保持一个陈旧的值 this.value == V1，
+     * 而另一个线程 T2 前进（在锁定下）到 this.value == V2。这通常是无害的，
+     * 但如果 T1 和 T2 通过某个其他渠道因果交互，
+     * 使得 T1 的进一步行动被限制（在 JMM 中）发生在 V2 事件之后，
+     * 那么 T1 对 V1 的观察将是错误的
      * <p>
      * The practical effect of making this.version be volatile is that it cannot
      * be hoisted out of a loop (by an optimizing JIT) or otherwise cached.
      * Some machines may also require a barrier instruction to execute
      * before this.version.
+     * 9.使 this.version 可变的实际效果是它不能被提升出循环（通过优化 JIT）或以其他方式缓存。
+     * 有些机器可能还需要在此版本之前执行屏障指令
      */
     private volatile Version<T> version = new Version<>(this);
     Version<T> version() { return version; }
@@ -310,29 +343,41 @@ public abstract class ClassValue<T> {
     }
 
     /** One binding of a value to a class via a ClassValue.
+     * 1.通过 ClassValue 将一个值绑定到一个类。
      *  States are:<ul>
      *  <li> promise if value == Entry.this
      *  <li> else dead if version == null
      *  <li> else stale if version != classValue.version
      *  <li> else live </ul>
+     *  2.状态是：
+     *  允许时value = Entry.this
+     *  死亡时value= null
+     *  陈旧时version!=classValueversion
+     *  否则就是活跃状态
      *  Promises are never put into the cache; they only live in the
      *  backing map while a computeValue call is in flight.
      *  Once an entry goes stale, it can be reset at any time
      *  into the dead state.
+     *  Promises 永远不会放入缓存；它们只存在于支持映射中，而计算值调用正在进行中。
+     *  一旦条目变得陈旧，它可以随时重置为死状态
      */
     static class Entry<T> extends WeakReference<Version<T>> {
+        //通常是 T 型，但有时 (Entry)this
         final Object value;  // usually of type T, but sometimes (Entry)this
         Entry(Version<T> version, T value) {
             super(version);
+            //对于常规条目，值的类型为 T
             this.value = value;  // for a regular entry, value is of type T
         }
         private void assertNotPromise() { assert(!isPromise()); }
         /** For creating a promise. */
+        //promise状态
         Entry(Version<T> version) {
             super(version);
             this.value = this;  // for a promise, value is not of type T, but Entry!
         }
         /** Fetch the value.  This entry must not be a promise. */
+        //取值。此条目不能是Promise
         @SuppressWarnings("unchecked")  // if !isPromise, type is T
         T value() { assertNotPromise(); return (T) value; }
         boolean isPromise() { return value == this; }
@@ -356,6 +401,7 @@ public abstract class ClassValue<T> {
             // value = null -- caller must drop
             return e2;
         }
+        //dead状态
         static final Entry<?> DEAD_ENTRY = new Entry<>(null, null);
     }
 
@@ -369,6 +415,7 @@ public abstract class ClassValue<T> {
         return initializeMap(type);
     }
 
+    //避免死锁的私有对象
     private static final Object CRITICAL_SECTION = new Object();
     private static ClassValueMap initializeMap(Class<?> type) {
         ClassValueMap map;
@@ -397,10 +444,13 @@ public abstract class ClassValue<T> {
     }
 
     // The following class could also be top level and non-public:
+    //以下类也可以是顶级和非公开的：
 
     /** A backing map for all ClassValues, relative a single given type.
      *  Gives a fully serialized "true state" for each pair (ClassValue cv, Class type).
      *  Also manages an unserialized fast-path cache.
+     *  所有 ClassValues 的支持映射，相对于单个给定类型。为
+     *  每对（ClassValue cv，Class 类型）提供一个完全序列化的“真实状态”。还管理未序列化的快速路径缓存
      */
     static class ClassValueMap extends WeakHashMap<ClassValue.Identity, Entry<?>> {
         private final Class<?> type;
@@ -410,11 +460,15 @@ public abstract class ClassValue<T> {
         /** Number of entries initially allocated to each type when first used with any ClassValue.
          *  It would be pointless to make this much smaller than the Class and ClassValueMap objects themselves.
          *  Must be a power of 2.
+         *  首次与任何 ClassValue 一起使用时，最初分配给每种类型的条目数。
+         *  使它比 Class 和 ClassValueMap 对象本身小得多是没有意义的。必须是 2 的幂
          */
         private static final int INITIAL_ENTRIES = 32;
 
         /** Build a backing map for ClassValues, relative the given type.
          *  Also, create an empty cache array and install it on the class.
+         *  为 ClassValues 构建一个支持映射，相对于给定的类型。
+         *  此外，创建一个空的缓存数组并将其安装在类上
          */
         ClassValueMap(Class<?> type) {
             this.type = type;
@@ -424,6 +478,7 @@ public abstract class ClassValue<T> {
         Entry<?>[] getCache() { return cacheArray; }
 
         /** Initiate a query.  Store a promise (placeholder) if there is no value yet. */
+        //发起查询。如果还没有值，则存储promise（占位符)
         synchronized
         <T> Entry<T> startEntry(ClassValue<T> classValue) {
             @SuppressWarnings("unchecked")  // one map has entries for all value types <T>
@@ -433,8 +488,10 @@ public abstract class ClassValue<T> {
                 e = v.promise();
                 // The presence of a promise means that a value is pending for v.
                 // Eventually, finishEntry will overwrite the promise.
+                //promise的存在意味着 v 的值正在等待。最终，finishEntry 将覆盖promise
                 put(classValue.identity, e);
                 // Note that the promise is never entered into the cache!
+                //请注意，promise永远不会进入缓存
                 return e;
             } else if (e.isPromise()) {
                 // Somebody else has asked the same question.
@@ -446,13 +503,17 @@ public abstract class ClassValue<T> {
                 return e;
             } else {
                 // there is already a completed entry here; report it
+                //这里已经有一个完整的条目；举报
                 if (e.version() != v) {
                     // There is a stale but valid entry here; make it fresh again.
                     // Once an entry is in the hash table, we don't care what its version is.
+                    //这里有一个陈旧但有效的条目；让它再次新鲜。
+                    // 一旦一个条目在哈希表中，我们就不关心它的版本是什么
                     e = e.refreshVersion(v);
                     put(classValue.identity, e);
                 }
                 // Add to the cache, to enable the fast path, next time.
+                //添加到缓存中，下次以启用快速路径，
                 checkCacheLoad();
                 addToCache(classValue, e);
                 return e;
@@ -581,6 +642,7 @@ public abstract class ClassValue<T> {
         }
 
         /** How far out of place is e? */
+        //e 离位多远？
         private static int entryDislocation(Entry<?>[] cache, int pos, Entry<?> e) {
             ClassValue<?> cv = e.classValueOrNull();
             if (cv == null)  return 0;  // entry is not live!
@@ -600,6 +662,7 @@ public abstract class ClassValue<T> {
         }
 
         /** Make sure the cache load stays below its limit, if possible. */
+        //如果可能，请确保缓存负载保持在其限制以下
         private void checkCacheLoad() {
             if (cacheLoad >= cacheLoadLimit) {
                 reduceCacheLoad();
@@ -622,6 +685,7 @@ public abstract class ClassValue<T> {
 
         /** Remove stale entries in the given range.
          *  Should be executed under a Map lock.
+         *  删除给定范围内的陈旧条目。应该在地图锁下执行
          */
         private void removeStaleEntries(Entry<?>[] cache, int begin, int count) {
             if (PROBE_LIMIT <= 0)  return;
@@ -634,6 +698,7 @@ public abstract class ClassValue<T> {
                 Entry<?> replacement = null;
                 if (PROBE_LIMIT > 1) {
                     // avoid breaking up a non-null run
+                    //避免中断非空运行
                     replacement = findReplacement(cache, i);
                 }
                 cache[i & mask] = replacement;
@@ -646,6 +711,8 @@ public abstract class ClassValue<T> {
          *  from the head of a non-null run, which would allow them
          *  to be found via reprobes.  Find an entry after cache[begin]
          *  to plug into the hole, or return null if none is needed.
+         *  清除缓存槽有可能将后续条目与非空运行的头部断开连接，
+         *  这将允许通过重新探测找到它们。在 cache[begin] 之后查找一个条目以插入该漏洞，如果不需要则返回 null
          */
         private Entry<?> findReplacement(Entry<?>[] cache, int home1) {
             Entry<?> replacement = null;
@@ -686,17 +753,20 @@ public abstract class ClassValue<T> {
         }
 
         /** Remove stale entries in the range near classValue. */
+        //删除 classValue 附近范围内的陈旧条目
         private void removeStaleEntries(ClassValue<?> classValue) {
             removeStaleEntries(getCache(), classValue.hashCodeForCache, PROBE_LIMIT);
         }
 
         /** Remove all stale entries, everywhere. */
+        //删除所有陈旧条目，无处不在
         private void removeStaleEntries() {
             Entry<?>[] cache = getCache();
             removeStaleEntries(cache, 0, cache.length + PROBE_LIMIT - 1);
         }
 
         /** Add the given entry to the cache, in its home location, unless it is out of date. */
+        //将给定条目添加到缓存中，在其主位置，除非它已过期
         private <T> void addToCache(Entry<T> e) {
             ClassValue<T> classValue = e.classValueOrNull();
             if (classValue != null)
@@ -704,6 +774,7 @@ public abstract class ClassValue<T> {
         }
 
         /** Add the given entry to the cache, in its home location. */
+        //将给定的条目添加到缓存中，在其主位置
         private <T> void addToCache(ClassValue<T> classValue, Entry<T> e) {
             if (PROBE_LIMIT <= 0)  return;  // do not fill cache
             // Add e to the cache.
@@ -727,6 +798,7 @@ public abstract class ClassValue<T> {
 
         /** Store the given entry.  Update cacheLoad, and return any live victim.
          *  'Gently' means return self rather than dislocating a live victim.
+         *  存储给定的条目。更新 cacheLoad，并返回任何活着的受害者。 “轻轻”意味着回归自我，而不是让一个活生生的受害者脱臼
          */
         private Entry<?> placeInCache(Entry<?>[] cache, int pos, Entry<?> e, boolean gently) {
             Entry<?> e2 = overwrittenEntry(cache[pos]);
@@ -744,6 +816,8 @@ public abstract class ClassValue<T> {
          *  If it is an actual null, increment cacheLoad,
          *  because the caller is going to store something
          *  in its place.
+         *  请注意即将被覆盖的条目。如果它不是活的，则悄悄地将其替换为空值。
+         *  如果它是一个实际的空值，增加 cacheLoad，因为调用者将在它的位置存储一些东西
          */
         private <T> Entry<T> overwrittenEntry(Entry<T> e2) {
             if (e2 == null)  cacheLoad += 1;
@@ -752,8 +826,10 @@ public abstract class ClassValue<T> {
         }
 
         /** Percent loading of cache before resize. */
+        //调整大小前缓存的加载百分比
         private static final int CACHE_LOAD_LIMIT = 67;  // 0..100
         /** Maximum number of probes to attempt. */
+        //尝试的最大探测数
         private static final int PROBE_LIMIT      =  6;       // 1..
         // N.B.  Set PROBE_LIMIT=0 to disable all fast paths.
     }

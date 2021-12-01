@@ -243,7 +243,7 @@ public interface AnnotatedElement {
      * Returns true if an annotation for the specified type
      * is <em>present</em> on this element, else false.  This method
      * is designed primarily for convenient access to marker annotations.
-     *
+     * 1.如果指定类型的注解在此元素上存在 ，则返回 true，否则返回 false。此方法主要是为了方便访问标记注解而设计的
      * <p>The truth value returned by this method is equivalent to:
      * {@code getAnnotation(annotationClass) != null}
      *
@@ -264,7 +264,7 @@ public interface AnnotatedElement {
    /**
      * Returns this element's annotation for the specified type if
      * such an annotation is <em>present</em>, else null.
-     *
+     *  如果这样的注解是存在的，则返回此元素的指定类型的注解，否则为 null
      * @param <T> the type of the annotation to query for and return if present
      * @param annotationClass the Class object corresponding to the
      *        annotation type
@@ -291,7 +291,7 @@ public interface AnnotatedElement {
 
     /**
      * Returns annotations that are <em>associated</em> with this element.
-     *
+     *返回与此元素关联的注解
      * If there are no annotations <em>associated</em> with this element, the return
      * value is an array of length 0.
      *
@@ -351,7 +351,7 @@ public interface AnnotatedElement {
     /**
      * Returns this element's annotation for the specified type if
      * such an annotation is <em>directly present</em>, else null.
-     *
+     *如果这样的注解（直接存在），则返回此元素对指定类型的注解，否则为 null
      * This method ignores inherited annotations. (Returns null if no
      * annotations are directly present on this element.)
      *

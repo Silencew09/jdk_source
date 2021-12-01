@@ -35,6 +35,8 @@ class ClassLoaderHelper {
      * such that if the original pathname did not exist, then the
      * file may be located at the alternate location.
      * For most platforms, this behavior is not supported and returns null.
+     * //返回给定文件的备用路径名，如果原始路径名不存在，则该文件可能位于备用位置。对于大多数平台，
+     * 不支持此行为并返回 null
      */
     static File mapAlternativeName(File lib) {
         return null;

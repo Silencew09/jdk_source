@@ -1432,12 +1432,17 @@ public final class Class<T> implements java.io.Serializable,
      * @since 1.5
      */
     public String getSimpleName() {
+        //首先判断是否是数组
         if (isArray())
+            //返回表示数组组件类型的 Class
             return getComponentType().getSimpleName()+"[]";
 
+        //获取底层简单名称
         String simpleName = getSimpleBinaryName();
         if (simpleName == null) { // top level class
+            //如果为null,则表示顶层类
             simpleName = getName();
+            //去掉包名
             return simpleName.substring(simpleName.lastIndexOf(".")+1); // strip the package name
         }
         // According to JLS3 "Binary Compatibility" (13.1) the binary
@@ -1446,13 +1451,19 @@ public final class Class<T> implements java.io.Serializable,
         // (for nested and inner classes): the simple name.
         // (for local classes): 1 or more digits followed by the simple name.
         // (for anonymous classes): 1 or more digits.
+        //根据 JLS3“二进制兼容性”（13.1），
+        // 非包类（不是顶级）的二进制名称是紧接其后的类的二进制名称后跟一个 '$'：
+        // （对于嵌套类和内部类）：简单的姓名。 （
+        // 对于本地类）：1 个或多个数字后跟简单名称。
+        // （对于匿名类）：1 个或多个数字
 
         // Since getSimpleBinaryName() will strip the binary name of
         // the immediatly enclosing class, we are now looking at a
         // string that matches the regular expression "\$[0-9]*"
         // followed by a simple name (considering the simple of an
         // anonymous class to be the empty string).
-
+        //由于 getSimpleBinaryName() 将剥离直接封闭类的二进制名称，
+        // 我们现在查看匹配正则表达式“$[0-9]*”的字符串，后跟一个简单名称（考虑匿名类的简单名称为空字符串
         // Remove leading "\$[0-9]*" from the name
         int length = simpleName.length();
         if (length < 1 || simpleName.charAt(0) != '$')
@@ -1461,19 +1472,22 @@ public final class Class<T> implements java.io.Serializable,
         while (index < length && isAsciiDigit(simpleName.charAt(index)))
             index++;
         // Eventually, this is the empty string iff this is an anonymous class
+       // 最终，如果这是一个匿名类，这是空字符串
         return simpleName.substring(index);
     }
 
     /**
      * Return an informative string for the name of this type.
-     *
+     *  返回此类型名称的信息字符串
      * @return an informative string for the name of this type
      * @since 1.8
      */
     public String getTypeName() {
+        //判断是否是数组
         if (isArray()) {
             try {
                 Class<?> cl = this;
+                //记录是几维数组
                 int dimensions = 0;
                 while (cl.isArray()) {
                     dimensions++;
@@ -1504,24 +1518,33 @@ public final class Class<T> implements java.io.Serializable,
      * the underlying class does not have a canonical name (i.e., if
      * it is a local or anonymous class or an array whose component
      * type does not have a canonical name).
+     * 返回 Java 语言规范定义的基础类的规范名称。
+     * 如果底层类没有规范名称（即，如果它是本地或匿名类或组件类型没有规范名称的数组），则返回 nul
      * @return the canonical name of the underlying class if it exists, and
      * {@code null} otherwise.
      * @since 1.5
      */
     public String getCanonicalName() {
         if (isArray()) {
+            //获取数组的类型,然后在获取基础名称
             String canonicalName = getComponentType().getCanonicalName();
             if (canonicalName != null)
                 return canonicalName + "[]";
             else
                 return null;
         }
+        //本地或匿名类 返回null
         if (isLocalOrAnonymousClass())
             return null;
+        //获取封闭类
         Class<?> enclosingClass = getEnclosingClass();
+
+        //没有就是顶层类
         if (enclosingClass == null) { // top level class
+            //直接获取顶层类名称
             return getName();
         } else {
+
             String enclosingName = enclosingClass.getCanonicalName();
             if (enclosingName == null)
                 return null;
@@ -1532,7 +1555,7 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * Returns {@code true} if and only if the underlying class
      * is an anonymous class.
-     *
+     *  当且仅当底层类是匿名类时才返回 true
      * @return {@code true} if and only if this class is an anonymous class.
      * @since 1.5
      */
@@ -1543,7 +1566,7 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * Returns {@code true} if and only if the underlying class
      * is a local class.
-     *
+     *  当且仅当底层类是本地类时才返回 true
      * @return {@code true} if and only if this class is a local class.
      * @since 1.5
      */
@@ -1554,7 +1577,7 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * Returns {@code true} if and only if the underlying class
      * is a member class.
-     *
+     *当且仅当基础类是成员类时才返回  true
      * @return {@code true} if and only if this class is a member class.
      * @since 1.5
      */
@@ -1567,6 +1590,8 @@ public final class Class<T> implements java.io.Serializable,
      * the binary name without the leading enclosing class name.
      * Returns {@code null} if the underlying class is a top level
      * class.
+     * 返回底层类的“简单二进制名称”，即没有前导类名称的二进制名称。
+     * 如果底层类是顶级类，则返回 {@code null}
      */
     private String getSimpleBinaryName() {
         Class<?> enclosingClass = getEnclosingClass();
@@ -1583,11 +1608,13 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * Returns {@code true} if this is a local class or an anonymous
      * class.  Returns {@code false} otherwise.
+     * 如果这是本地类或匿名类，则返回 true。否则返回 false
      */
     private boolean isLocalOrAnonymousClass() {
         // JVM Spec 4.8.6: A class must have an EnclosingMethod
         // attribute if and only if it is a local class or an
         // anonymous class.
+        //JVM 规范 4.8.6：当且仅当类是本地类或匿名类时，类必须具有 EnclosureMethod 属性
         return getEnclosingMethodInfo() != null;
     }
 
@@ -1601,6 +1628,10 @@ public final class Class<T> implements java.io.Serializable,
      * classes or interfaces.  This method also returns an array of length 0 if
      * this {@code Class} object represents a primitive type, an array
      * class, or void.
+     * 返回一个包含 Class对象的数组，这些对象表示作为此Class对象表示的类的成员的所有公共类和接口。
+     * 这包括从超类继承的公共类和接口成员以及由该类声明的公共类和接口成员。
+     * 如果此 Class对象没有公共成员类或接口，则此方法返回长度为 0 的数组。
+     * 如果此Class对象表示原始类型、数组类或 void，则此方法还返回长度为 0 的数组
      *
      * @return the array of {@code Class} objects representing the public
      *         members of this class
@@ -1616,6 +1647,7 @@ public final class Class<T> implements java.io.Serializable,
      */
     @CallerSensitive
     public Class<?>[] getClasses() {
+        //检查成员的访问权限
         checkMemberAccess(Member.PUBLIC, Reflection.getCallerClass(), false);
 
         // Privileged so this implementation can look at DECLARED classes,
@@ -1623,6 +1655,10 @@ public final class Class<T> implements java.io.Serializable,
         // is allowed to look at DECLARED classes because (1) it does not hand
         // out anything other than public members and (2) public member access
         // has already been ok'd by the SecurityManager.
+        //因此此实现可以查看已声明的类，调用者可能无权执行此操作。
+        // 允许这里的代码查看 DECLARED 类，
+        // 因为 (1) 它不分发公共成员以外的任何东西，并且
+        // (2) SecurityManager 已经确定公共成员访问权限
 
         return java.security.AccessController.doPrivileged(
             new java.security.PrivilegedAction<Class<?>[]>() {
@@ -1648,24 +1684,26 @@ public final class Class<T> implements java.io.Serializable,
      * Returns an array containing {@code Field} objects reflecting all
      * the accessible public fields of the class or interface represented by
      * this {@code Class} object.
+     * 1.返回一个包含 Field对象的数组，这些对象反映了此 Class对象表示的类或接口的所有可访问公共字段
      *
      * <p> If this {@code Class} object represents a class or interface with no
      * no accessible public fields, then this method returns an array of length
      * 0.
-     *
+     * 2.如果此 Class对象表示没有可访问公共字段的类或接口，则此方法返回长度为 0 的数组
      * <p> If this {@code Class} object represents a class, then this method
      * returns the public fields of the class and of all its superclasses.
-     *
+     * 3.如果此 Class对象表示一个类，则此方法返回该类及其所有超类的公共字段
      * <p> If this {@code Class} object represents an interface, then this
      * method returns the fields of the interface and of all its
      * superinterfaces.
+     * 4.如果此 Class对象表示一个接口，则此方法返回该接口及其所有超接口的字段
      *
      * <p> If this {@code Class} object represents an array type, a primitive
      * type, or void, then this method returns an array of length 0.
-     *
+     * 5.如果此 Class对象表示数组类型、原始类型或 void，则此方法返回长度为 0 的数组
      * <p> The elements in the returned array are not sorted and are not in any
      * particular order.
-     *
+     * 6.返回的数组中的元素没有排序，也没有任何特定的顺序
      * @return the array of {@code Field} objects representing the
      *         public fields
      * @throws SecurityException
@@ -1692,38 +1730,45 @@ public final class Class<T> implements java.io.Serializable,
      * public methods of the class or interface represented by this {@code
      * Class} object, including those declared by the class or interface and
      * those inherited from superclasses and superinterfaces.
-     *
+     * 1.返回一个包含 Method对象的数组，这些对象反映了此Class对象表示的类或接口的所有公共方法，
+     * 包括由类或接口声明的方法以及从超类和超接口继承的方法
      * <p> If this {@code Class} object represents a type that has multiple
      * public methods with the same name and parameter types, but different
      * return types, then the returned array has a {@code Method} object for
      * each such method.
-     *
+     * 2.如果此Class对象表示具有多个具有相同名称和参数类型但返回类型不同的公共方法的类型，
+     * 则返回的数组对于每个此类方法都有一个 Method对象
      * <p> If this {@code Class} object represents a type with a class
      * initialization method {@code <clinit>}, then the returned array does
      * <em>not</em> have a corresponding {@code Method} object.
-     *
+     * 3.如果此 Class对象表示具有类初始化方法 <clinit> 的类型，
+     * 则返回的数组不具有相应的 Method对象
      * <p> If this {@code Class} object represents an array type, then the
      * returned array has a {@code Method} object for each of the public
      * methods inherited by the array type from {@code Object}. It does not
      * contain a {@code Method} object for {@code clone()}.
-     *
+     * 4.如果此 Class对象表示一个数组类型，则返回的数组具有一个 Method对象，
+     * 用于该数组类型从Object继承的每个公共方法。它不包含 clone()的 Method对象
      * <p> If this {@code Class} object represents an interface then the
      * returned array does not contain any implicitly declared methods from
      * {@code Object}. Therefore, if no methods are explicitly declared in
      * this interface or any of its superinterfaces then the returned array
      * has length 0. (Note that a {@code Class} object which represents a class
      * always has public methods, inherited from {@code Object}.)
+     * 5.如果此 Class对象表示一个接口，则返回的数组不包含来自 Object 的任何隐式声明的方法。
+     * 因此，如果在此接口或其任何超接口中没有显式声明方法，则返回的数组长度为 0。
+     * （请注意，表示类的 Class对象始终具有从 Object继承的公共方法.)
      *
      * <p> If this {@code Class} object represents a primitive type or void,
      * then the returned array has length 0.
-     *
+     * 6.如果此Class对象表示原始类型或 void，则返回的数组长度为 0
      * <p> Static methods declared in superinterfaces of the class or interface
      * represented by this {@code Class} object are not considered members of
      * the class or interface.
-     *
+     * 7.在此Class对象表示的类或接口的超接口中声明的静态方法不被视为类或接口的成员
      * <p> The elements in the returned array are not sorted and are not in any
      * particular order.
-     *
+     * 8.返回的数组中的元素没有排序，也没有任何特定的顺序
      * @return the array of {@code Method} objects representing the
      *         public methods of this class
      * @throws SecurityException
@@ -1751,7 +1796,8 @@ public final class Class<T> implements java.io.Serializable,
      * {@code Class} object.  An array of length 0 is returned if the
      * class has no public constructors, or if the class is an array class, or
      * if the class reflects a primitive type or void.
-     *
+     * 1.返回一个包含 Constructor对象的数组，该对象反映了此 Class对象表示的类的所有公共构造函数。
+     * 如果该类没有公共构造函数，或者如果该类是一个数组类，或者如果该类反映一个基本类型或 void，则返回长度为 0 的数组
      * Note that while this method returns an array of {@code
      * Constructor<T>} objects (that is an array of constructors from
      * this class), the return type of this method is {@code
@@ -1761,7 +1807,10 @@ public final class Class<T> implements java.io.Serializable,
      * array could be modified to hold {@code Constructor} objects for
      * different classes, which would violate the type guarantees of
      * {@code Constructor<T>[]}.
-     *
+     * 2.请注意，虽然此方法返回一个 Constructor<T>对象数组（即来自此类的构造函数数组），
+     * 但此方法的返回类型是 Constructor<?>[]和 不是Constructor<T>[]
+     * 正如预期的那样。这种信息较少的返回类型是必要的，因为从该方法返回后，
+     * 可以修改数组以保存不同类的Constructor象，这将违反 Constructor<T>[]的类型保证
      * @return the array of {@code Constructor} objects representing the
      *         public constructors of this class
      * @throws SecurityException
@@ -1786,7 +1835,8 @@ public final class Class<T> implements java.io.Serializable,
      * field of the class or interface represented by this {@code Class}
      * object. The {@code name} parameter is a {@code String} specifying the
      * simple name of the desired field.
-     *
+     * 1.返回一个 Field对象，该对象反映此Class对象表示的类或接口的指定公共成员字段。
+     * name参数是一个String，指定所需字段的简单名称
      * <p> The field to be reflected is determined by the algorithm that
      * follows.  Let C be the class or interface represented by this object:
      *
@@ -1804,7 +1854,7 @@ public final class Class<T> implements java.io.Serializable,
      *
      * <p> If this {@code Class} object represents an array type, then this
      * method does not find the {@code length} field of the array type.
-     *
+     * 如果这个Class对象代表的是一个数组类型，那么这个方法就找不到该数组类型的length字段
      * @param name the field name
      * @return the {@code Field} object of this class specified by
      *         {@code name}
@@ -1844,6 +1894,9 @@ public final class Class<T> implements java.io.Serializable,
      * objects that identify the method's formal parameter types, in declared
      * order. If {@code parameterTypes} is {@code null}, it is
      * treated as if it were an empty array.
+     * 1.返回一个 Method对象，该对象反映此Class对象表示的类或接口的指定公共成员方法。
+     * name参数是一个 String，指定所需方法的简单名称。parameterTypes参数是一个 Class对象数组，
+     * 这些对象按声明的顺序标识方法的形式参数类型。如果 parameterTypes为 null，则将其视为空数组
      *
      * <p> If the {@code name} is "{@code <init>}" or "{@code <clinit>}" a
      * {@code NoSuchMethodException} is raised. Otherwise, the method to
@@ -1868,7 +1921,9 @@ public final class Class<T> implements java.io.Serializable,
      * than one such method is found in C, and one of these methods has a
      * return type that is more specific than any of the others, that method is
      * reflected; otherwise one of the methods is chosen arbitrarily.
-     *
+     *  1.在类或接口 C 中查找匹配的方法：如果 C 仅声明了一个具有指定名称和完全相同的形式参数类型的公共方法，
+     *  则该方法就是反射的方法。如果在 C 中找到多个这样的方法，
+     *  并且这些方法之一的返回类型比其他任何一个方法都更具体，则反映该方法；否则任意选择其中一种方法
      * <p>Note that there may be more than one matching method in a
      * class because while the Java language forbids a class to
      * declare multiple methods with the same signature but different
@@ -1879,14 +1934,18 @@ public final class Class<T> implements java.io.Serializable,
      * java.lang.reflect.Method#isBridge bridge methods}; the bridge
      * method and the method being overridden would have the same
      * signature but different return types.
+     * 2.请注意，一个类中可能有多个匹配的方法，因为 Java 语言禁止一个类声明多个具有相同签名但返回类型不同的方法，
+     * 而 Java 虚拟机则没有。虚拟机中这种增加的灵活性可用于实现各种语言功能。
+     * 例如，协变返回可以用java.lang.reflect.MethodisBridge 桥接方法来实现；
+     * 桥接方法和被覆盖的方法将具有相同的签名但不同的返回类型
      *
      * <p> If this {@code Class} object represents an array type, then this
      * method does not find the {@code clone()} method.
-     *
+     * 如果此 Class对象表示数组类型，则此方法找不到 clone()方法
      * <p> Static methods declared in superinterfaces of the class or interface
      * represented by this {@code Class} object are not considered members of
      * the class or interface.
-     *
+     * 在此 Class对象表示的类或接口的超接口中声明的静态方法不被视为类或接口的成员
      * @param name the name of the method
      * @param parameterTypes the list of parameters
      * @return the {@code Method} object that matches the specified
@@ -1924,15 +1983,16 @@ public final class Class<T> implements java.io.Serializable,
      * object. The {@code parameterTypes} parameter is an array of
      * {@code Class} objects that identify the constructor's formal
      * parameter types, in declared order.
-     *
+     * 1.返回一个 Constructor对象，该对象反映此 Class对象表示的类的指定公共构造函数。
+     * parameterTypes参数是一个Class对象数组，按声明顺序标识构造函数的形参类型
      * If this {@code Class} object represents an inner class
      * declared in a non-static context, the formal parameter types
      * include the explicit enclosing instance as the first parameter.
-     *
+     * 2.如果此 Class对象表示在非静态上下文中声明的内部类，则形参类型包括显式封闭实例作为第一个参数
      * <p> The constructor to reflect is the public constructor of the class
      * represented by this {@code Class} object whose formal parameter
      * types match those specified by {@code parameterTypes}.
-     *
+     * 3.要反映的构造函数是此 Class对象表示的类的公共构造函数，其形式参数类型与parameterTypes指定的类型匹配
      * @param parameterTypes the parameter array
      * @return the {@code Constructor} object of the public constructor that
      *         matches the specified {@code parameterTypes}
@@ -1964,7 +2024,10 @@ public final class Class<T> implements java.io.Serializable,
      * returns an array of length 0 if the class declares no classes or
      * interfaces as members, or if this {@code Class} object represents a
      * primitive type, an array class, or void.
-     *
+     * 1.返回一个 Class对象数组，这些对象反映了声明为由这个Class对象表示的类的成员的所有类和接口。
+     * 这包括公共、受保护、默认（包）访问以及类声明的私有类和接口，但不包括继承的类和接口。
+     * 如果该类没有声明任何类或接口作为成员，或者如果此Class对象表示原始类型、数组类或 void，
+     * 则此方法返回长度为 0 的数组
      * @return the array of {@code Class} objects representing all the
      *         declared members of this class
      * @throws SecurityException
@@ -2002,16 +2065,17 @@ public final class Class<T> implements java.io.Serializable,
      * declared by the class or interface represented by this
      * {@code Class} object. This includes public, protected, default
      * (package) access, and private fields, but excludes inherited fields.
-     *
+     * 1.返回一个 Field对象数组，这些对象反映了由这个 Class对象表示的类或接口声明的所有字段。
+     * 这包括公共、受保护、默认（包）访问和私有字段，但不包括继承的字段
      * <p> If this {@code Class} object represents a class or interface with no
      * declared fields, then this method returns an array of length 0.
-     *
+     * 2.如果此 {@code Class} 对象表示没有声明字段的类或接口，则此方法返回长度为 0 的数组
      * <p> If this {@code Class} object represents an array type, a primitive
      * type, or void, then this method returns an array of length 0.
-     *
+     * 3.如果此 {@code Class} 对象表示数组类型、原始类型或 void，则此方法返回长度为 0 的数组
      * <p> The elements in the returned array are not sorted and are not in any
      * particular order.
-     *
+     * 4.返回的数组中的元素没有排序，也没有任何特定的顺序
      * @return  the array of {@code Field} objects representing all the
      *          declared fields of this class
      * @throws  SecurityException
@@ -2052,25 +2116,28 @@ public final class Class<T> implements java.io.Serializable,
      * declared methods of the class or interface represented by this {@code
      * Class} object, including public, protected, default (package)
      * access, and private methods, but excluding inherited methods.
-     *
+     * 1.返回一个包含 Method对象的数组，该对象反映了此Class对象表示的类或接口的所有声明方法，
+     * 包括公共、受保护、默认（包）访问和私有方法，但不包括继承的方法
      * <p> If this {@code Class} object represents a type that has multiple
      * declared methods with the same name and parameter types, but different
      * return types, then the returned array has a {@code Method} object for
      * each such method.
-     *
+     * 2.如果这个 Class对象表示一个类型，该类型具有多个具有相同名称和参数类型但返回类型不同的声明方法，
+     * 则返回的数组对于每个这样的方法都有一个 Method对象
      * <p> If this {@code Class} object represents a type that has a class
      * initialization method {@code <clinit>}, then the returned array does
      * <em>not</em> have a corresponding {@code Method} object.
-     *
+     * 3.如果此 Class对象表示具有类初始化方法 <clinit>的类型，
+     * 则返回的数组<em>不<em>具有相应的Method对象
      * <p> If this {@code Class} object represents a class or interface with no
      * declared methods, then the returned array has length 0.
-     *
+     * 4.如果此 Class对象表示没有声明方法的类或接口，则返回的数组长度为 0
      * <p> If this {@code Class} object represents an array type, a primitive
      * type, or void, then the returned array has length 0.
-     *
+     * 5.如果此Class对象表示数组类型、原始类型或 void，则返回的数组长度为 0
      * <p> The elements in the returned array are not sorted and are not in any
      * particular order.
-     *
+     *6.返回的数组中的元素没有排序，也没有任何特定的顺序
      * @return  the array of {@code Method} objects representing all the
      *          declared methods of this class
      * @throws  SecurityException
@@ -2115,6 +2182,11 @@ public final class Class<T> implements java.io.Serializable,
      * This method returns an array of length 0 if this {@code Class}
      * object represents an interface, a primitive type, an array class, or
      * void.
+     * 1.返回一个Constructor对象数组，这些对象反映了由这个Class对象表示的类声明的所有构造函数。
+     * 2.它们是公共、受保护、默认（包）访问和私有构造函数。
+     * 3.返回的数组中的元素没有排序，也没有任何特定的顺序。
+     * 4.如果该类具有默认构造函数，则它包含在返回的数组中。
+     * 5.如果此 Class对象表示接口、原始类型、数组类或 void，则此方法返回长度为 0 的数组
      *
      * <p> See <em>The Java Language Specification</em>, section 8.2.
      *
@@ -2155,10 +2227,11 @@ public final class Class<T> implements java.io.Serializable,
      * field of the class or interface represented by this {@code Class}
      * object. The {@code name} parameter is a {@code String} that specifies
      * the simple name of the desired field.
-     *
+     *  1.返回一个Field对象，该对象反映此Class对象表示的类或接口的指定声明字段。
+     *  name参数是一个String，用于指定所需字段的简单名称
      * <p> If this {@code Class} object represents an array type, then this
      * method does not find the {@code length} field of the array type.
-     *
+     * 2.如果这个Class对象代表的是一个数组类型，那么这个方法就找不到该数组类型的length字段
      * @param name the name of the field
      * @return  the {@code Field} object for the specified field in this
      *          class
@@ -2215,7 +2288,12 @@ public final class Class<T> implements java.io.Serializable,
      * returned; otherwise one of the methods is chosen arbitrarily.  If the
      * name is "&lt;init&gt;"or "&lt;clinit&gt;" a {@code NoSuchMethodException}
      * is raised.
-     *
+     * 1.返回一个Method对象，该对象反映了此Class对象表示的类或接口的指定声明方法。
+     * 2.name参数是一个String，用于指定所需方法的简单名称，而 parameterTypes参数是一个Class对象数组，
+     * 用于标识方法的形参类型，按照声明的顺序。
+     * 3.如果在一个类中声明了多个具有相同参数类型的方法，并且其中一个方法的返回类型比其他任何一个方法都更具体，
+     * 则返回该方法；否则任意选择其中一种方法。
+     * 4.如果名称是“<init>”或“<clinit>”，则会引发 NoSuchMethodException
      * <p> If this {@code Class} object represents an array type, then this
      * method does not find the {@code clone()} method.
      *
@@ -2268,11 +2346,12 @@ public final class Class<T> implements java.io.Serializable,
      * {@code Class} object.  The {@code parameterTypes} parameter is
      * an array of {@code Class} objects that identify the constructor's
      * formal parameter types, in declared order.
-     *
+     * 1.返回一个 Constructor对象，该对象反映了此 Class对象表示的类或接口的指定构造函数。
+     * parameterTypes参数是一个 Class对象数组，这些对象按声明的顺序标识构造函数的形参类型
      * If this {@code Class} object represents an inner class
      * declared in a non-static context, the formal parameter types
      * include the explicit enclosing instance as the first parameter.
-     *
+     * 2.如果此Class对象表示在非静态上下文中声明的内部类，则形式参数类型包括显式封闭实例作为第一个参数
      * @param parameterTypes the parameter array
      * @return  The {@code Constructor} object for the constructor with the
      *          specified parameter list
@@ -2314,7 +2393,9 @@ public final class Class<T> implements java.io.Serializable,
      * delegates to this object's class loader.  If this object was loaded by
      * the bootstrap class loader, the method delegates to {@link
      * ClassLoader#getSystemResourceAsStream}.
-     *
+     * 1.查找具有给定名称的资源。搜索与给定类相关联的资源的规则由类的定义ClassLoader类加载器实现。
+     * 此方法委托给此对象的类加载器。如果此对象由引导类加载器加载，
+     * 则该方法委托给 ClassLoader.getSystemResourceAsStream
      * <p> Before delegation, an absolute resource name is constructed from the
      * given resource name using this algorithm:
      *
@@ -2359,7 +2440,8 @@ public final class Class<T> implements java.io.Serializable,
      * delegates to this object's class loader.  If this object was loaded by
      * the bootstrap class loader, the method delegates to {@link
      * ClassLoader#getSystemResource}.
-     *
+     * 1.查找具有给定名称的资源。搜索与给定类相关联的资源的规则由类的定义 ClassLoader类加载器实现。
+     * 此方法委托给此对象的类加载器。如果此对象由引导类加载器加载，则该方法委托给ClassLoadergetSystemResource
      * <p> Before delegation, an absolute resource name is constructed from the
      * given resource name using this algorithm:
      *
@@ -2410,7 +2492,9 @@ public final class Class<T> implements java.io.Serializable,
      * {@code RuntimePermission("getProtectionDomain")} permission to
      * ensure it's ok to get the
      * {@code ProtectionDomain}.
-     *
+     * 1.返回此类的 ProtectionDomain。
+     * 如果安装了安全管理器，此方法首先调用安全管理器的checkPermission方法，
+     * 并带有 RuntimePermission("getProtectionDomain") 权限，以确保可以获取ProtectionDomain
      * @return the ProtectionDomain of this class
      *
      * @throws SecurityException
@@ -2424,10 +2508,12 @@ public final class Class<T> implements java.io.Serializable,
      * @since 1.2
      */
     public java.security.ProtectionDomain getProtectionDomain() {
+        //判断是否存在安全管理器
         SecurityManager sm = System.getSecurityManager();
         if (sm != null) {
             sm.checkPermission(SecurityConstants.GET_PD_PERMISSION);
         }
+        //获取保护域
         java.security.ProtectionDomain pd = getProtectionDomain0();
         if (pd == null) {
             if (allPermDomain == null) {
@@ -2522,7 +2608,9 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * Add a package name prefix if the name is not absolute Remove leading "/"
      * if name is absolute
+     * 如果名称不是绝对的，则添加包名称前缀 如果名称是绝对的，则删除前导“/”
      */
+
     private String resolveName(String name) {
         if (name == null) {
             return name;
@@ -2649,6 +2737,7 @@ public final class Class<T> implements java.io.Serializable,
     private volatile transient int classRedefinedCount = 0;
 
     // Lazily create and cache ReflectionData
+    //懒惰地创建和缓存 ReflectionData
     private ReflectionData<T> reflectionData() {
         SoftReference<ReflectionData<T>> reflectionData = this.reflectionData;
         int classRedefinedCount = this.classRedefinedCount;
@@ -2661,9 +2750,11 @@ public final class Class<T> implements java.io.Serializable,
         }
         // else no SoftReference or cleared SoftReference or stale ReflectionData
         // -> create and replace new instance
+        //否则没有 SoftReference 或清除 SoftReference 或陈旧的 ReflectionData -> 创建和替换新实例
         return newReflectionData(reflectionData, classRedefinedCount);
     }
 
+    //将旧的反射数据替换成新的反射数据
     private ReflectionData<T> newReflectionData(SoftReference<ReflectionData<T>> oldReflectionData,
                                                 int classRedefinedCount) {
         if (!useCaches) return null;
@@ -2695,11 +2786,13 @@ public final class Class<T> implements java.io.Serializable,
     // accessor for factory
     private GenericsFactory getFactory() {
         // create scope and factory
+        //创建范围和工厂
         return CoreReflectionFactory.make(this, ClassScope.make(this));
     }
 
     // accessor for generic info repository;
     // generic info is lazily initialized
+    //通用信息存储库的访问器；通用信息被延迟初始化
     private ClassRepository getGenericInfo() {
         ClassRepository genericInfo = this.genericInfo;
         if (genericInfo == null) {
@@ -2718,6 +2811,7 @@ public final class Class<T> implements java.io.Serializable,
     native byte[] getRawAnnotations();
     // Since 1.8
     native byte[] getRawTypeAnnotations();
+    //获取可执行类型注释字节
     static byte[] getExecutableTypeAnnotationBytes(Executable ex) {
         return getReflectionFactory().getExecutableTypeAnnotationBytes(ex);
     }
@@ -2733,6 +2827,7 @@ public final class Class<T> implements java.io.Serializable,
     // Returns an array of "root" fields. These Field objects must NOT
     // be propagated to the outside world, but must instead be copied
     // via ReflectionFactory.copyField.
+    //返回一组“根”字段。这些 Field 对象不能传播到外部世界，而必须通过 ReflectionFactory.copyField 复制
     private Field[] privateGetDeclaredFields(boolean publicOnly) {
         checkInitted();
         Field[] res;
@@ -2742,6 +2837,7 @@ public final class Class<T> implements java.io.Serializable,
             if (res != null) return res;
         }
         // No cached value available; request value from VM
+        //没有可用的缓存值；从 VM 请求值
         res = Reflection.filterFields(this, getDeclaredFields0(publicOnly));
         if (rd != null) {
             if (publicOnly) {
@@ -2756,6 +2852,7 @@ public final class Class<T> implements java.io.Serializable,
     // Returns an array of "root" fields. These Field objects must NOT
     // be propagated to the outside world, but must instead be copied
     // via ReflectionFactory.copyField.
+    //返回一组“根”字段。这些 Field 对象不得传播到外部世界，而必须通过 ReflectionFactory.copyField 进行复制
     private Field[] privateGetPublicFields(Set<Class<?>> traversedInterfaces) {
         checkInitted();
         Field[] res;
@@ -2767,6 +2864,7 @@ public final class Class<T> implements java.io.Serializable,
 
         // No cached value available; compute value recursively.
         // Traverse in correct order for getField().
+        //没有可用的缓存值；递归计算值。以正确的顺序遍历 getField()
         List<Field> fields = new ArrayList<>();
         if (traversedInterfaces == null) {
             traversedInterfaces = new HashSet<>();
@@ -2816,6 +2914,8 @@ public final class Class<T> implements java.io.Serializable,
     // Returns an array of "root" constructors. These Constructor
     // objects must NOT be propagated to the outside world, but must
     // instead be copied via ReflectionFactory.copyConstructor.
+    //返回一个“根”构造函数数组。这些构造函数对象不能传播到外部世界，
+    // 而必须通过 ReflectionFactory.copyConstructor 复制
     private Constructor<T>[] privateGetDeclaredConstructors(boolean publicOnly) {
         checkInitted();
         Constructor<T>[] res;
@@ -2851,6 +2951,8 @@ public final class Class<T> implements java.io.Serializable,
     // Returns an array of "root" methods. These Method objects must NOT
     // be propagated to the outside world, but must instead be copied
     // via ReflectionFactory.copyMethod.
+    //返回一组“根”方法。这些 Method 对象不能传播到外部世界，
+    // 而必须通过 ReflectionFactory.copyMethod 复制
     private Method[] privateGetDeclaredMethods(boolean publicOnly) {
         checkInitted();
         Method[] res;
@@ -3070,6 +3172,7 @@ public final class Class<T> implements java.io.Serializable,
     // Returns an array of "root" methods. These Method objects must NOT
     // be propagated to the outside world, but must instead be copied
     // via ReflectionFactory.copyMethod.
+    //返回一组“根”方法。这些 Method 对象不能传播到外部世界，而必须通过 ReflectionFactory.copyMethod 复制
     private Method[] privateGetPublicMethods() {
         checkInitted();
         Method[] res;
@@ -3134,6 +3237,7 @@ public final class Class<T> implements java.io.Serializable,
 
     //
     // Helpers for fetchers of one field, method, or constructor
+    //一个字段、方法或构造函数的获取器的助手
     //
 
     private static Field searchFields(Field[] fields, String name) {
@@ -3156,8 +3260,12 @@ public final class Class<T> implements java.io.Serializable,
         // of Field objects which have to be created for the common
         // case where the field being requested is declared in the
         // class which is being queried.
+        //注意：目的是该例程使用的搜索算法等效于 privateGetPublicFields() 强加的排序。
+        // 然而，它只获取每个类的声明的公共字段，以减少必须为常见情况创建的 Field 对象的数量，
+        // 其中所请求的字段在被查询的类中声明
         Field res;
         // Search declared public fields
+        //搜索声明的公共字段
         if ((res = searchFields(privateGetDeclaredFields(true), name)) != null) {
             return res;
         }
@@ -3181,6 +3289,7 @@ public final class Class<T> implements java.io.Serializable,
         return null;
     }
 
+    //查找方法名
     private static Method searchMethods(Method[] methods,
                                         String name,
                                         Class<?>[] parameterTypes)
@@ -3221,12 +3330,17 @@ public final class Class<T> implements java.io.Serializable,
         // number of Method objects which have to be created for the
         // common case where the method being requested is declared in
         // the class which is being queried.
-        //
+        //1.注意：目的是该例程使用的搜索算法等效于 privateGetPublicMethods() 强加的排序。
+        // 然而，它只获取每个类的声明的公共方法，以减少必须为常见情况创建的 Method 对象的数量，
+        // 其中所请求的方法是在被查询的类中声明的
+
         // Due to default methods, unless a method is found on a superclass,
         // methods declared in any superinterface needs to be considered.
         // Collect all candidates declared in superinterfaces in {@code
         // allInterfaceCandidates} and select the most specific if no match on
         // a superclass is found.
+        //2.由于默认方法，除非在超类上找到方法，否则需要考虑在任何超接口中声明的方法。
+        // 收集在 allInterfaceCandidates中的超接口中声明的所有候选，如果未找到超类的匹配项则选择最具体的候选
 
         // Must _not_ return root methods
         Method res;
@@ -3270,6 +3384,7 @@ public final class Class<T> implements java.io.Serializable,
 
     //
     // Other helpers and base implementation
+    //其他助手和基础实现
     //
 
     private static boolean arrayContentsEq(Object[] a1, Object[] a2) {
@@ -3376,6 +3491,11 @@ public final class Class<T> implements java.io.Serializable,
      * otherwise, if this class is not a system class (i.e., it has a
      * class loader) its class loader's default assertion status is returned;
      * otherwise, the system class default assertion status is returned.
+     * 1.如果在调用此方法时对其进行初始化，则返回将分配给此类的断言状态。
+     * 如果该类已设置其断言状态，则将返回最近的设置；
+     * 否则，如果任何包默认断言状态属于此类，则返回最具体的相关包默认断言状态的最新设置；
+     * 否则，如果该类不是系统类（即，它有一个类加载器），则返回其类加载器的默认断言状态；
+     * 否则，返回系统类默认断言状态
      * <p>
      * Few programmers will have any need for this method; it is provided
      * for the benefit of the JRE itself.  (It allows a class to determine at
@@ -3393,11 +3513,13 @@ public final class Class<T> implements java.io.Serializable,
     public boolean desiredAssertionStatus() {
         ClassLoader loader = getClassLoader();
         // If the loader is null this is a system class, so ask the VM
+        //如果 loader 为 null，则这是一个系统类，因此请询问 VM
         if (loader == null)
             return desiredAssertionStatus0(this);
 
         // If the classloader has been initialized with the assertion
         // directives, ask it. Otherwise, ask the VM.
+        //If the classloader has been initialized with the assertion directives, ask it. Otherwise, ask the VM.
         synchronized(loader.assertionLock) {
             if (loader.classAssertionStatus != null) {
                 return loader.desiredAssertionStatus(getName());
@@ -3412,6 +3534,7 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * Returns true if and only if this class was declared as an enum in the
      * source code.
+     * //当且仅当此类在源代码中被声明为枚举时才返回 true
      *
      * @return true if and only if this class was declared as an enum in the
      *     source code
@@ -3421,11 +3544,13 @@ public final class Class<T> implements java.io.Serializable,
         // An enum must both directly extend java.lang.Enum and have
         // the ENUM bit set; classes for specialized enum constants
         // don't do the former.
+        //枚举必须直接扩展 java.lang.Enum 并设置 ENUM 位；专门的枚举常量的类不做前者
         return (this.getModifiers() & ENUM) != 0 &&
         this.getSuperclass() == java.lang.Enum.class;
     }
 
     // Fetches the factory for reflective objects
+    //获取反射对象的工厂
     private static ReflectionFactory getReflectionFactory() {
         if (reflectionFactory == null) {
             reflectionFactory =
@@ -3452,13 +3577,19 @@ public final class Class<T> implements java.io.Serializable,
                     // if System.out is non-null then the System class has been
                     // fully initialized and that the bulk of the startup code
                     // has been run.
+                    //测试以确保系统属性表已完全初始化。
+                    // 这是必需的，因为反射代码在初始化过程中很早就被调用
+                    // （在命令行参数被解析之前，因此这些用户可设置的属性被安装之前。）
+                    // 我们假设如果 System.out 是非空的，那么 System 类已经被完全初始化并且大部分启动代码已经运行
 
                     if (System.out == null) {
                         // java.lang.System not yet fully initialized
+                        //java.lang.System 尚未完全初始化
                         return null;
                     }
 
                     // Doesn't use Boolean.getBoolean to avoid class init.
+                    //不使用 Boolean.getBoolean 来避免类初始化
                     String val =
                         System.getProperty("sun.reflect.noCaches");
                     if (val != null && val.equals("true")) {
@@ -3474,6 +3605,7 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * Returns the elements of this enum class or null if this
      * Class object does not represent an enum type.
+     * //如果此 Class 对象不表示枚举类型，则返回此枚举类的元素或 null
      *
      * @return an array containing the values comprising the enum class
      *     represented by this Class object in the order they're
@@ -3512,6 +3644,7 @@ public final class Class<T> implements java.io.Serializable,
             }
             // These can happen when users concoct enum-like classes
             // that don't comply with the enum spec.
+            //当用户编造不符合枚举规范的类似枚举的类时，就会发生这些情况
             catch (InvocationTargetException | NoSuchMethodException |
                    IllegalAccessException ex) { return null; }
         }
@@ -3549,6 +3682,7 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * Casts an object to the class or interface represented
      * by this {@code Class} object.
+     * //将对象强制转换为由该 {@code Class} 对象表示的类或接口
      *
      * @param obj the object to be cast
      * @return the object after casting, or null if obj is null
@@ -3574,7 +3708,9 @@ public final class Class<T> implements java.io.Serializable,
      * represented by the specified class object.  Checks that the cast
      * is valid, and throws a {@code ClassCastException} if it is not.  If
      * this method succeeds, it always returns a reference to this class object.
-     *
+     *  1.强制转换此Class对象以表示由指定类对象表示的类的子类。
+     *  检查强制转换是否有效，如果无效则抛出ClassCastException。
+     *  如果此方法成功，则始终返回对此类对象的引用（向上转型）
      * <p>This method is useful when a client needs to "narrow" the type of
      * a {@code Class} object to pass it to an API that restricts the
      * {@code Class} objects that it is willing to accept.  A cast would
@@ -3593,6 +3729,7 @@ public final class Class<T> implements java.io.Serializable,
      */
     @SuppressWarnings("unchecked")
     public <U> Class<? extends U> asSubclass(Class<U> clazz) {
+        //判断是否向上转型成功
         if (clazz.isAssignableFrom(this))
             return (Class<? extends U>) this;
         else
@@ -3602,6 +3739,7 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * @throws NullPointerException {@inheritDoc}
      * @since 1.5
+     * 如果这样的注解是存在的，则返回此元素的指定类型的注解，否则为 null
      */
     @SuppressWarnings("unchecked")
     public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
@@ -3614,6 +3752,7 @@ public final class Class<T> implements java.io.Serializable,
      * {@inheritDoc}
      * @throws NullPointerException {@inheritDoc}
      * @since 1.5
+     * 判断当前类型的注解是否存在
      */
     @Override
     public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) {
@@ -3623,6 +3762,7 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * @throws NullPointerException {@inheritDoc}
      * @since 1.8
+     * 返回与此元素关联的注解
      */
     @Override
     public <A extends Annotation> A[] getAnnotationsByType(Class<A> annotationClass) {
@@ -3636,6 +3776,7 @@ public final class Class<T> implements java.io.Serializable,
 
     /**
      * @since 1.5
+     * 获取所有注解
      */
     public Annotation[] getAnnotations() {
         return AnnotationParser.toArray(annotationData().annotations);
@@ -3644,6 +3785,7 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * @throws NullPointerException {@inheritDoc}
      * @since 1.8
+     * //获取声明的注解
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -3656,6 +3798,7 @@ public final class Class<T> implements java.io.Serializable,
     /**
      * @throws NullPointerException {@inheritDoc}
      * @since 1.8
+     * //通过类型获得特定的声明注解
      */
     @Override
     public <A extends Annotation> A[] getDeclaredAnnotationsByType(Class<A> annotationClass) {
@@ -3667,6 +3810,7 @@ public final class Class<T> implements java.io.Serializable,
 
     /**
      * @since 1.5
+     * 获取声明的注解
      */
     public Annotation[] getDeclaredAnnotations()  {
         return AnnotationParser.toArray(annotationData().declaredAnnotations);
@@ -3677,7 +3821,7 @@ public final class Class<T> implements java.io.Serializable,
     private static class AnnotationData {
         //注解
         final Map<Class<? extends Annotation>, Annotation> annotations;
-        //默认注解
+        //声明的注解
         final Map<Class<? extends Annotation>, Annotation> declaredAnnotations;
 
         // Value of classRedefinedCount when we created this AnnotationData instance
@@ -3778,16 +3922,18 @@ public final class Class<T> implements java.io.Serializable,
      * Class} object. (The <em>use</em> of type Foo to specify the superclass
      * in '...  extends Foo' is distinct from the <em>declaration</em> of type
      * Foo.)
-     *
+     *  1.返回一个 AnnotatedType对象，该对象表示使用一种类型来指定此 Class对象表示的实体的超类。
+     *  （Foo 类型的 <em>use<em> 用于指定 '... extends Foo' 中的超类与 Foo 类型的 <em>declaration<em> 不同。）
      * <p> If this {@code Class} object represents a type whose declaration
      * does not explicitly indicate an annotated superclass, then the return
      * value is an {@code AnnotatedType} object representing an element with no
      * annotations.
-     *
+     * 2.如果此 Class对象表示其声明未明确指示带注解的超类的类型，
+     * 则返回值是表示没有注解的元素的 AnnotatedType对象
      * <p> If this {@code Class} represents either the {@code Object} class, an
      * interface type, an array type, a primitive type, or void, the return
      * value is {@code null}.
-     *
+     * 3.如果此 Class表示 Object类、接口类型、数组类型、原始类型或 void，则返回值为null
      * @return an object representing the superclass
      * @since 1.8
      */
@@ -3809,28 +3955,31 @@ public final class Class<T> implements java.io.Serializable,
      * {@code Class} object. (The <em>use</em> of type Foo to specify a
      * superinterface in '... implements Foo' is distinct from the
      * <em>declaration</em> of type Foo.)
-     *
+     * 1.返回一个 AnnotatedType对象数组，这些对象表示使用类型来指定此 Class对象表示的实体的超接口。
+     * （Foo 类型的 <em>use<em> 在 '... implements Foo' 中指定一个超接口与 Foo 类型的 <em>declaration<em> 不同。）
      * <p> If this {@code Class} object represents a class, the return value is
      * an array containing objects representing the uses of interface types to
      * specify interfaces implemented by the class. The order of the objects in
      * the array corresponds to the order of the interface types used in the
      * 'implements' clause of the declaration of this {@code Class} object.
-     *
+     * 2.如果此Class对象表示一个类，则返回值是一个包含表示使用接口类型的对象的数组，以指定该类实现的接口。
+     * 数组中对象的顺序与此 Class对象声明的“实现”子句中使用的接口类型的顺序相对应
      * <p> If this {@code Class} object represents an interface, the return
      * value is an array containing objects representing the uses of interface
      * types to specify interfaces directly extended by the interface. The
      * order of the objects in the array corresponds to the order of the
      * interface types used in the 'extends' clause of the declaration of this
      * {@code Class} object.
-     *
+     * 3.如果此 Class对象表示一个接口，则返回值是一个数组，其中包含表示使用接口类型指定接口直接扩展的接口的对象。
+     * 数组中对象的顺序与此 Class对象声明的“扩展”子句中使用的接口类型的顺序相对应
      * <p> If this {@code Class} object represents a class or interface whose
      * declaration does not explicitly indicate any annotated superinterfaces,
      * the return value is an array of length 0.
-     *
+     * 4.如果这个Class对象代表一个类或接口，其声明没有明确指示任何带注释的超接口，则返回值为长度为 0 的数组
      * <p> If this {@code Class} object represents either the {@code Object}
      * class, an array type, a primitive type, or void, the return value is an
      * array of length 0.
-     *
+     * 5.如果此 Class对象表示 Object类、数组类型、原始类型或 void，则返回值是长度为 0 的数组
      * @return an array representing the superinterfaces
      * @since 1.8
      */
