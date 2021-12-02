@@ -29,7 +29,8 @@ package java.lang;
  * The {@code Compiler} class is provided to support Java-to-native-code
  * compilers and related services. By design, the {@code Compiler} class does
  * nothing; it serves as a placeholder for a JIT compiler implementation.
- *
+ * 1.提供 Compiler类以支持 Java-to-native-code 编译器和相关服务
+ * 2.按照设计，Compiler类什么都不做；它用作 JIT 编译器实现的占位符
  * <p> When the Java Virtual Machine first starts, it determines if the system
  * property {@code java.compiler} exists. (System properties are accessible
  * through {@link System#getProperty(String)} and {@link
@@ -38,9 +39,12 @@ package java.lang;
  * System#loadLibrary} is called to load that library. If this loading
  * succeeds, the function named {@code java_lang_Compiler_start()} in that
  * library is called.
- *
+ * 3.当 Java 虚拟机第一次启动时，它会确定系统属性 -java.compiler-是否存在。
+ * （系统属性可通过 System.getProperty(String)和 System.getProperty(String, String)=访问。
+ * 如果是这样，则假定它是库的名称（具有依赖于平台的确切位置和类型） ;
+ * System.loadLibrary=被调用以加载该库。如果加载成功，则调用该库中名为 =java_lang_Compiler_start()=的函数。
  * <p> If no compiler is available, these methods do nothing.
- *
+ * 4.如果没有可用的编译器，这些方法什么也不做。
  * @author  Frank Yellin
  * @since   JDK1.0
  */
@@ -83,7 +87,7 @@ public final class Compiler  {
 
     /**
      * Compiles the specified class.
-     *
+     * 编译指定的类。
      * @param  clazz
      *         A class
      *
@@ -97,7 +101,7 @@ public final class Compiler  {
 
     /**
      * Compiles all classes whose name matches the specified string.
-     *
+     *编译名称与指定字符串匹配的所有类
      * @param  string
      *         The name of the classes to compile
      *
@@ -112,7 +116,7 @@ public final class Compiler  {
     /**
      * Examines the argument type and its fields and perform some documented
      * operation.  No specific operations are required.
-     *
+     * 检查参数类型及其字段并执行一些记录的操作。不需要特定的操作。
      * @param  any
      *         An argument
      *
@@ -126,11 +130,13 @@ public final class Compiler  {
 
     /**
      * Cause the Compiler to resume operation.
+     * 使编译器恢复运行
      */
     public static native void enable();
 
     /**
      * Cause the Compiler to cease operation.
+     * 导致编译器停止运行
      */
     public static native void disable();
 }

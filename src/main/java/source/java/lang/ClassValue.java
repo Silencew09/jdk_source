@@ -94,12 +94,13 @@ public abstract class ClassValue<T> {
      * The {@code type} parameter is typically a class, but it may be any type,
      * such as an interface, a primitive type (like {@code int.class}), or {@code void.class}.
      * <p>
+     * 4.参数通常是一个类，但它可以是任何类型，例如接口、原始类型（如 int.class）或void.class
      * In the absence of {@code remove} calls, a class value has a simple
      * state diagram:  uninitialized and initialized.
      * When {@code remove} calls are made,
      * the rules for value observation are more complex.
      * See the documentation for {@link #remove remove} for more information.
-     *
+     * 5.type参数通常是一个类，但它可以是任何类型，例如接口、原始类型（如 int.class或 void.class
      * @param type the type whose class value must be computed or retrieved
      * @return the current value associated with this {@code ClassValue}, for the given class or interface
      * @throws NullPointerException if the argument is null
@@ -111,7 +112,9 @@ public abstract class ClassValue<T> {
         Entry<?>[] cache;
         Entry<T> e = probeHomeLocation(cache = getCacheCarefully(type), this);
         // racing e : current value <=> stale value from current cache or from stale cache
+        //当前值 <=> 来自当前缓存或陈旧缓存的陈旧值
         // invariant:  e is null or an Entry with readable Entry.version and Entry.value
+        //e 为 null 或具有可读 Entry.version 和 Entry.value 的条目
         if (match(e))
             // invariant:  No false positive matches.  False negatives are OK if rare.
             // The key fact that makes this work: if this.version == e.version,
@@ -122,6 +125,11 @@ public abstract class ClassValue<T> {
         // 2. hash code collision (before or after reduction mod cache.length)
         // 3. an entry has been removed (either on this type or another)
         // 4. the GC has somehow managed to delete e.version and clear the reference
+        //快速路径可能因以下任何原因而失败：
+        // 1. 尚未计算任何条目
+        // 2. 哈希码冲突（减少 mod cache.length 之前或之后）
+        // 3. 条目已被删除（在此类型或其他类型上）
+        // 4 . GC 以某种方式设法删除了 e.version 并清除了引用
         return getFromBackup(cache, type);
     }
 
@@ -132,32 +140,45 @@ public abstract class ClassValue<T> {
      * This may result in an additional invocation of the
      * {@code computeValue} method for the given class.
      * <p>
+     * 1.删除给定类的关联值。如果此值随后为同一类 get/read，
+     * 则其值将通过调用其 computeValue 方法重新初始化。
+     * 这可能会导致对给定类的computeValue方法的额外调用
      * In order to explain the interaction between {@code get} and {@code remove} calls,
      * we must model the state transitions of a class value to take into account
      * the alternation between uninitialized and initialized states.
      * To do this, number these states sequentially from zero, and note that
      * uninitialized (or removed) states are numbered with even numbers,
      * while initialized (or re-initialized) states have odd numbers.
+     * 2.为了解释 get和 remove调用之间的交互，我们必须对类值的状态转换进行建模，
+     * 以考虑未初始化和初始化状态之间的交替。为此，请从零开始对这些状态进行顺序编号，
+     * 并注意未初始化（或删除）状态使用偶数编号，而初始化（或重新初始化）状态使用奇数编号
      * <p>
      * When a thread {@code T} removes a class value in state {@code 2N},
      * nothing happens, since the class value is already uninitialized.
      * Otherwise, the state is advanced atomically to {@code 2N+1}.
+     * 3.当线程 T在状态 2N中删除类值时，什么也不会发生，因为类值已经未初始化。
+     * 否则，状态将自动推进到2N+1
      * <p>
      * When a thread {@code T} queries a class value in state {@code 2N},
      * the thread first attempts to initialize the class value to state {@code 2N+1}
      * by invoking {@code computeValue} and installing the resulting value.
+     * 4.当线程T查询状态2N的类值时，该线程首先尝试通过调用computeValue并安装结果值来将类值初始化为状态2N+1
      * <p>
      * When {@code T} attempts to install the newly computed value,
      * if the state is still at {@code 2N}, the class value will be initialized
      * with the computed value, advancing it to state {@code 2N+1}.
+     * 5.当 T尝试安装新计算的值时，如果状态仍为2N，则类值将使用计算值进行初始化，将其推进到状态2N+1
      * <p>
      * Otherwise, whether the new state is even or odd,
      * {@code T} will discard the newly computed value
      * and retry the {@code get} operation.
+     * 6.否则，无论新状态是偶数还是奇数，T都会丢弃新计算的值并重试 get 操作
      * <p>
      * Discarding and retrying is an important proviso,
      * since otherwise {@code T} could potentially install
-     * a disastrously stale value.  For example:
+     * a disastrously stale value.
+     * 7.丢弃和重试是一个重要的条件，否则 T可能会安装一个灾难性的陈旧值
+     * For example:
      * <ul>
      * <li>{@code T} calls {@code CV.get(C)} and sees state {@code 2N}
      * <li>{@code T} quickly computes a time-dependent value {@code V0} and gets ready to install it
@@ -174,7 +195,8 @@ public abstract class ClassValue<T> {
      * This does not remove the threat of a stale value, since there is a window of time
      * between the return of {@code computeValue} in {@code T} and the installation
      * of the the new value.  No user synchronization is possible during this time.
-     *
+     * 8.我们可以假设在上面的场景中CV.computeValue在计算 V1等时使用锁来正确观察依赖于时间的状态。
+     * 这并没有消除过时值的威胁，因为有在 T中返回 computeValue和安装新值之间的时间窗口。在此期间无法进行用户同步
      * @param type the type whose class value must be removed
      * @throws NullPointerException if the argument is null
      */
@@ -194,6 +216,7 @@ public abstract class ClassValue<T> {
     /// --------
 
     /** Return the cache, if it exists, else a dummy empty cache. */
+    //返回缓存，如果存在，否则返回一个虚拟的空缓存
     private static Entry<?>[] getCacheCarefully(Class<?> type) {
         // racing type.classValueMap{.cacheArray} : null => new Entry[X] <=> new Entry[Y]
         ClassValueMap map = type.classValueMap;
@@ -201,6 +224,7 @@ public abstract class ClassValue<T> {
         Entry<?>[] cache = map.getCache();
         return cache;
         // invariant:  returned value is safe to dereference and check for an Entry
+        //不变：返回值可以安全地取消引用并检查条目
     }
 
     /** Initial, one-element, empty cache used by all Class instances.  Must never be filled. */
@@ -212,6 +236,8 @@ public abstract class ClassValue<T> {
      * or take a slow lock and check the hash table.
      * Called only if the first probe was empty or a collision.
      * This is a separate method, so compilers can process it independently.
+     * ClassValue.get 的慢尾在缓存中的附近位置重试，或者采取慢速锁定并检查哈希表。
+     * 仅在第一个探针为空或发生碰撞时调用。这是一个单独的方法，因此编译器可以独立处理它
      */
     private T getFromBackup(Entry<?>[] cache, Class<?> type) {
         Entry<T> e = probeBackupLocations(cache, this);
@@ -225,9 +251,11 @@ public abstract class ClassValue<T> {
     Entry<T> castEntry(Entry<?> e) { return (Entry<T>) e; }
 
     /** Called when the fast path of get fails, and cache reprobe also fails.
+     * //get 的快速路径失败时调用，缓存 reprobe 也失败时调用
      */
     private T getFromHashMap(Class<?> type) {
         // The fail-safe recovery is to fall back to the underlying classValueMap.
+        //故障安全恢复是回退到底层 classValueMap
         ClassValueMap map = getMap(type);
         for (;;) {
             Entry<T> e = map.startEntry(this);
@@ -235,10 +263,12 @@ public abstract class ClassValue<T> {
                 return e.value();
             try {
                 // Try to make a real entry for the promised version.
+                //尝试为承诺的版本做一个真实的条目
                 e = makeEntry(e.version(), computeValue(type));
             } finally {
                 // Whether computeValue throws or returns normally,
                 // be sure to remove the empty entry.
+                //无论computeValue 是正常抛出还是返回，请务必删除空条目
                 e = map.finishEntry(this, e);
             }
             if (e != null)
@@ -248,6 +278,7 @@ public abstract class ClassValue<T> {
     }
 
     /** Check that e is non-null, matches this ClassValue, and is live. */
+    //检查 e 是否为非空、是否与此 ClassValue 匹配且是否有效
     boolean match(Entry<?> e) {
         // racing e.version : null (blank) => unique Version token => null (GC-ed version)
         // non-racing this.version : v1 => v2 => ... (updates are read faithfully from volatile)
@@ -406,10 +437,13 @@ public abstract class ClassValue<T> {
     }
 
     /** Return the backing map associated with this type. */
+    //返回与此类型关联的支持映射
     private static ClassValueMap getMap(Class<?> type) {
         // racing type.classValueMap : null (blank) => unique ClassValueMap
         // if a null is observed, a map is created (lazily, synchronously, uniquely)
         // all further access to that map is synchronized
+        //Race type.classValueMap : null (blank) => unique ClassValueMap
+        // 如果观察到 null，则创建一个地图（延迟、同步、唯一）对该地图的所有进一步访问都是同步的
         ClassValueMap map = type.classValueMap;
         if (map != null)  return map;
         return initializeMap(type);
@@ -429,6 +463,7 @@ public abstract class ClassValue<T> {
 
     static <T> Entry<T> makeEntry(Version<T> explicitVersion, T value) {
         // Note that explicitVersion might be different from this.version.
+        //请注意，explicitVersion 可能与 this.version 不同
         return new Entry<>(explicitVersion, value);
 
         // As soon as the Entry is put into the cache, the value will be
@@ -521,23 +556,27 @@ public abstract class ClassValue<T> {
         }
 
         /** Finish a query.  Overwrite a matching placeholder.  Drop stale incoming values. */
+        //完成一个查询。覆盖匹配的占位符。删除陈旧的传入值
         synchronized
         <T> Entry<T> finishEntry(ClassValue<T> classValue, Entry<T> e) {
             @SuppressWarnings("unchecked")  // one map has entries for all value types <T>
             Entry<T> e0 = (Entry<T>) get(classValue.identity);
             if (e == e0) {
                 // We can get here during exception processing, unwinding from computeValue.
+                //我们可以在异常处理期间到达这里，从computeValue 展开
                 assert(e.isPromise());
                 remove(classValue.identity);
                 return null;
             } else if (e0 != null && e0.isPromise() && e0.version() == e.version()) {
                 // If e0 matches the intended entry, there has not been a remove call
                 // between the previous startEntry and now.  So now overwrite e0.
+                //如果 e0 与预期条目匹配，则前一个 startEntry 和现在之间没有删除调用。所以现在覆盖e0
                 Version<T> v = classValue.version();
                 if (e.version() != v)
                     e = e.refreshVersion(v);
                 put(classValue.identity, e);
                 // Add to the cache, to enable the fast path, next time.
+                //添加到缓存中，以启用快速路径，下次
                 checkCacheLoad();
                 addToCache(classValue, e);
                 return e;
@@ -606,9 +645,11 @@ public abstract class ClassValue<T> {
         }
 
         /** Given that first probe was a collision, retry at nearby locations. */
+        //鉴于第一次探测是碰撞，请在附近位置重试
         static <T> Entry<T> probeBackupLocations(Entry<?>[] cache, ClassValue<T> classValue) {
             if (PROBE_LIMIT <= 0)  return null;
             // Probe the cache carefully, in a range of slots.
+            //在一系列插槽中仔细探测缓存
             int mask = (cache.length-1);
             int home = (classValue.hashCodeForCache & mask);
             Entry<?> e2 = cache[home];  // victim, if we find the real guy

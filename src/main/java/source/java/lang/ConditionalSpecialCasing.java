@@ -38,6 +38,7 @@ import sun.text.Normalizer;
  * <code>String.toUpperCase()</code>, that handles special casing with
  * conditions.  In other words, it handles the mappings with conditions
  * that are defined in
+ * 1.这是一个用于 <code>String.toLowerCase()<code> 和 <code>String.toUpperCase()<code> 的实用程序类，它处理有条件的特殊大小写
  * <a href="http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt">Special
  * Casing Properties</a> file.
  * <p>

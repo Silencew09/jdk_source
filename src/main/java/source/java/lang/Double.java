@@ -34,13 +34,13 @@ import sun.misc.DoubleConsts;
  * {@code double} in an object. An object of type
  * {@code Double} contains a single field whose type is
  * {@code double}.
- *
+ * 1.Double类将原始类型 double的值包装在一个对象中。Double类型的对象包含一个类型为 double的字段
  * <p>In addition, this class provides several methods for converting a
  * {@code double} to a {@code String} and a
  * {@code String} to a {@code double}, as well as other
  * constants and methods useful when dealing with a
  * {@code double}.
- *
+ * 2.此外，该类提供了几种将 double转换为 String和将 String转换为 double的方法，以及在处理double
  * @author  Lee Boynton
  * @author  Arthur van Hoff
  * @author  Joseph D. Darcy
@@ -49,6 +49,7 @@ import sun.misc.DoubleConsts;
 public final class Double extends Number implements Comparable<Double> {
     /**
      * A constant holding the positive infinity of type
+     * 保持类型的正无穷大的常数
      * {@code double}. It is equal to the value returned by
      * {@code Double.longBitsToDouble(0x7ff0000000000000L)}.
      */
@@ -56,6 +57,7 @@ public final class Double extends Number implements Comparable<Double> {
 
     /**
      * A constant holding the negative infinity of type
+     * //保持类型的负无穷大的常数
      * {@code double}. It is equal to the value returned by
      * {@code Double.longBitsToDouble(0xfff0000000000000L)}.
      */
@@ -63,6 +65,7 @@ public final class Double extends Number implements Comparable<Double> {
 
     /**
      * A constant holding a Not-a-Number (NaN) value of type
+     * 保存类型为非数字 (NaN) 值的常量
      * {@code double}. It is equivalent to the value returned by
      * {@code Double.longBitsToDouble(0x7ff8000000000000L)}.
      */
@@ -70,6 +73,7 @@ public final class Double extends Number implements Comparable<Double> {
 
     /**
      * A constant holding the largest positive finite value of type
+     * 保持最大正有限值类型的常数
      * {@code double},
      * (2-2<sup>-52</sup>)&middot;2<sup>1023</sup>.  It is equal to
      * the hexadecimal floating-point literal
@@ -80,6 +84,7 @@ public final class Double extends Number implements Comparable<Double> {
 
     /**
      * A constant holding the smallest positive normal value of type
+     * Double.MIN_NORMAL是您可以表示的最小可能数
      * {@code double}, 2<sup>-1022</sup>.  It is equal to the
      * hexadecimal floating-point literal {@code 0x1.0p-1022} and also
      * equal to {@code Double.longBitsToDouble(0x0010000000000000L)}.
@@ -90,6 +95,7 @@ public final class Double extends Number implements Comparable<Double> {
 
     /**
      * A constant holding the smallest positive nonzero value of type
+     * Double.MIN_VALUE基本上是您可以在没有此约束的情况下表示的最小数字
      * {@code double}, 2<sup>-1074</sup>. It is equal to the
      * hexadecimal floating-point literal
      * {@code 0x0.0000000000001P-1022} and also equal to
@@ -99,6 +105,7 @@ public final class Double extends Number implements Comparable<Double> {
 
     /**
      * Maximum exponent a finite {@code double} variable may have.
+     * 有限 double变量可能具有的最大指数。
      * It is equal to the value returned by
      * {@code Math.getExponent(Double.MAX_VALUE)}.
      *
@@ -110,21 +117,21 @@ public final class Double extends Number implements Comparable<Double> {
      * Minimum exponent a normalized {@code double} variable may
      * have.  It is equal to the value returned by
      * {@code Math.getExponent(Double.MIN_NORMAL)}.
-     *
+     * 标准化double变量可能具有的最小指数。它等于返回的值
      * @since 1.6
      */
     public static final int MIN_EXPONENT = -1022;
 
     /**
      * The number of bits used to represent a {@code double} value.
-     *
+     * 用于表示double值的位数
      * @since 1.5
      */
     public static final int SIZE = 64;
 
     /**
      * The number of bytes used to represent a {@code double} value.
-     *
+     * 用于表示 double值的字节数
      * @since 1.8
      */
     public static final int BYTES = SIZE / Byte.SIZE;
@@ -132,7 +139,7 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * The {@code Class} instance representing the primitive type
      * {@code double}.
-     *
+     * 表示原始类型 double的Class实例
      * @since JDK1.1
      */
     @SuppressWarnings("unchecked")
@@ -141,9 +148,12 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * Returns a string representation of the {@code double}
      * argument. All characters mentioned below are ASCII characters.
+     * 1.返回 double参数的字符串表示形式。下面提到的所有字符都是ASCII字符
      * <ul>
      * <li>If the argument is NaN, the result is the string
      *     "{@code NaN}".
+     * 2.如果参数为NaN，则结果为字符串“NaN”,否则，结果是一个字符串，表示参数的符号和大小（绝对值）。
+     * 如果符号为负，则结果的第一个字符为'-'；如果符号为正，则结果中不出现符号字符。
      * <li>Otherwise, the result is a string that represents the sign and
      * magnitude (absolute value) of the argument. If the sign is negative,
      * the first character of the result is '{@code -}'
@@ -159,13 +169,17 @@ public final class Double extends Number implements Comparable<Double> {
      * {@code "0.0"}; thus, negative zero produces the result
      * {@code "-0.0"} and positive zero produces the result
      * {@code "0.0"}.
-     *
+     * 3.至于幅度m：
+     *      1)如果m为无穷大，则用字符"Infinity"表示；
+     *      因此，正无穷产生结果 "Infinity"，负无穷产生结果 "-Infinity"。
+     *      如果m为零，则用字符"0.0"表示；因此，负零产生结果"-0.0"，正零产生结果"0.0"
      * <li>If <i>m</i> is greater than or equal to 10<sup>-3</sup> but less
      * than 10<sup>7</sup>, then it is represented as the integer part of
      * <i>m</i>, in decimal form with no leading zeroes, followed by
      * '{@code .}' ({@code '\u005Cu002E'}), followed by one or
      * more decimal digits representing the fractional part of <i>m</i>.
-     *
+     *      2)如果m大于等于10<sup>-3<sup>但小于10<sup>7<sup>，
+     *      则表示为m，十进制形式，没有前导零，后跟'.'，后跟一个或多个十进制数字，代表m的小数部分
      * <li>If <i>m</i> is less than 10<sup>-3</sup> or greater than or
      * equal to 10<sup>7</sup>, then it is represented in so-called
      * "computerized scientific notation." Let <i>n</i> be the unique
@@ -180,6 +194,12 @@ public final class Double extends Number implements Comparable<Double> {
      * letter '{@code E}' ({@code '\u005Cu0045'}), followed
      * by a representation of <i>n</i> as a decimal integer, as
      * produced by the method {@link Integer#toString(int)}.
+     *      3)如果m小于10<sup>-3<sup>或大于或等于10<sup>7<sup>，则用所谓的“计算机科学记数法”表示。
+     *      令 n为唯一整数，满足 10<sup>n<sup> ≤ m {@literal <} 10<sup><i>n< i>+1<sup>;
+     *      然后让 a成为 m和 10<sup><i>n<i><sup> 的数学上精确商，使得 1 ≤a { <} 10.
+     *      然后将幅度表示为 a的整数部分，作为单个十进制数字，后跟 '.'，
+     *      然后是由十进制数字表示 a的小数部分，后跟字母 'E'，后跟 n的表示作为十进制整数，
+     *      由方法 Integer.toString(int)产生
      * </ul>
      * </ul>
      * How many digits must be printed for the fractional part of
@@ -193,10 +213,14 @@ public final class Double extends Number implements Comparable<Double> {
      * to <i>x</i>; or if two {@code double} values are equally close
      * to <i>x</i>, then <i>d</i> must be one of them and the least
      * significant bit of the significand of <i>d</i> must be {@code 0}.
-     *
+     *      4).m或 a的小数部分必须打印多少位数字？必须至少有一个数字来表示小数部分，
+     *      并且超过这个数字，但只能是唯一地将参数值与double类型的相邻值区分开来所需的数字。
+     *      也就是说，假设x是由此方法为有限非零参数 d生成的十进制表示所表示的精确数学值。
+     *      那么d必须是最接近x的double值；或者如果两个double值同样接近x，
+     *      则 d必须是其中之一，并且是 d的有效数的最低有效位必须是0
      * <p>To create localized string representations of a floating-point
      * value, use subclasses of {@link java.text.NumberFormat}.
-     *
+     * 4.要创建浮点值的本地化字符串表示，请使用java.text.NumberFormat的子类
      * @param   d   the {@code double} to be converted.
      * @return a string representation of the argument.
      */
@@ -208,7 +232,11 @@ public final class Double extends Number implements Comparable<Double> {
      * Returns a hexadecimal string representation of the
      * {@code double} argument. All characters mentioned below
      * are ASCII characters.
-     *
+     * 1.返回 double参数的十六进制字符串表示形式。
+     * 2.下面提到的所有字符都是ASCII字符:
+     *      1)如果参数是 NaN，则结果是字符串 "NaN"
+     *      2)否则，结果是一个字符串，表示参数的符号和大小。
+     *      如果符号为负，则结果的第一个字符为'-' ；如果符号为正，则结果中不出现符号字符
      * <ul>
      * <li>If the argument is NaN, the result is the string
      *     "{@code NaN}".
@@ -217,18 +245,25 @@ public final class Double extends Number implements Comparable<Double> {
      * first character of the result is '{@code -}'
      * ({@code '\u005Cu002D'}); if the sign is positive, no sign
      * character appears in the result. As for the magnitude <i>m</i>:
-     *
+     *  3.至于幅度m:
+     *      1)如果m是无穷大，则用字符串 "Infinity"表示；因此，正无穷产生结果"Infinity"，
+     *      负无穷产生结果"-Infinity"
      * <ul>
      * <li>If <i>m</i> is infinity, it is represented by the string
      * {@code "Infinity"}; thus, positive infinity produces the
      * result {@code "Infinity"} and negative infinity produces
      * the result {@code "-Infinity"}.
-     *
+     *      2)如果 m为零，则由字符串 "0x0.0p0"表示；因此，负零产生结果 "-0x0.0p0"，
+     *      正零产生结果 "0x0.0p0"
      * <li>If <i>m</i> is zero, it is represented by the string
      * {@code "0x0.0p0"}; thus, negative zero produces the result
      * {@code "-0x0.0p0"} and positive zero produces the result
      * {@code "0x0.0p0"}.
-     *
+     *      3)如果m是具有标准化表示的double 值，则子字符串用于表示有效数和指数字段。
+     *      有效数由字符 "0x1."表示，后跟有效数其余部分的小写十六进制表示形式。
+     *      除非所有数字都为零，否则将删除十六进制表示中的尾随零，在这种情况下使用单个零。
+     *      接下来，指数由"p"后跟无偏指数的十进制字符串表示，就像通过对指数值调用
+     *      Integer.toString(int)产生的一样
      * <li>If <i>m</i> is a {@code double} value with a
      * normalized representation, substrings are used to represent the
      * significand and exponent fields.  The significand is
@@ -250,7 +285,9 @@ public final class Double extends Number implements Comparable<Double> {
      * removed. Next, the exponent is represented by
      * {@code "p-1022"}.  Note that there must be at
      * least one nonzero digit in a subnormal significand.
-     *
+     *      4)如果m 是具有次正规表示的 double 值，则有效数由字符 "0x0."表示，
+     *      后跟有效数其余部分的十六进制表示作为分数.十六进制表示中的尾随零被删除。
+     *      接下来，指数由 "p-1022"表示。请注意，次正规有效数中必须至少有一个非零数字
      * </ul>
      *
      * </ul>
@@ -286,9 +323,11 @@ public final class Double extends Number implements Comparable<Double> {
          */
         if (!isFinite(d) )
             // For infinity and NaN, use the decimal output.
+            //对于无穷大和 NaN，使用十进制输出
             return Double.toString(d);
         else {
             // Initialized to maximum size of output.
+            //初始化为最大输出大小
             StringBuilder answer = new StringBuilder(24);
 
             if (Math.copySign(1.0, d) == -1.0)    // value is negative,
@@ -306,18 +345,22 @@ public final class Double extends Number implements Comparable<Double> {
                 // Isolate significand bits and OR in a high-order bit
                 // so that the string representation has a known
                 // length.
+                //隔离高位中的有效位和 OR，以便字符串表示具有已知长度
                 long signifBits = (Double.doubleToLongBits(d)
                                    & DoubleConsts.SIGNIF_BIT_MASK) |
                     0x1000000000000000L;
 
                 // Subnormal values have a 0 implicit bit; normal
                 // values have a 1 implicit bit.
+                //次正规值有一个 0 隐含位；正常值有 1 个隐式位
                 answer.append(subnormal ? "0." : "1.");
 
                 // Isolate the low-order 13 digits of the hex
                 // representation.  If all the digits are zero,
                 // replace with a single 0; otherwise, remove all
                 // trailing zeros.
+                //隔离十六进制表示的低 13 位数字。
+                // 如果所有数字都为零，则替换为单个 0；否则，删除所有尾随零
                 String signif = Long.toHexString(signifBits).substring(3,16);
                 answer.append(signif.equals("0000000000000") ? // 13 zeros
                               "0":
@@ -328,6 +371,8 @@ public final class Double extends Number implements Comparable<Double> {
                 // value for double; otherwise, extract and report d's
                 // exponent (the representation of a subnormal uses
                 // E_min -1).
+                //如果该值低于正常值，则对 double 使用 E_min 指数值；
+                // 否则，提取并报告 d 的指数（次正规的表示使用 E_min -1）
                 answer.append(subnormal ?
                               DoubleConsts.MIN_EXPONENT:
                               Math.getExponent(d));
@@ -340,16 +385,19 @@ public final class Double extends Number implements Comparable<Double> {
      * Returns a {@code Double} object holding the
      * {@code double} value represented by the argument string
      * {@code s}.
-     *
+     * 1.返回一个Double对象，其中包含由参数字符串s表示的double值
      * <p>If {@code s} is {@code null}, then a
      * {@code NullPointerException} is thrown.
-     *
+     * 2.如果 s为 null，则抛出NullPointerException。
      * <p>Leading and trailing whitespace characters in {@code s}
      * are ignored.  Whitespace is removed as if by the {@link
      * String#trim} method; that is, both ASCII space and control
      * characters are removed. The rest of {@code s} should
      * constitute a <i>FloatValue</i> as described by the lexical
      * syntax rules:
+     * 3.s中的前导和尾随空白字符将被忽略。像 String.trim方法一样删除空格；
+     * 也就是说，ASCII 空格和控制字符都被删除了,其余的 s应该构成一个FloatValue，
+     *
      *
      * <blockquote>
      * <dl>
@@ -395,6 +443,8 @@ public final class Double extends Number implements Comparable<Double> {
      * sections of
      * <cite>The Java&trade; Language Specification</cite>,
      * except that underscores are not accepted between digits.
+     * 3.其中Sign、FloatingPointLiteral、HexNumeral、HexDigits、SignedInteger
+     * 和 FloatTypeSuffix为在Java™ 语言规范的词法结构部分中定义，除了数字之间不接受下划线
      * If {@code s} does not have the form of
      * a <i>FloatValue</i>, then a {@code NumberFormatException}
      * is thrown. Otherwise, {@code s} is regarded as
@@ -406,6 +456,10 @@ public final class Double extends Number implements Comparable<Double> {
      * by the usual round-to-nearest rule of IEEE 754 floating-point
      * arithmetic, which includes preserving the sign of a zero
      * value.
+     * 4.如果 s不具有 FloatValue的形式，则抛出 NumberFormatException
+     * 5.否则，s被视为表示通常的“计算机化科学记数法”中的精确十进制值或精确的十六进制值；
+     * 然后，这个精确的数值在概念上被转换为一个“无限精确”的二进制值，
+     * 然后通过 IEEE 754 浮点运算的通常舍入到最近的规则舍入到类型 double，其中包括保留一个零值
      *
      * Note that the round-to-nearest rule also implies overflow and
      * underflow behaviour; if the exact value of {@code s} is large
@@ -415,19 +469,22 @@ public final class Double extends Number implements Comparable<Double> {
      * exact value of {@code s} is small enough in magnitude (less
      * than or equal to {@link #MIN_VALUE}/2), rounding to float will
      * result in a zero.
-     *
+     * 6.请注意，舍入到最近的规则还暗示上溢和下溢行为
+     * 7.如果 s的确切值在数量级上足够大（大于或等于 MAX_VALUE+ Math.ulp(double)），
+     * 四舍五入到 double将导致无穷大，
+     * 8.如果 s 的确切值在数量级上足够小（小于或等于 MIN_VALUE，四舍五入为浮点数将导致零
      * Finally, after rounding a {@code Double} object representing
      * this {@code double} value is returned.
-     *
+     * 9.最后，在四舍五入后返回表示此 double值的 Double对象
      * <p> To interpret localized string representations of a
      * floating-point value, use subclasses of {@link
      * java.text.NumberFormat}.
-     *
+     * 10.要解释浮点值的本地化字符串表示，请使用java.text.NumberFormat的子类
      * <p>Note that trailing format specifiers, specifiers that
      * determine the type of a floating-point literal
      * ({@code 1.0f} is a {@code float} value;
      * {@code 1.0d} is a {@code double} value), do
-     * <em>not</em> influence the results of this method.  In other
+     * not influence the results of this method.  In other
      * words, the numerical value of the input string is converted
      * directly to the target floating-point type.  The two-step
      * sequence of conversions, string to {@code float} followed
@@ -440,11 +497,17 @@ public final class Double extends Number implements Comparable<Double> {
      * value than the {@code double} literal
      * {@code 0.1}. (The numerical value 0.1 cannot be exactly
      * represented in a binary floating-point number.)
-     *
+     * 11.请注意尾随格式说明符，确定浮点文字类型的说明符（1.0f是一个  float 值；
+     * 1.0d是一个 double值），请执行不影响本方法的结果
+     * 12.换句话说，输入字符串的数值直接转换为目标浮点类型
+     * 13.两步转换序列，字符串到 float，然后是 float到double，不等效于将字符串直接转换为 double
+     * 14.例如，float文字 0.1f 等于 double值 0.10000000149011612；float文字 0.1f表示与 double文字 0.1不同的数值。
+     * （数值 0.1 不能用二进制浮点数精确表示。
      * <p>To avoid calling this method on an invalid string and having
      * a {@code NumberFormatException} be thrown, the regular
      * expression below can be used to screen the input string:
-     *
+     * 15.为了避免在无效字符串上调用此方法并抛出NumberFormatException，
+     * 可以使用下面的正则表达式来筛选输入字符串
      * <pre>{@code
      *  final String Digits     = "(\\p{Digit}+)";
      *  final String HexDigits  = "(\\p{XDigit}+)";
@@ -510,7 +573,9 @@ public final class Double extends Number implements Comparable<Double> {
      * {@link #Double(double)}, as this method is likely to yield
      * significantly better space and time performance by caching
      * frequently requested values.
-     *
+     * 1.返回表示指定的 double值的 Double实例。
+     * 2.如果不需要新的Double实例，则通常应优先使用此方法而不是构造函数 Double(double)，
+     * 因为此方法可能会通过缓存频繁请求的内容来显着提高空间和时间性能值
      * @param  d a double value.
      * @return a {@code Double} instance representing {@code d}.
      * @since  1.5
@@ -524,7 +589,8 @@ public final class Double extends Number implements Comparable<Double> {
      * represented by the specified {@code String}, as performed
      * by the {@code valueOf} method of class
      * {@code Double}.
-     *
+     * 返回一个新的 double，初始化为由指定的 String表示的值，
+     * 由 Double类的 valueOf法执行
      * @param  s   the string to be parsed.
      * @return the {@code double} value represented by the string
      *         argument.
@@ -541,7 +607,7 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * Returns {@code true} if the specified number is a
      * Not-a-Number (NaN) value, {@code false} otherwise.
-     *
+     * 1.如果指定的数字是非数字 (NaN) 值，则返回 true，否则返回false
      * @param   v   the value to be tested.
      * @return  {@code true} if the value of the argument is NaN;
      *          {@code false} otherwise.
@@ -553,7 +619,7 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * Returns {@code true} if the specified number is infinitely
      * large in magnitude, {@code false} otherwise.
-     *
+     * 如果指定数字的大小无限大，则返回 true，否则返回 false
      * @param   v   the value to be tested.
      * @return  {@code true} if the value of the argument is positive
      *          infinity or negative infinity; {@code false} otherwise.
@@ -566,7 +632,7 @@ public final class Double extends Number implements Comparable<Double> {
      * Returns {@code true} if the argument is a finite floating-point
      * value; returns {@code false} otherwise (for NaN and infinity
      * arguments).
-     *
+     * 如果参数是有限浮点值，则返回true；否则返回false对于 NaN 和无穷大参数
      * @param d the {@code double} value to be tested
      * @return {@code true} if the argument is a finite
      * floating-point value, {@code false} otherwise.
@@ -578,7 +644,7 @@ public final class Double extends Number implements Comparable<Double> {
 
     /**
      * The value of the Double.
-     *
+     * Double 的值
      * @serial
      */
     private final double value;
@@ -586,7 +652,7 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * Constructs a newly allocated {@code Double} object that
      * represents the primitive {@code double} argument.
-     *
+     * 构造一个新分配的 Double对象，表示原始double参数
      * @param   value   the value to be represented by the {@code Double}.
      */
     public Double(double value) {
@@ -598,7 +664,8 @@ public final class Double extends Number implements Comparable<Double> {
      * represents the floating-point value of type {@code double}
      * represented by the string. The string is converted to a
      * {@code double} value as if by the {@code valueOf} method.
-     *
+     * 1.构造一个新分配的 Double对象，该对象表示由字符串表示的double类型的浮点值。
+     * 字符串被转换为 double值，就像通过 valueOf方法一样
      * @param  s  a string to be converted to a {@code Double}.
      * @throws    NumberFormatException  if the string does not contain a
      *            parsable number.
@@ -647,7 +714,7 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * Returns the value of this {@code Double} as a {@code byte}
      * after a narrowing primitive conversion.
-     *
+     * 在缩小原始转换后将此 Double的值作为byte返回
      * @return  the {@code double} value represented by this object
      *          converted to type {@code byte}
      * @jls 5.1.3 Narrowing Primitive Conversions
@@ -660,7 +727,7 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * Returns the value of this {@code Double} as a {@code short}
      * after a narrowing primitive conversion.
-     *
+     * 在缩小原始转换后，将此 Double的值作为short返回。
      * @return  the {@code double} value represented by this object
      *          converted to type {@code short}
      * @jls 5.1.3 Narrowing Primitive Conversions
@@ -674,7 +741,7 @@ public final class Double extends Number implements Comparable<Double> {
      * Returns the value of this {@code Double} as an {@code int}
      * after a narrowing primitive conversion.
      * @jls 5.1.3 Narrowing Primitive Conversions
-     *
+     * 在缩小原始转换后，将此 Double的值作为 int返回。
      * @return  the {@code double} value represented by this object
      *          converted to type {@code int}
      */
@@ -685,7 +752,7 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * Returns the value of this {@code Double} as a {@code long}
      * after a narrowing primitive conversion.
-     *
+     * 在缩小原始转换后将此 Double的值作为 long返回
      * @return  the {@code double} value represented by this object
      *          converted to type {@code long}
      * @jls 5.1.3 Narrowing Primitive Conversions
@@ -697,7 +764,7 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * Returns the value of this {@code Double} as a {@code float}
      * after a narrowing primitive conversion.
-     *
+     * 在缩小原始转换后将此 Double的值作为 float返回
      * @return  the {@code double} value represented by this object
      *          converted to type {@code float}
      * @jls 5.1.3 Narrowing Primitive Conversions
@@ -709,7 +776,7 @@ public final class Double extends Number implements Comparable<Double> {
 
     /**
      * Returns the {@code double} value of this {@code Double} object.
-     *
+     * 返回此  Double对象的 double 值
      * @return the {@code double} value represented by this object
      */
     public double doubleValue() {
@@ -724,7 +791,9 @@ public final class Double extends Number implements Comparable<Double> {
      * the primitive {@code double} value represented by this
      * {@code Double} object. That is, the hash code is the value
      * of the expression:
-     *
+     * 1.返回此Double对象的哈希码
+     * 2.结果是 long整数位表示的两半的异或，与方法 doubleToLongBits(double)
+     * 产生的完全一样，由这个 表示的原始double值代码 Double对象(int)(v^(v>>>32))
      * <blockquote>
      *  {@code (int)(v^(v>>>32))}
      * </blockquote>
@@ -804,7 +873,7 @@ public final class Double extends Number implements Comparable<Double> {
      * Returns a representation of the specified floating-point value
      * according to the IEEE 754 floating-point "double
      * format" bit layout.
-     *
+     * 1.根据 IEEE 754 浮点“双格式”位布局返回指定浮点值的表示
      * <p>Bit 63 (the bit that is selected by the mask
      * {@code 0x8000000000000000L}) represents the sign of the
      * floating-point number. Bits
