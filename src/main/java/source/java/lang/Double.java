@@ -814,7 +814,7 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * Returns a hash code for a {@code double} value; compatible with
      * {@code Double.hashCode()}.
-     *
+     * 1.返回双精度值的哈希码；与 Double.hashCode() 兼容
      * @param value the value to hash
      * @return a hash code value for a {@code double} value.
      * @since 1.8
@@ -882,22 +882,25 @@ public final class Double extends Number implements Comparable<Double> {
      * (the bits that are selected by the mask
      * {@code 0x000fffffffffffffL}) represent the significand
      * (sometimes called the mantissa) of the floating-point number.
-     *
+     * 2.第 63 位（由掩码  0x8000000000000000L选择的位）表示浮点数的符号
+     * 3.第 62-52 位（掩码0x7ff0000000000000L 选择的位）代表指数
+     * 4.位 51-0（由掩码 0x000fffffffffffffL 选择的位）表示浮点数的有效数（有时称为尾数）
      * <p>If the argument is positive infinity, the result is
      * {@code 0x7ff0000000000000L}.
-     *
+     * 5.如果参数为正无穷大，则结果为 0x7ff0000000000000L
      * <p>If the argument is negative infinity, the result is
      * {@code 0xfff0000000000000L}.
-     *
+     * 6.如果参数为负无穷大，则结果为 0xfff0000000000000L
      * <p>If the argument is NaN, the result is
      * {@code 0x7ff8000000000000L}.
-     *
+     * 7.如果参数为 NaN，则结果为 0x7ff8000000000000L
      * <p>In all cases, the result is a {@code long} integer that, when
      * given to the {@link #longBitsToDouble(long)} method, will produce a
      * floating-point value the same as the argument to
      * {@code doubleToLongBits} (except all NaN values are
      * collapsed to a single "canonical" NaN value).
-     *
+     * 8.在所有情况下，结果都是一个 long整数，当给longBitsToDouble(long)方法时，
+     * 将产生一个与 doubleToLongBits的参数相同的浮点值（除了所有 NaN 值都折叠为单个“规范”NaN 值）
      * @param   value   a {@code double} precision floating-point number.
      * @return the bits that represent the floating-point number.
      */
@@ -905,6 +908,7 @@ public final class Double extends Number implements Comparable<Double> {
         long result = doubleToRawLongBits(value);
         // Check for NaN based on values of bit fields, maximum
         // exponent and nonzero significand.
+        //根据位字段的值、最大指数和非零有效数检查 NaN
         if ( ((result & DoubleConsts.EXP_BIT_MASK) ==
               DoubleConsts.EXP_BIT_MASK) &&
              (result & DoubleConsts.SIGNIF_BIT_MASK) != 0L)
@@ -916,7 +920,7 @@ public final class Double extends Number implements Comparable<Double> {
      * Returns a representation of the specified floating-point value
      * according to the IEEE 754 floating-point "double
      * format" bit layout, preserving Not-a-Number (NaN) values.
-     *
+     * 1.根据 IEEE 754 浮点“双格式”位布局返回指定浮点值的表示，保留非数字 (NaN) 值
      * <p>Bit 63 (the bit that is selected by the mask
      * {@code 0x8000000000000000L}) represents the sign of the
      * floating-point number. Bits
@@ -925,25 +929,28 @@ public final class Double extends Number implements Comparable<Double> {
      * (the bits that are selected by the mask
      * {@code 0x000fffffffffffffL}) represent the significand
      * (sometimes called the mantissa) of the floating-point number.
-     *
+     * 2.第63位（掩码选中的位0x8000000000000000L）表示浮点数的符号
+     * 3.第 62-52 位（掩码0x7ff0000000000000L选择的位）代表指数
+     * 4.位 51-0（由掩码 0x000fffffffffffffL选择的位）表示浮点数的有效数（有时称为尾数）
      * <p>If the argument is positive infinity, the result is
      * {@code 0x7ff0000000000000L}.
-     *
+     * 5.如果参数为正无穷大，则结果为 0x7ff0000000000000L
      * <p>If the argument is negative infinity, the result is
      * {@code 0xfff0000000000000L}.
-     *
+     * 6.如果参数为负无穷大，则结果为0xfff0000000000000L
      * <p>If the argument is NaN, the result is the {@code long}
      * integer representing the actual NaN value.  Unlike the
      * {@code doubleToLongBits} method,
      * {@code doubleToRawLongBits} does not collapse all the bit
      * patterns encoding a NaN to a single "canonical" NaN
      * value.
-     *
+     * 7.如果参数是 NaN，则结果是表示实际 NaN 值的 long 整数
+     * 8.与 doubleToLongBits方法不同， doubleToRawLongBits会将编码 NaN 的所有位模式折叠为单个“规范”NaN 值
      * <p>In all cases, the result is a {@code long} integer that,
      * when given to the {@link #longBitsToDouble(long)} method, will
      * produce a floating-point value the same as the argument to
      * {@code doubleToRawLongBits}.
-     *
+     * 9.在所有情况下，结果都是一个long 整数，当将其提供给longBitsToDouble(long)方法时，将产生与 doubleToRawLongBits的参数相同的浮点值
      * @param   value   a {@code double} precision floating-point number.
      * @return the bits that represent the floating-point number.
      * @since 1.3
