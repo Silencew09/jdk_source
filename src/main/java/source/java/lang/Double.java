@@ -834,6 +834,11 @@ public final class Double extends Number implements Comparable<Double> {
      * the same if and only if the method {@link
      * #doubleToLongBits(double)} returns the identical
      * {@code long} value when applied to each.
+     * 1.将此对象与指定的对象进行比较
+     * 2.结果是 true当且仅当参数不是 null并且是一个 Double对象，
+     * 该对象表示与 double具有相同值的 double由这个对象表示
+     * 3.为此，当且仅当方法 doubleToLongBits(double)
+     * 在应用于每个时返回相同的  long 值时，才认为两个double值相同
      *
      * <p>Note that in most cases, for two instances of class
      * {@code Double}, {@code d1} and {@code d2}, the
@@ -843,6 +848,12 @@ public final class Double extends Number implements Comparable<Double> {
      * <blockquote>
      *  {@code d1.doubleValue() == d2.doubleValue()}
      * </blockquote>
+     * 4.请注意，在大多数情况下，对于Double类d1和d2的两个实例，
+     * d1.equals(d2)的值是 true如果并且仅当 d1.doubleValue() == d2.doubleValue()
+     * 也有值 true。
+     * 5.但是，有两个例外:
+     *  1)如果 d1和 d2都表示Double.NaN，那么equals方法返回 true，即使 Double.NaN==Double.NaN的值为 false。
+     *  2)如果 d1代表 +0.0 而d2代表-0.0，反之亦然，equal测试的值为false，即使 +0.0==-0.0的值为 true
      *
      * <p>also has the value {@code true}. However, there are two
      * exceptions:
@@ -1025,7 +1036,12 @@ public final class Double extends Number implements Comparable<Double> {
      * are two ways in which comparisons performed by this method
      * differ from those performed by the Java language numerical
      * comparison operators ({@code <, <=, ==, >=, >})
+     * 1.以数字方式比较两个Double对象。此方法执行的比较与 Java 语言数值比较运算符
+     * (<, <=, ==, >=, >) 执行的比较有两种不同之处
      * when applied to primitive {@code double} values:
+     * 2.当应用于原始 double 值时：
+     * 此方法认为 Double.NaN等于自身并大于所有其他double值（包括  Double.POSITIVE_INFINITY}。
+     * 0.0d被此方法认为大于 -0.0d
      * <ul><li>
      *          {@code Double.NaN} is considered by this method
      *          to be equal to itself and greater than all other
@@ -1038,7 +1054,7 @@ public final class Double extends Number implements Comparable<Double> {
      * This ensures that the <i>natural ordering</i> of
      * {@code Double} objects imposed by this method is <i>consistent
      * with equals</i>.
-     *
+     * 3.这确保了此方法强加的 Double对象的自然顺序与 equals一致
      * @param   anotherDouble   the {@code Double} to be compared.
      * @return  the value {@code 0} if {@code anotherDouble} is
      *          numerically equal to this {@code Double}; a value
@@ -1061,7 +1077,8 @@ public final class Double extends Number implements Comparable<Double> {
      * <pre>
      *    new Double(d1).compareTo(new Double(d2))
      * </pre>
-     *
+     * 比较两个指定的 double值。返回的整数值的符号与调用将返回的整数的符号相同：
+     *new Double(d1).compareTo(new Double(d2))
      * @param   d1        the first {@code double} to compare
      * @param   d2        the second {@code double} to compare
      * @return  the value {@code 0} if {@code d1} is
@@ -1079,6 +1096,7 @@ public final class Double extends Number implements Comparable<Double> {
             return 1;            // Neither val is NaN, thisVal is larger
 
         // Cannot use doubleToRawLongBits because of possibility of NaNs.
+        //由于 NaN 的可能性，不能使用 doubleToRawLongBits
         long thisBits    = Double.doubleToLongBits(d1);
         long anotherBits = Double.doubleToLongBits(d2);
 
@@ -1089,7 +1107,7 @@ public final class Double extends Number implements Comparable<Double> {
 
     /**
      * Adds two {@code double} values together as per the + operator.
-     *
+     * 根据 + 运算符将两个double值相加
      * @param a the first operand
      * @param b the second operand
      * @return the sum of {@code a} and {@code b}
@@ -1104,7 +1122,7 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * Returns the greater of two {@code double} values
      * as if by calling {@link Math#max(double, double) Math.max}.
-     *
+     * 返回两个 double值中的较大者，就像调用 Math.max(double, double)
      * @param a the first operand
      * @param b the second operand
      * @return the greater of {@code a} and {@code b}
@@ -1118,7 +1136,7 @@ public final class Double extends Number implements Comparable<Double> {
     /**
      * Returns the smaller of two {@code double} values
      * as if by calling {@link Math#min(double, double) Math.min}.
-     *
+     * 返回两个 double值中较小的一个，就像通过调用 Math.min(double, double)
      * @param a the first operand
      * @param b the second operand
      * @return the smaller of {@code a} and {@code b}.
