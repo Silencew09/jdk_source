@@ -202,7 +202,7 @@ public interface Set<E> extends Collection<E> {
      * unchanged and returns <tt>false</tt>.  In combination with the
      * restriction on constructors, this ensures that sets never contain
      * duplicate elements.
-     *
+     * 1.如果指定的元素尚不存在，则将其添加到此集合中（可选操作）
      * <p>The stipulation above does not imply that sets must accept all
      * elements; sets may refuse to add any particular element, including
      * <tt>null</tt>, and throw an exception, as described in the
