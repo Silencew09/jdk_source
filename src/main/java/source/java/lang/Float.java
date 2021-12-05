@@ -34,13 +34,13 @@ import sun.misc.DoubleConsts;
  * {@code float} in an object. An object of type
  * {@code Float} contains a single field whose type is
  * {@code float}.
- *
+ * 1.Float类将原始类型 float的值包装在一个对象中。Float类型的对象包含一个类型为float的字段
  * <p>In addition, this class provides several methods for converting a
  * {@code float} to a {@code String} and a
  * {@code String} to a {@code float}, as well as other
  * constants and methods useful when dealing with a
  * {@code float}.
- *
+ * 2.此外，该类提供了几种将float转换为String和将 String转换为 float的方法，以及在处理{float}
  * @author  Lee Boynton
  * @author  Arthur van Hoff
  * @author  Joseph D. Darcy

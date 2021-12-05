@@ -7,7 +7,6 @@ import java.util.Map;
  * @author Silence_w
  */
 public class offer10_1 {
-    Map<Integer,Integer> cache = new HashMap<>();
 
     public static int fib1(int n) {
         if (n == 0 ){
