@@ -31,18 +31,19 @@ import java.lang.annotation.Native;
  * The {@code Integer} class wraps a value of the primitive type
  * {@code int} in an object. An object of type {@code Integer}
  * contains a single field whose type is {@code int}.
- *
+ * 1.Integer类将原始类型int的值包装在一个对象中，Integer类型的对象包含一个类型为int的字段。
  * <p>In addition, this class provides several methods for converting
  * an {@code int} to a {@code String} and a {@code String} to an
  * {@code int}, as well as other constants and methods useful when
  * dealing with an {@code int}.
- *
+ * 2.此外，该类还提供了几种将int转换为String和将String转换为int的方法，以及在处理int
  * <p>Implementation note: The implementations of the "bit twiddling"
  * methods (such as {@link #highestOneBit(int) highestOneBit} and
  * {@link #numberOfTrailingZeros(int) numberOfTrailingZeros}) are
  * based on material from Henry S. Warren, Jr.'s <i>Hacker's
  * Delight</i>, (Addison Wesley, 2002).
- *
+ * 3.>实施说明：“位旋转”方法（例如highestOneBit(int)和numberOfTrailingZeros(int)）
+ * 的实现基于来自Henry S. Warren, Jr. 的材料<i>黑客的喜悦<i>，（艾迪生韦斯利，2002 年）
  * @author  Lee Boynton
  * @author  Arthur van Hoff
  * @author  Josh Bloch
@@ -53,19 +54,21 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * A constant holding the minimum value an {@code int} can
      * have, -2<sup>31</sup>.
+     * 保持 int 可以具有的最小值的常量，-2的31次方
      */
     @Native public static final int   MIN_VALUE = 0x80000000;
 
     /**
      * A constant holding the maximum value an {@code int} can
      * have, 2<sup>31</sup>-1.
+     * 保持 int 可以具有的最大值的常量，2的31-1
      */
     @Native public static final int   MAX_VALUE = 0x7fffffff;
 
     /**
      * The {@code Class} instance representing the primitive type
      * {@code int}.
-     *
+     * 表示原始类型int的Class实例
      * @since   JDK1.1
      */
     @SuppressWarnings("unchecked")
@@ -73,6 +76,7 @@ public final class Integer extends Number implements Comparable<Integer> {
 
     /**
      * All possible chars for representing a number as a String
+     * 将数字表示为字符串的所有可能字符
      */
     final static char[] digits = {
         '0' , '1' , '2' , '3' , '4' , '5' ,
@@ -86,27 +90,32 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns a string representation of the first argument in the
      * radix specified by the second argument.
-     *
+     * 1.返回由第二个参数指定的基数中第一个参数的字符串表示形式。
      * <p>If the radix is smaller than {@code Character.MIN_RADIX}
      * or larger than {@code Character.MAX_RADIX}, then the radix
      * {@code 10} is used instead.
-     *
+     * 2.如果基数小于Character.MIN_RADIX或大于Character.MAX_RADIX，则使用基数10
      * <p>If the first argument is negative, the first element of the
      * result is the ASCII minus character {@code '-'}
      * ({@code '\u005Cu002D'}). If the first argument is not
      * negative, no sign character appears in the result.
-     *
+     * 3.如果第一个参数为负，则结果的第一个元素是 ASCII 减号字符 '-'
+     * 。如果第一个参数不是负数，则结果中不会出现符号字符。
      * <p>The remaining characters of the result represent the magnitude
      * of the first argument. If the magnitude is zero, it is
      * represented by a single zero character {@code '0'}
      * ({@code '\u005Cu0030'}); otherwise, the first character of
      * the representation of the magnitude will not be the zero
      * character.  The following ASCII characters are used as digits:
-     *
+     * 4.结果的其余字符表示第一个参数的大小,如果幅度为零，则由单个零字符 '0' 表示；
+     * 否则，大小表示的第一个字符将不是零字符
      * <blockquote>
      *   {@code 0123456789abcdefghijklmnopqrstuvwxyz}
      * </blockquote>
-     *
+     * 5.以下 ASCII 字符用作数字：
+     *      它们是 '\u005Cu0030' 到 '\u005Cu0039' 和 '\u005Cu0061'到 '\u005Cu007A'。
+     *      如果 radix} 是 N，则这些字符的第一个N将用作所示顺序的基数-N 数字。
+     *      因此，十六进制（基数 16）的数字是0123456789abcdef。
      * These are {@code '\u005Cu0030'} through
      * {@code '\u005Cu0039'} and {@code '\u005Cu0061'} through
      * {@code '\u005Cu007A'}. If {@code radix} is
@@ -120,7 +129,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * <blockquote>
      *  {@code Integer.toString(n, 16).toUpperCase()}
      * </blockquote>
-     *
+     * 6.如果需要大写字母，可以对结果调用java.lang.String.toUpperCase()方法：
+     * Integer.toString(n, 16).toUpperCase()
      * @param   i       an integer to be converted to a string.
      * @param   radix   the radix to use in the string representation.
      * @return  a string representation of the argument in the specified radix.
@@ -161,22 +171,22 @@ public final class Integer extends Number implements Comparable<Integer> {
      * Returns a string representation of the first argument as an
      * unsigned integer value in the radix specified by the second
      * argument.
-     *
+     * 1.以第二个参数指定的基数中的无符号整数值形式返回第一个参数的字符串表示形式
      * <p>If the radix is smaller than {@code Character.MIN_RADIX}
      * or larger than {@code Character.MAX_RADIX}, then the radix
      * {@code 10} is used instead.
-     *
+     * 2.如果基数小于 Character.MIN_RADIX或大于 Character.MAX_RADIX，则使用基数 10。
      * <p>Note that since the first argument is treated as an unsigned
      * value, no leading sign character is printed.
-     *
+     * 3.请注意，由于第一个参数被视为无符号值，因此不会打印前导符号字符。
      * <p>If the magnitude is zero, it is represented by a single zero
      * character {@code '0'} ({@code '\u005Cu0030'}); otherwise,
      * the first character of the representation of the magnitude will
      * not be the zero character.
-     *
+     * 4.如果幅度为零，则用单个零字符表示'0'；否则，大小表示的第一个字符将不是零字符
      * <p>The behavior of radixes and the characters used as digits
      * are the same as {@link #toString(int, int) toString}.
-     *
+     * 5.基数的行为和用作数字的字符与toString(int, int)相同
      * @param   i       an integer to be converted to an unsigned string.
      * @param   radix   the radix to use in the string representation.
      * @return  an unsigned string representation of the argument in the specified radix.
@@ -190,24 +200,25 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns a string representation of the integer argument as an
      * unsigned integer in base&nbsp;16.
-     *
+     * 1.以 16 进制无符号整数形式返回整数参数的字符串表示形式
      * <p>The unsigned integer value is the argument plus 2<sup>32</sup>
      * if the argument is negative; otherwise, it is equal to the
      * argument.  This value is converted to a string of ASCII digits
      * in hexadecimal (base&nbsp;16) with no extra leading
      * {@code 0}s.
-     *
+     * 2.如果参数为负，则无符号整数值是参数加上 2<sup>32<sup>；
+     * 否则，它等于参数。此值被转换为十六进制（基数 16）的 ASCII 数字字符串，没有额外的前导 0。
      * <p>The value of the argument can be recovered from the returned
      * string {@code s} by calling {@link
      * Integer#parseUnsignedInt(String, int)
      * Integer.parseUnsignedInt(s, 16)}.
-     *
+     * 3.通过调用Integer.parseUnsignedInt(String, int)，可以从返回的字符串s中恢复参数的值
      * <p>If the unsigned magnitude is zero, it is represented by a
      * single zero character {@code '0'} ({@code '\u005Cu0030'});
      * otherwise, the first character of the representation of the
      * unsigned magnitude will not be the zero character. The
      * following characters are used as hexadecimal digits:
-     *
+     * 4.如果无符号幅度为零，则由单个零字符 '0'表示；否则，无符号幅度表示的第一个字符将不是零字符。
      * <blockquote>
      *  {@code 0123456789abcdef}
      * </blockquote>
@@ -236,12 +247,13 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns a string representation of the integer argument as an
      * unsigned integer in base&nbsp;8.
-     *
+     * 1.将整数参数的字符串表示形式返回为基数为 8 的无符号整数
      * <p>The unsigned integer value is the argument plus 2<sup>32</sup>
      * if the argument is negative; otherwise, it is equal to the
      * argument.  This value is converted to a string of ASCII digits
      * in octal (base&nbsp;8) with no extra leading {@code 0}s.
-     *
+     * 2.如果参数为负，则无符号整数值是参数加上 2<sup>32<sup>；否则，它等于参数。
+     * 该值被转换为八进制（基数为 8）的 ASCII 数字字符串，没有额外的前导 0
      * <p>The value of the argument can be recovered from the returned
      * string {@code s} by calling {@link
      * Integer#parseUnsignedInt(String, int)
@@ -274,12 +286,13 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns a string representation of the integer argument as an
      * unsigned integer in base&nbsp;2.
-     *
+     * 以 2 为基数的无符号整数形式返回整数参数的字符串表示形式。
      * <p>The unsigned integer value is the argument plus 2<sup>32</sup>
      * if the argument is negative; otherwise it is equal to the
      * argument.  This value is converted to a string of ASCII digits
      * in binary (base&nbsp;2) with no extra leading {@code 0}s.
-     *
+     *无符号整数值是参数加2<sup>32<sup>，如果参数为负数；否则它等于参数。
+     * 此值转换为二进制（基数 2）的 ASCII 数字字符串，没有额外的前导 0。
      * <p>The value of the argument can be recovered from the returned
      * string {@code s} by calling {@link
      * Integer#parseUnsignedInt(String, int)
@@ -305,6 +318,7 @@ public final class Integer extends Number implements Comparable<Integer> {
 
     /**
      * Convert the integer to an unsigned number.
+     * 将整数转换为无符号数
      */
     private static String toUnsignedString0(int val, int shift) {
         // assert shift > 0 && shift <=5 : "Illegal shift value";
@@ -320,6 +334,7 @@ public final class Integer extends Number implements Comparable<Integer> {
 
     /**
      * Format a long (treated as unsigned) into a character buffer.
+     * 将 long（视为无符号）格式化为字符缓冲区
      * @param val the unsigned int to format
      * @param shift the log2 of the base to format in (4 for hex, 3 for octal, 1 for binary)
      * @param buf the character buffer to write to
@@ -368,14 +383,16 @@ public final class Integer extends Number implements Comparable<Integer> {
         // I use the "invariant division by multiplication" trick to
         // accelerate Integer.toString.  In particular we want to
         // avoid division by 10.
-        //
+        // 1.使用“乘法不变除法”技巧来加速 Integer.toString。我们特别希望避免除以 10
         // The "trick" has roughly the same performance characteristics
         // as the "classic" Integer.toString code on a non-JIT VM.
         // The trick avoids .rem and .div calls but has a longer code
         // path and is thus dominated by dispatch overhead.  In the
         // JIT case the dispatch overhead doesn't exist and the
         // "trick" is considerably faster than the classic code.
-        //
+        // 2.“技巧”与非 JIT VM 上的“经典”Integer.toString 代码具有大致相同的性能特征。
+    // 该技巧避免了 .rem 和 .div 调用，但具有更长的代码路径，因此受调度开销的支配。
+    // 在 JIT 情况下，不存在分派开销，并且“技巧”比经典代码快得多。
         // TODO-FIXME: convert (x * 52429) into the equiv shift-add
         // sequence.
         //
@@ -390,7 +407,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * representation and returned as a string, exactly as if the
      * argument and radix 10 were given as arguments to the {@link
      * #toString(int, int)} method.
-     *
+     * 返回表示指定整数的  String对象。参数被转换为有符号十进制表示并作为字符串返回，
+     * 就像参数和基数 10 作为参数提供给 toString(int, int) 方法一样。
      * @param   i   an integer to be converted.
      * @return  a string representation of the argument in base&nbsp;10.
      */
@@ -406,7 +424,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns a string representation of the argument as an unsigned
      * decimal value.
-     *
+     * 以无符号十进制值形式返回参数的字符串表示形式。
      * The argument is converted to unsigned decimal representation
      * and returned as a string exactly as if the argument and radix
      * 10 were given as arguments to the {@link #toUnsignedString(int,
@@ -427,8 +445,10 @@ public final class Integer extends Number implements Comparable<Integer> {
      * the buffer backwards starting with the least significant
      * digit at the specified index (exclusive), and working
      * backwards from there.
-     *
+     * 将表示整数 i 的字符放入字符数组 buf 中。
+     * 字符从指定索引处的最低有效数字（不包括）开始向后放入缓冲区，然后从那里向后工作
      * Will fail if i == Integer.MIN_VALUE
+     * 如果 i == Integer.MIN_VALUE 将失败
      */
     static void getChars(int i, int index, char[] buf) {
         int q, r;
@@ -441,6 +461,7 @@ public final class Integer extends Number implements Comparable<Integer> {
         }
 
         // Generate two digits per iteration
+        //每次迭代生成两位数
         while (i >= 65536) {
             q = i / 100;
         // really: r = i - (q * 100);
@@ -484,23 +505,28 @@ public final class Integer extends Number implements Comparable<Integer> {
      * indicate a negative value or an ASCII plus sign {@code '+'}
      * ({@code '\u005Cu002B'}) to indicate a positive value. The
      * resulting integer value is returned.
-     *
+     * 1.将字符串参数解析为第二个参数指定的基数中的有符号整数
+     * 2.字符串中的字符必须都是指定基数的数字（由java.lang.Character.digit(char, int)是否返回非负值决定），
+     * 除了第一个字符可以是ASCII减号{'-'} 表示负值
+     * 或 ASCII 加号 {@code '+'}  表示正值,返回结果整数值
      * <p>An exception of type {@code NumberFormatException} is
      * thrown if any of the following situations occurs:
      * <ul>
      * <li>The first argument is {@code null} or is a string of
      * length zero.
-     *
+     * 3.如果发生以下任何一种情况，则会抛出NumberFormatException类型的异常:
+     * 第一个参数是 {@code null} 或长度为零的字符串。
      * <li>The radix is either smaller than
      * {@link java.lang.Character#MIN_RADIX} or
      * larger than {@link java.lang.Character#MAX_RADIX}.
-     *
+     * 4.基数小于 java.lang.CharacterMIN_RADIX或大于 java.lang.CharacterMAX_RADIX
      * <li>Any character of the string is not a digit of the specified
      * radix, except that the first character may be a minus sign
      * {@code '-'} ({@code '\u005Cu002D'}) or plus sign
      * {@code '+'} ({@code '\u005Cu002B'}) provided that the
      * string is longer than length 1.
-     *
+     * 5.字符串中的任何字符都不是指定基数的数字，除了第一个字符可以是减号'-'
+     * 或加号{@code '+' } 前提是字符串的长度大于长度 1。
      * <li>The value represented by the string is not a value of type
      * {@code int}.
      * </ul>
@@ -536,6 +562,7 @@ public final class Integer extends Number implements Comparable<Integer> {
          * WARNING: This method may be invoked early during VM initialization
          * before IntegerCache is initialized. Care must be taken to not use
          * the valueOf method.
+         * 警告：此方法可能会在 IntegerCache 初始化之前的 VM 初始化期间提前调用。必须注意不要使用 valueOf 方法。
          */
 
         if (s == null) {
@@ -575,6 +602,7 @@ public final class Integer extends Number implements Comparable<Integer> {
             multmin = limit / radix;
             while (i < len) {
                 // Accumulating negatively avoids surprises near MAX_VALUE
+                //负累积避免了 MAX_VALUE 附近的意外
                 digit = Character.digit(s.charAt(i++),radix);
                 if (digit < 0) {
                     throw NumberFormatException.forInputString(s);
@@ -604,7 +632,10 @@ public final class Integer extends Number implements Comparable<Integer> {
      * returned, exactly as if the argument and the radix 10 were
      * given as arguments to the {@link #parseInt(java.lang.String,
      * int)} method.
-     *
+     * 将字符串参数解析为有符号十进制整数。
+     * 字符串中的字符必须都是十进制数字，除了第一个字符可以是ASCII减号'-'}表示负值
+     * 或ASCII加号'+'表示正值。返回结果整数值，就像参数和基数 10 作为参数提供给
+     *  parseInt(java.lang.String, int)方法一样。
      * @param s    a {@code String} containing the {@code int}
      *             representation to be parsed
      * @return     the integer value represented by the argument in decimal.
@@ -620,14 +651,16 @@ public final class Integer extends Number implements Comparable<Integer> {
      * specified by the second argument.  An unsigned integer maps the
      * values usually associated with negative numbers to positive
      * numbers larger than {@code MAX_VALUE}.
-     *
+     * 1.将字符串参数解析为第二个参数指定的基数中的无符号整数。
+     * 无符号整数将通常与负数关联的值映射到大于 MAX_VALUE的正数
      * The characters in the string must all be digits of the
      * specified radix (as determined by whether {@link
      * java.lang.Character#digit(char, int)} returns a nonnegative
      * value), except that the first character may be an ASCII plus
      * sign {@code '+'} ({@code '\u005Cu002B'}). The resulting
      * integer value is returned.
-     *
+     * 2.字符串中的字符必须都是指定基数的数字（由java.lang.Character.digit(char, int)是否返回非负值决定），
+     * 除了第一个字符可以是ASCII加号'+'。返回结果整数值
      * <p>An exception of type {@code NumberFormatException} is
      * thrown if any of the following situations occurs:
      * <ul>
@@ -642,10 +675,10 @@ public final class Integer extends Number implements Comparable<Integer> {
      * radix, except that the first character may be a plus sign
      * {@code '+'} ({@code '\u005Cu002B'}) provided that the
      * string is longer than length 1.
-     *
+     * 字符串的任何字符都不是指定基数的数字，但第一个字符可以是加号'+'，前提是该字符串的长度大于长度 1
      * <li>The value represented by the string is larger than the
      * largest unsigned {@code int}, 2<sup>32</sup>-1.
-     *
+     * 字符串表示的值大于最大的无符号int，2<sup>32<sup>-1。
      * </ul>
      *
      *
@@ -699,7 +732,9 @@ public final class Integer extends Number implements Comparable<Integer> {
      * is returned, exactly as if the argument and the radix 10 were
      * given as arguments to the {@link
      * #parseUnsignedInt(java.lang.String, int)} method.
-     *
+     * 将字符串参数解析为无符号十进制整数。字符串中的字符必须都是十进制数字，
+     * 除了第一个字符可以是ASCII加号'+'。返回结果整数值，就像参数和基数 10
+     * 作为参数提供给parseUnsignedInt(java.lang.String, int)方法一样。
      * @param s   a {@code String} containing the unsigned {@code int}
      *            representation to be parsed
      * @return    the unsigned integer value represented by the argument in decimal.
@@ -720,14 +755,16 @@ public final class Integer extends Number implements Comparable<Integer> {
      * were given to the {@link #parseInt(java.lang.String, int)}
      * method. The result is an {@code Integer} object that
      * represents the integer value specified by the string.
-     *
+     * 1.返回一个 Integer对象，该对象保存从指定的String中提取的值，当使用第二个参数给出的基数进行解析时。
+     * 第一个参数被解释为表示由第二个参数指定的基数中的有符号整数，就像将参数提供给 parseInt(java.lang.String, int)方法一样。
+     * 结果是一个 Integer 对象，表示字符串指定的整数值
      * <p>In other words, this method returns an {@code Integer}
      * object equal to the value of:
      *
      * <blockquote>
      *  {@code new Integer(Integer.parseInt(s, radix))}
      * </blockquote>
-     *
+     * 2.换句话说，这个方法返回一个Integer对象，其值等于：new Integer(Integer.parseInt(s, radix))
      * @param      s   the string to be parsed.
      * @param      radix the radix to be used in interpreting {@code s}
      * @return     an {@code Integer} object holding the value
@@ -748,14 +785,15 @@ public final class Integer extends Number implements Comparable<Integer> {
      * #parseInt(java.lang.String)} method. The result is an
      * {@code Integer} object that represents the integer value
      * specified by the string.
-     *
+     * 1.返回一个Integer对象，其中包含指定的String的值。该参数被解释为表示一个带符号的十进制整数，
+     * 就像将参数提供给 parseInt(java.lang.String)方法一样。结果是一个Integer对象，表示字符串指定的整数值
      * <p>In other words, this method returns an {@code Integer}
      * object equal to the value of:
      *
      * <blockquote>
      *  {@code new Integer(Integer.parseInt(s))}
      * </blockquote>
-     *
+     * 2.换句话说，此方法返回一个 Integer对象，其值等于：new Integer(Integer.parseInt(s))
      * @param      s   the string to be parsed.
      * @return     an {@code Integer} object holding the value
      *             represented by the string argument.
@@ -769,12 +807,15 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Cache to support the object identity semantics of autoboxing for values between
      * -128 and 127 (inclusive) as required by JLS.
-     *
+     * 1.缓存以支持 JLS 要求的 -128 和 127（含）之间值的自动装箱的对象标识语义
      * The cache is initialized on first usage.  The size of the cache
      * may be controlled by the {@code -XX:AutoBoxCacheMax=<size>} option.
      * During VM initialization, java.lang.Integer.IntegerCache.high property
      * may be set and saved in the private system properties in the
      * sun.misc.VM class.
+     * 2.缓存在第一次使用时初始化。缓存的大小可以由  -XX:AutoBoxCacheMax=<size> 选项控制。
+     * 在VM初始化过程中，java.lang.Integer.IntegerCache.high属性可能会被设置并保存
+     * 在sun.misc.VM类的私有系统属性中。
      */
 
     private static class IntegerCache {
@@ -784,6 +825,7 @@ public final class Integer extends Number implements Comparable<Integer> {
 
         static {
             // high value may be configured by property
+            //可以通过属性配置高值
             int h = 127;
             String integerCacheHighPropValue =
                 sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
@@ -792,6 +834,7 @@ public final class Integer extends Number implements Comparable<Integer> {
                     int i = parseInt(integerCacheHighPropValue);
                     i = Math.max(i, 127);
                     // Maximum array size is Integer.MAX_VALUE
+                    //最大数组大小为 Integer.MAX_VALU
                     h = Math.min(i, Integer.MAX_VALUE - (-low) -1);
                 } catch( NumberFormatException nfe) {
                     // If the property cannot be parsed into an int, ignore it.
@@ -818,10 +861,11 @@ public final class Integer extends Number implements Comparable<Integer> {
      * the constructor {@link #Integer(int)}, as this method is likely
      * to yield significantly better space and time performance by
      * caching frequently requested values.
-     *
+     * 1.返回表示指定的int值的Integer实例。如果不需要新的 Integer实例，则通常应优先使用此方法
+     * 而不是构造函数 Integer(int)，因为此方法可能会通过缓存频繁请求的方式产生明显更好的空间和时间性能值。
      * This method will always cache values in the range -128 to 127,
      * inclusive, and may cache other values outside of this range.
-     *
+     * 2.此方法将始终缓存 -128 到 127（含）范围内的值，并且可能缓存此范围之外的其他值。
      * @param  i an {@code int} value.
      * @return an {@code Integer} instance representing {@code i}.
      * @since  1.5
@@ -834,7 +878,7 @@ public final class Integer extends Number implements Comparable<Integer> {
 
     /**
      * The value of the {@code Integer}.
-     *
+     * Integer的值。
      * @serial
      */
     private final int value;
@@ -842,7 +886,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Constructs a newly allocated {@code Integer} object that
      * represents the specified {@code int} value.
-     *
+     *   构造一个新分配的 Integer对象，表示指定的 int值
      * @param   value   the value to be represented by the
      *                  {@code Integer} object.
      */
@@ -856,7 +900,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code String} parameter. The string is converted to an
      * {@code int} value in exactly the manner used by the
      * {@code parseInt} method for radix 10.
-     *
+     * 构造一个新分配的 Integer对象，该对象表示由String参数指示的int值。
+     * 字符串按照  parseInt方法使用的基数 10 的方式完全转换为 int值
      * @param      s   the {@code String} to be converted to an
      *                 {@code Integer}.
      * @exception  NumberFormatException  if the {@code String} does not
@@ -870,6 +915,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns the value of this {@code Integer} as a {@code byte}
      * after a narrowing primitive conversion.
+     * 在缩小原始转换后，将此Integer的值作为 byte返回。
      * @jls 5.1.3 Narrowing Primitive Conversions
      */
     public byte byteValue() {
@@ -879,6 +925,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns the value of this {@code Integer} as a {@code short}
      * after a narrowing primitive conversion.
+     * 在缩小原始转换后，将此Integer的值作为short返回
      * @jls 5.1.3 Narrowing Primitive Conversions
      */
     public short shortValue() {
@@ -888,6 +935,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns the value of this {@code Integer} as an
      * {@code int}.
+     * 将此 Integer 的值作为 int返回
      */
     public int intValue() {
         return value;
@@ -896,6 +944,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns the value of this {@code Integer} as a {@code long}
      * after a widening primitive conversion.
+     * 在扩展原始转换后，将此Integer的值作为long返回。
      * @jls 5.1.2 Widening Primitive Conversions
      * @see Integer#toUnsignedLong(int)
      */
@@ -906,6 +955,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns the value of this {@code Integer} as a {@code float}
      * after a widening primitive conversion.
+     * 在扩展原始转换后，将此Integer的值作为float返回
      * @jls 5.1.2 Widening Primitive Conversions
      */
     public float floatValue() {
@@ -915,6 +965,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns the value of this {@code Integer} as a {@code double}
      * after a widening primitive conversion.
+     * 在扩展原始转换后，将此Integer的值作为 double返回。
      * @jls 5.1.2 Widening Primitive Conversions
      */
     public double doubleValue() {
@@ -937,7 +988,7 @@ public final class Integer extends Number implements Comparable<Integer> {
 
     /**
      * Returns a hash code for this {@code Integer}.
-     *
+     *返回此Integer的哈希码
      * @return  a hash code value for this object, equal to the
      *          primitive {@code int} value represented by this
      *          {@code Integer} object.
@@ -950,7 +1001,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns a hash code for a {@code int} value; compatible with
      * {@code Integer.hashCode()}.
-     *
+     * 返回int值的哈希码；与 Integer.hashCode() 兼容。
      * @param value the value to hash
      * @since 1.8
      *
@@ -965,7 +1016,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code true} if and only if the argument is not
      * {@code null} and is an {@code Integer} object that
      * contains the same {@code int} value as this object.
-     *
+     *将此对象与指定的对象进行比较。结果是true当且仅当参数不是null
+     * 并且是包含与此对象相同的int值的 Integer对象。
      * @param   obj   the object to compare with.
      * @return  {@code true} if the objects are the same;
      *          {@code false} otherwise.
@@ -980,26 +1032,27 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Determines the integer value of the system property with the
      * specified name.
-     *
+     * 1.确定具有指定名称的系统属性的整数值
      * <p>The first argument is treated as the name of a system
      * property.  System properties are accessible through the {@link
      * java.lang.System#getProperty(java.lang.String)} method. The
      * string value of this property is then interpreted as an integer
      * value using the grammar supported by {@link Integer#decode decode} and
      * an {@code Integer} object representing this value is returned.
-     *
+     * 2.第一个参数被视为系统属性的名称。系统属性可通过java.lang.SystemgetProperty(java.lang.String)方法访问。
+     * 然后使用Integer.decode支持的语法将此属性的字符串值解释为整数值，并返回表示此值的Integer对象
      * <p>If there is no property with the specified name, if the
      * specified name is empty or {@code null}, or if the property
      * does not have the correct numeric format, then {@code null} is
      * returned.
-     *
+     * 3.如果没有指定名称的属性，如果指定名称为空或null，或者如果属性没有正确的数字格式，则返回null。
      * <p>In other words, this method returns an {@code Integer}
      * object equal to the value of:
      *
      * <blockquote>
      *  {@code getInteger(nm, null)}
      * </blockquote>
-     *
+     * 换句话说，此方法返回一个Integer对象，其值等于：getInteger(nm, null)
      * @param   nm   property name.
      * @return  the {@code Integer} value of the property.
      * @throws  SecurityException for the same reasons as
@@ -1014,20 +1067,21 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Determines the integer value of the system property with the
      * specified name.
-     *
+     * 1.确定具有指定名称的系统属性的整数值
      * <p>The first argument is treated as the name of a system
      * property.  System properties are accessible through the {@link
      * java.lang.System#getProperty(java.lang.String)} method. The
      * string value of this property is then interpreted as an integer
      * value using the grammar supported by {@link Integer#decode decode} and
      * an {@code Integer} object representing this value is returned.
-     *
+     * 2.第一个参数被视为系统属性的名称。系统属性可通过java.lang.System。getProperty(java.lang.String)方法访问。
+     * 然后使用 Integer。decode支持的语法将此属性的字符串值解释为整数值，并返回表示此值的Integer对象。
      * <p>The second argument is the default value. An {@code Integer} object
      * that represents the value of the second argument is returned if there
      * is no property of the specified name, if the property does not have
      * the correct numeric format, or if the specified name is empty or
      * {@code null}.
-     *
+     * 3.第二个参数是默认值。如果没有指定名称的属性，如果该属性没有正确的数字格式，或者指定的名称为空或  null.
      * <p>In other words, this method returns an {@code Integer} object
      * equal to the value of:
      *
@@ -1067,7 +1121,9 @@ public final class Integer extends Number implements Comparable<Integer> {
      * integer value, as per the {@link Integer#decode decode} method,
      * and an {@code Integer} object representing this value is
      * returned; in summary:
-     *
+     * 1.返回具有指定名称的系统属性的整数值。第一个参数被视为系统属性的名称。
+     * 系统属性可通过 java.lang.System.getProperty(java.lang.String)方法访问。
+     * 然后根据 Integer.decode方法将此属性的字符串值解释为整数值，并返回表示此值的Integer对象
      * <ul><li>If the property value begins with the two ASCII characters
      *         {@code 0x} or the ASCII character {@code #}, not
      *      followed by a minus sign, then the rest of it is parsed as a
@@ -1081,12 +1137,18 @@ public final class Integer extends Number implements Comparable<Integer> {
      * exactly as by the method {@link #valueOf(java.lang.String, int)}
      * with radix 10.
      * </ul>
-     *
+     * 2.总之：
+     *  1）如果属性值以两个 ASCII 字符 0x或 ASCII 字符 #开头，后面没有减号，
+     * 那么它的其余部分将被解析为十六进制整数，就像方法 valueOf(java.lang.String, int) 以 16 为基数。
+     *  2）如果属性值以 ASCII 字符 0开头，后跟另一个字符，则将其解析为八进制整数，
+     *  与方法valueOf(java.lang.String, int)以 8 为基数。
+     *  3）否则，属性值将被解析为十进制整数，与方法valueOf(java.lang.String, int) 完全一样基数为 10。
      * <p>The second argument is the default value. The default value is
      * returned if there is no property of the specified name, if the
      * property does not have the correct numeric format, or if the
      * specified name is empty or {@code null}.
-     *
+     *3.第二个参数是默认值。如果没有指定名称的属性，
+     * 如果该属性没有正确的数字格式，或者如果指定的名称为空或null，则返回默认值。
      * @param   nm   property name.
      * @param   val   default value.
      * @return  the {@code Integer} value of the property.
@@ -1114,7 +1176,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * Decodes a {@code String} into an {@code Integer}.
      * Accepts decimal, hexadecimal, and octal numbers given
      * by the following grammar:
-     *
+     * 将  String解码为 Integer。接受语法给出的十进制、十六进制和八进制数
      * <blockquote>
      * <dl>
      * <dt><i>DecodableString:</i>
@@ -1134,7 +1196,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * are as defined in section 3.10.1 of
      * <cite>The Java&trade; Language Specification</cite>,
      * except that underscores are not accepted between digits.
-     *
+     * 2.DecimalNumeral、HexDigits 和 OctalDigits在Java™ 语言规范的第 3.10.1 节中定义，除了数字之间不接受下划线
      * <p>The sequence of characters following an optional
      * sign and/or radix specifier ("{@code 0x}", "{@code 0X}",
      * "{@code #}", or leading zero) is parsed as by the {@code
@@ -1144,7 +1206,10 @@ public final class Integer extends Number implements Comparable<Integer> {
      * result is negated if first character of the specified {@code
      * String} is the minus sign.  No whitespace characters are
      * permitted in the {@code String}.
-     *
+     *3.可选符号和/或基数说明符（“0x”、“0X”、“#”或前导零）之后的字符序列被解析为
+     *  Integer.parseInt具有指定基数（10、16 或 8）的方法。此字符序列必须表示正值，
+     *  否则将抛出 NumberFormatException。如果指定的 String的第一个字符是减号，则结果否定。
+     *  String中不允许出现空白字符。
      * @param     nm the {@code String} to decode.
      * @return    an {@code Integer} object holding the {@code int}
      *             value represented by {@code nm}
@@ -1201,7 +1266,7 @@ public final class Integer extends Number implements Comparable<Integer> {
 
     /**
      * Compares two {@code Integer} objects numerically.
-     *
+     * 以数字方式比较两个 Integer对象。
      * @param   anotherInteger   the {@code Integer} to be compared.
      * @return  the value {@code 0} if this {@code Integer} is
      *          equal to the argument {@code Integer}; a value less than
@@ -1222,6 +1287,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * <pre>
      *    Integer.valueOf(x).compareTo(Integer.valueOf(y))
      * </pre>
+     * 以数字方式比较两个int值。返回的值与以下返回的值相同：Integer.valueOf(x).compareTo(Integer.valueOf(y))
      *
      * @param  x the first {@code int} to compare
      * @param  y the second {@code int} to compare
@@ -1237,7 +1303,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Compares two {@code int} values numerically treating the values
      * as unsigned.
-     *
+     * 比较两个 {@code int} 值，以数字方式将这些值视为无符号。
      * @param  x the first {@code int} to compare
      * @param  y the second {@code int} to compare
      * @return the value {@code 0} if {@code x == y}; a value less
@@ -1256,12 +1322,13 @@ public final class Integer extends Number implements Comparable<Integer> {
      * high-order 32 bits of the {@code long} are zero and the
      * low-order 32 bits are equal to the bits of the integer
      * argument.
-     *
+     * 1.通过无符号转换将参数转换为long。在到 long的无符号转换中，
+     * long的高 32 位为零，低 32 位等于整数参数的位。
      * Consequently, zero and positive {@code int} values are mapped
      * to a numerically equal {@code long} value and negative {@code
      * int} values are mapped to a {@code long} value equal to the
      * input plus 2<sup>32</sup>.
-     *
+     * 2.因此，零和正int值被映射到一个数值相等的long值，负 int值被映射到一个 long值等于输入加上 2的32次方
      * @param  x the value to convert to an unsigned {@code long}
      * @return the argument converted to {@code long} by an unsigned
      *         conversion
@@ -1275,13 +1342,14 @@ public final class Integer extends Number implements Comparable<Integer> {
      * Returns the unsigned quotient of dividing the first argument by
      * the second where each argument and the result is interpreted as
      * an unsigned value.
-     *
+     * 1.返回第一个参数除以第二个参数的无符号商，其中每个参数和结果被解释为无符号值。
      * <p>Note that in two's complement arithmetic, the three other
      * basic arithmetic operations of add, subtract, and multiply are
      * bit-wise identical if the two operands are regarded as both
      * being signed or both being unsigned.  Therefore separate {@code
      * addUnsigned}, etc. methods are not provided.
-     *
+     * 2.请注意，在二进制补码算术中，如果将两个操作数都视为有符号或无符号，
+     * 则加、减和乘这三个其他基本算术运算在位上相同。因此不提供单独的 addUnsigned等方法。
      * @param dividend the value to be divided
      * @param divisor the value doing the dividing
      * @return the unsigned quotient of the first argument divided by
@@ -1291,6 +1359,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      */
     public static int divideUnsigned(int dividend, int divisor) {
         // In lieu of tricky code, for now just use long arithmetic.
+        //代替棘手的代码，现在只使用长算术
         return (int)(toUnsignedLong(dividend) / toUnsignedLong(divisor));
     }
 
@@ -1298,7 +1367,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * Returns the unsigned remainder from dividing the first argument
      * by the second where each argument and the result is interpreted
      * as an unsigned value.
-     *
+     * 返回第一个参数除以第二个参数的无符号余数，其中每个参数和结果被解释为无符号值。
      * @param dividend the value to be divided
      * @param divisor the value doing the dividing
      * @return the unsigned remainder of the first argument divided by
@@ -1317,7 +1386,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * The number of bits used to represent an {@code int} value in two's
      * complement binary form.
-     *
+     * 用于以二进制补码形式表示 int值的位
      * @since 1.5
      */
     @Native public static final int SIZE = 32;
@@ -1325,7 +1394,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * The number of bytes used to represent a {@code int} value in two's
      * complement binary form.
-     *
+     * 用于以二进制补码形式表示 int 值的字节数
      * @since 1.8
      */
     public static final int BYTES = SIZE / Byte.SIZE;
@@ -1336,7 +1405,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code int} value.  Returns zero if the specified value has no
      * one-bits in its two's complement binary representation, that is, if it
      * is equal to zero.
-     *
+     * 1.返回一个 int值，在指定的 int值中最高位（“最左边”）的位置最多只有一个一位。
+     * 如果指定值的二进制补码表示中没有一位，即如果它等于零，则返回零
      * @param i the value whose highest one bit is to be computed
      * @return an {@code int} value with a single one-bit, in the position
      *     of the highest-order one-bit in the specified value, or zero if
@@ -1359,7 +1429,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code int} value.  Returns zero if the specified value has no
      * one-bits in its two's complement binary representation, that is, if it
      * is equal to zero.
-     *
+     * 1.返回一个int值，最多只有一个一位，位于指定的 int值中最低（“最右边”）一位的位置。
+     * 如果指定值的二进制补码表示中没有一位，即如果它等于零，则返回零
      * @param i the value whose lowest one bit is to be computed
      * @return an {@code int} value with a single one-bit, in the position
      *     of the lowest-order one-bit in the specified value, or zero if
@@ -1377,14 +1448,17 @@ public final class Integer extends Number implements Comparable<Integer> {
      * of the specified {@code int} value.  Returns 32 if the
      * specified value has no one-bits in its two's complement representation,
      * in other words if it is equal to zero.
-     *
+     * 1.返回指定int值的二进制补码表示中最高位（“最左边”）一位之前的零位数。
+     * 如果指定值在其二进制补码表示中没有一位，换句话说，如果它等于 0，则返回 32。
      * <p>Note that this method is closely related to the logarithm base 2.
      * For all positive {@code int} values x:
      * <ul>
      * <li>floor(log<sub>2</sub>(x)) = {@code 31 - numberOfLeadingZeros(x)}
      * <li>ceil(log<sub>2</sub>(x)) = {@code 32 - numberOfLeadingZeros(x - 1)}
      * </ul>
-     *
+     * 2.请注意，此方法与以 2 为底的对数密切相关。对于所有正 int值 x：
+     *      floor(log2(x)) = 31 - numberOfLeadingZeros(x)
+     *      ceil(log2(x)) = 32 - numberOfLeadingZeros(x - 1)
      * @param i the value whose number of leading zeros is to be computed
      * @return the number of zero bits preceding the highest-order
      *     ("leftmost") one-bit in the two's complement binary representation
@@ -1411,7 +1485,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * {@code int} value.  Returns 32 if the specified value has no
      * one-bits in its two's complement representation, in other words if it is
      * equal to zero.
-     *
+     * 返回指定 int值的二进制补码表示中的最低位（“最右边”）一位之后的零位数。
+     * 如果指定值在其二进制补码表示中没有一位，换句话说，如果它等于 0，则返回 32。
      * @param i the value whose number of trailing zeros is to be computed
      * @return the number of zero bits following the lowest-order ("rightmost")
      *     one-bit in the two's complement binary representation of the
@@ -1435,7 +1510,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * Returns the number of one-bits in the two's complement binary
      * representation of the specified {@code int} value.  This function is
      * sometimes referred to as the <i>population count</i>.
-     *
+     * 返回指定 int值的二进制补码表示中的一位数。此函数有时称为人口计数。
      * @param i the value whose bits are to be counted
      * @return the number of one-bits in the two's complement binary
      *     representation of the specified {@code int} value.
@@ -1456,14 +1531,17 @@ public final class Integer extends Number implements Comparable<Integer> {
      * representation of the specified {@code int} value left by the
      * specified number of bits.  (Bits shifted out of the left hand, or
      * high-order, side reenter on the right, or low-order.)
-     *
+     * 1.返回通过将指定的int值的二进制补码表示形式向左旋转指定位数而获得的值。
+     * （从左手或高阶移出的位重新进入右侧或低阶。）
      * <p>Note that left rotation with a negative distance is equivalent to
      * right rotation: {@code rotateLeft(val, -distance) == rotateRight(val,
      * distance)}.  Note also that rotation by any multiple of 32 is a
      * no-op, so all but the last five bits of the rotation distance can be
      * ignored, even if the distance is negative: {@code rotateLeft(val,
      * distance) == rotateLeft(val, distance & 0x1F)}.
-     *
+     * 2.请注意，负距离的左旋转等效于右旋转： rotateLeft(val, -distance) == rotateRight(val, distance)。
+     * 另请注意，以 32 的任意倍数旋转是空操作，因此可以忽略旋转距离的最后五位以外的所有位，
+     * 即使距离为负数：rotateLeft(val, distance) == rotateLeft( val、距离和 0x1F)。
      * @param i the value whose bits are to be rotated left
      * @param distance the number of bit positions to rotate left
      * @return the value obtained by rotating the two's complement binary
@@ -1480,14 +1558,17 @@ public final class Integer extends Number implements Comparable<Integer> {
      * representation of the specified {@code int} value right by the
      * specified number of bits.  (Bits shifted out of the right hand, or
      * low-order, side reenter on the left, or high-order.)
-     *
+     * 1.返回通过将指定的int值的二进制补码表示向右旋转指定的位数而获得的值。
+     * （从右侧移出的位，或低位，在左侧重新进入，或高位。）
      * <p>Note that right rotation with a negative distance is equivalent to
      * left rotation: {@code rotateRight(val, -distance) == rotateLeft(val,
      * distance)}.  Note also that rotation by any multiple of 32 is a
      * no-op, so all but the last five bits of the rotation distance can be
      * ignored, even if the distance is negative: {@code rotateRight(val,
      * distance) == rotateRight(val, distance & 0x1F)}.
-     *
+     * 2.请注意，负距离的右旋转等同于左旋转：rotateRight(val, -distance) == rotateLeft(val, distance)
+     * 。另请注意，以 32 的任意倍数旋转是空操作，因此可以忽略旋转距离的最后五位以外的所有位，
+     * 即使距离为负数： rotateRight(val, distance) == rotateRight( val、距离和 0x1F)。
      * @param i the value whose bits are to be rotated right
      * @param distance the number of bit positions to rotate right
      * @return the value obtained by rotating the two's complement binary
@@ -1503,7 +1584,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * Returns the value obtained by reversing the order of the bits in the
      * two's complement binary representation of the specified {@code int}
      * value.
-     *
+     * 返回通过反转指定 int值的二进制补码表示中的位顺序而获得的值。
      * @param i the value to be reversed
      * @return the value obtained by reversing order of the bits in the
      *     specified {@code int} value.
@@ -1523,7 +1604,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * Returns the signum function of the specified {@code int} value.  (The
      * return value is -1 if the specified value is negative; 0 if the
      * specified value is zero; and 1 if the specified value is positive.)
-     *
+     * 返回指定int值的符号函数。
+     * （如果指定值为负，则返回值为 -1；如果指定值为 0，则返回值为 0；如果指定值为正，则返回值为 1。）
      * @param i the value whose signum is to be computed
      * @return the signum function of the specified {@code int} value.
      * @since 1.5
@@ -1536,7 +1618,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns the value obtained by reversing the order of the bytes in the
      * two's complement representation of the specified {@code int} value.
-     *
+     * 1.返回通过反转指定 int 值的二进制补码表示中的字节顺序而获得的值。
      * @param i the value whose bytes are to be reversed
      * @return the value obtained by reversing the bytes in the specified
      *     {@code int} value.
@@ -1551,7 +1633,7 @@ public final class Integer extends Number implements Comparable<Integer> {
 
     /**
      * Adds two integers together as per the + operator.
-     *
+     * 根据 + 运算符将两个整数相加。
      * @param a the first operand
      * @param b the second operand
      * @return the sum of {@code a} and {@code b}
@@ -1565,7 +1647,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns the greater of two {@code int} values
      * as if by calling {@link Math#max(int, int) Math.max}.
-     *
+     * 返回两个int值中的较大者，就像通过调用 Math.max(int, int)
      * @param a the first operand
      * @param b the second operand
      * @return the greater of {@code a} and {@code b}
@@ -1579,7 +1661,7 @@ public final class Integer extends Number implements Comparable<Integer> {
     /**
      * Returns the smaller of two {@code int} values
      * as if by calling {@link Math#min(int, int) Math.min}.
-     *
+     * 返回两个int值中较小的一个，就像通过调用 Math.min(int, int)
      * @param a the first operand
      * @param b the second operand
      * @return the smaller of {@code a} and {@code b}
