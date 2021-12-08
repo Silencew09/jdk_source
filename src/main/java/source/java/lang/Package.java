@@ -61,7 +61,8 @@ import java.lang.annotation.Annotation;
  * by the {@link ClassLoader} instance that
  * loaded the class(es).  Typically, it is stored in the manifest that is
  * distributed with the classes.
- *
+ * 1.Package对象包含有关 Java 包的实现和规范的版本信息,此版本信息由加载类的 ClassLoader实例检索并提供。
+ * 通常，它存储在与类一起分发的清单中
  * <p>The set of classes that make up the package may implement a
  * particular specification and if so the specification title, version number,
  * and vendor strings identify that specification.
@@ -69,7 +70,10 @@ import java.lang.annotation.Annotation;
  * compatible with a particular version, see the {@link
  * #isCompatibleWith isCompatibleWith}
  * method for details.
- *
+ * 2.组成包的一组类可以实现特定的规范，如果是这样，规范标题、版本号和供应商字符串会标识该规范。
+ * 应用程序可以询问包是否与特定版本兼容，有关详细信息，请参阅 isCompatibleWith方法。
+ * 3.规范版本号使用的语法由以句点“.”分隔的非负十进制整数组成，例如“2.0”或“1.2.3.4.5.6.7”。
+ * 这允许使用可扩展的数字来表示主要、次要、微等版本。
  * <p>Specification version numbers use a syntax that consists of nonnegative
  * decimal integers separated by periods ".", for example "2.0" or
  * "1.2.3.4.5.6.7".  This allows an extensible number to be used to represent
@@ -100,18 +104,20 @@ import java.lang.annotation.Annotation;
  * all three implementation strings are vendor specific. The
  * implementation version strings have no specified syntax and should
  * only be compared for equality with desired version identifiers.
- *
+ * 4.实现标题、版本和供应商字符串标识了一个实现，并且可以方便地使用，以便在出现问题时准确报告所涉及的包。
+ * 所有三个实现字符串的内容都是特定于供应商的。实现版本字符串没有指定的语法，只应与所需的版本标识符进行相等性比较。
  * <p>Within each {@code ClassLoader} instance all classes from the same
  * java package have the same Package object.  The static methods allow a package
  * to be found by name or the set of all packages known to the current class
  * loader to be found.
- *
+ * 5.在每个 ClassLoader实例中，来自同一个 java 包的所有类都具有相同的 Package 对象。
+ * 静态方法允许通过名称或当前类加载器已知的所有包的集合来查找包。
  * @see ClassLoader#definePackage
  */
 public class Package implements java.lang.reflect.AnnotatedElement {
     /**
      * Return the name of this package.
-     *
+     * 1.返回此包的名称
      * @return  The fully-qualified name of this package as defined in section 6.5.3 of
      *          <cite>The Java&trade; Language Specification</cite>,
      *          for example, {@code java.lang}
@@ -123,6 +129,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
 
     /**
      * Return the title of the specification that this package implements.
+     * 1.返回此包实现的规范的标题
      * @return the specification title, null is returned if it is not known.
      */
     public String getSpecificationTitle() {
@@ -136,6 +143,8 @@ public class Package implements java.lang.reflect.AnnotatedElement {
      * integers separated by "."'s and may have leading zeros.
      * When version strings are compared the most significant
      * numbers are compared.
+     * 1.返回此包实现的规范的版本号。此版本字符串必须是由“.”分隔的非负十进制整数序列，并且可以有前导零。
+     * 当比较版本字符串时，比较最重要的数字。
      * @return the specification version, null is returned if it is not known.
      */
     public String getSpecificationVersion() {
@@ -146,6 +155,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
      * Return the name of the organization, vendor,
      * or company that owns and maintains the specification
      * of the classes that implement this package.
+     * 返回拥有并维护实现此包的类的规范的组织、供应商或公司的名称
      * @return the specification vendor, null is returned if it is not known.
      */
     public String getSpecificationVendor() {
@@ -154,6 +164,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
 
     /**
      * Return the title of this package.
+     * 返回此包的标题
      * @return the title of the implementation, null is returned if it is not known.
      */
     public String getImplementationTitle() {
@@ -167,6 +178,8 @@ public class Package implements java.lang.reflect.AnnotatedElement {
      * runtime. It may be compared for equality with other
      * package version strings used for this implementation
      * by this vendor for this package.
+     * 返回此实现的版本。它由此实现的供应商分配的任何字符串组成，并且没有 Java 运行时指定或期望的任何特定语法。
+     * 它可以与此供应商为此包的此实现所使用的其他包版本字符串进行比较。
      * @return the version of the implementation, null is returned if it is not known.
      */
     public String getImplementationVersion() {
@@ -176,6 +189,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
     /**
      * Returns the name of the organization,
      * vendor or company that provided this implementation.
+     * 返回提供此实现的组织、供应商或公司的名称
      * @return the vendor that implemented this package..
      */
     public String getImplementationVendor() {
@@ -184,7 +198,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
 
     /**
      * Returns true if this package is sealed.
-     *
+     * 如果此包是密封的，则返回 true。
      * @return true if the package is sealed, false otherwise
      */
     public boolean isSealed() {
@@ -194,7 +208,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
     /**
      * Returns true if this package is sealed with respect to the specified
      * code source url.
-     *
+     * 如果此包相对于指定的代码源 url 是密封的，则返回 true。
      * @param url the code source url
      * @return true if this package is sealed with respect to url
      */
@@ -207,16 +221,17 @@ public class Package implements java.lang.reflect.AnnotatedElement {
      * desired version. It returns true if
      * this packages specification version number is greater than or equal
      * to the desired version number. <p>
-     *
+     * 1.将此包的规范版本与所需版本进行比较。如果此包规范版本号大于或等于所需的版本号，则返回 true
      * Version numbers are compared by sequentially comparing corresponding
      * components of the desired and specification strings.
      * Each component is converted as a decimal integer and the values
      * compared.
+     * 2.通过顺序比较所需字符串和规范字符串的相应组件来比较版本号。每个分量都被转换为十进制整数并比较值。
      * If the specification value is greater than the desired
      * value true is returned. If the value is less false is returned.
      * If the values are equal the period is skipped and the next pair of
      * components is compared.
-     *
+     * 3.如果规范值大于所需值，则返回 true。如果该值较小，则返回 false。如果值相等，则跳过周期并比较下一对组件。
      * @param desired the version string of the desired version.
      * @return true if this package's version number is greater
      *          than or equal to the desired version number
@@ -266,11 +281,12 @@ public class Package implements java.lang.reflect.AnnotatedElement {
      * {@code ClassLoader} instance is null then the set of packages loaded
      * by the system {@code ClassLoader} instance is searched to find the
      * named package. <p>
-     *
+     * 1.在调用者ClassLoader实例中按名称查找包。  调用者ClassLoader实例用于查找命名类对应的包实例。
+     * 如果调用者 ClassLoader实例为空，则搜索系统 ClassLoader实例加载的包集以找到命名包。
      * Packages have attributes for versions and specifications only if the class
      * loader created the package instance with the appropriate attributes. Typically,
      * those attributes are defined in the manifests that accompany the classes.
-     *
+     * 2.仅当类加载器创建具有适当属性的包实例时，包才具有版本和规范的属性。通常，这些属性在类随附的清单中定义。
      * @param name a package name, for example, java.lang.
      * @return the package of the requested name. It may be null if no package
      *          information is available from the archive or codebase.
@@ -293,7 +309,9 @@ public class Package implements java.lang.reflect.AnnotatedElement {
      * instance, which may be represented by {@code null} in some implementations,
      * only packages corresponding to classes loaded by the bootstrap
      * {@code ClassLoader} instance will be returned.
-     *
+     * 获取调用者的ClassLoader实例当前已知的所有包。这些包对应于通过该ClassLoader实例加载或通过名称访问的类。
+     * 如果调用者的ClassLoader实例是 bootstrap ClassLoader实例，在某些实现中可能用null表示，
+     * 那么只有 bootstrap ClassLoader实例加载的类对应的包才会被回来。
      * @return a new array of packages known to the callers {@code ClassLoader}
      * instance.  An zero length array is returned if none are known.
      */
@@ -314,13 +332,15 @@ public class Package implements java.lang.reflect.AnnotatedElement {
      * is the bootstrap class loader, which may be represented by
      * {@code null} in some implementations, then the set of packages
      * loaded by the bootstrap class loader is searched to find the package.
+     * 1.获取指定类的包。类的类加载器用于查找指定类对应的包实例。如果类加载器是bootstrap类加载器，
+     * 在某些实现中可能用null表示，那么搜索bootstrap类加载器加载的包集合来找到包。
      * <p>
      * Packages have attributes for versions and specifications only
      * if the class loader created the package
      * instance with the appropriate attributes. Typically those
      * attributes are defined in the manifests that accompany
-     * the classes.
-     *
+     * the  classes.
+     * 2.仅当类加载器创建具有适当属性的包实例时，包才具有版本和规范的属性。通常，这些属性在类随附的清单中定义。
      * @param c the class to get the package of.
      * @return the package of the class. It may be null if no package
      *          information is available from the archive or codebase.  */
@@ -342,6 +362,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
 
     /**
      * Return the hash code computed from the package name.
+     * 返回根据包名称计算的哈希码。
      * @return the hash code computed from the package name.
      */
     public int hashCode(){
@@ -353,6 +374,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
      * Its value is the string "package " and the package name.
      * If the package title is defined it is appended.
      * If the package version is defined it is appended.
+     * 返回此包的字符串表示形式。它的值是字符串“package”和包名称。如果定义了包标题，则附加它。如果定义了包版本，则会附加它
      * @return the string representation of the package.
      */
     public String toString() {
@@ -375,6 +397,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
                 packageInfo = Class.forName(pkgName + ".package-info", false, loader);
             } catch (ClassNotFoundException ex) {
                 // store a proxy for the package info that has no annotations
+                //存储没有注释的包信息的代理
                 class PackageInfoProxy {}
                 packageInfo = PackageInfoProxy.class;
             }
@@ -444,13 +467,14 @@ public class Package implements java.lang.reflect.AnnotatedElement {
     /**
      * Construct a package instance with the specified version
      * information.
-     * @param name the name of the package
-     * @param spectitle the title of the specification
-     * @param specversion the version of the specification
-     * @param specvendor the organization that maintains the specification
-     * @param impltitle the title of the implementation
-     * @param implversion the version of the implementation
-     * @param implvendor the organization that maintains the implementation
+     * 构造具有指定版本信息的包实例。
+     * @param name the name of the package 包名
+     * @param spectitle the title of the specification 规范的标题
+     * @param specversion the version of the specification 规范的版本
+     * @param specvendor the organization that maintains the specification 维护规范的组织
+     * @param impltitle the title of the implementation 实施的标题
+     * @param implversion the version of the implementation 实现的版本
+     * @param implvendor the organization that maintains the implementation 维护实施的组织
      */
     Package(String name,
             String spectitle, String specversion, String specvendor,
@@ -470,7 +494,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
 
     /*
      * Construct a package using the attributes from the specified manifest.
-     *
+     * 使用指定清单中的属性构建包。
      * @param name the package name
      * @param man the optional manifest for the package
      * @param url the optional code source url for the package
@@ -535,6 +559,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
 
     /*
      * Returns the loaded system package for the specified name.
+     * 返回指定名称的加载系统包。
      */
     static Package getSystemPackage(String name) {
         synchronized (pkgs) {
@@ -552,9 +577,11 @@ public class Package implements java.lang.reflect.AnnotatedElement {
 
     /*
      * Return an array of loaded system packages.
+     * //返回一组加载的系统包
      */
     static Package[] getSystemPackages() {
         // First, update the system package map with new package names
+        //首先，使用新的包名更新系统包映射
         String[] names = getSystemPackages0();
         synchronized (pkgs) {
             for (int i = 0; i < names.length; i++) {
@@ -571,9 +598,11 @@ public class Package implements java.lang.reflect.AnnotatedElement {
             public Package run() {
                 String name = iname;
                 // Get the cached code source url for the file name
+                //获取文件名的缓存代码源url
                 URL url = urls.get(fn);
                 if (url == null) {
                     // URL not found, so create one
+                    //未找到 URL，因此创建一个
                     File file = new File(fn);
                     try {
                         url = ParseUtil.fileToEncodedURL(file);
@@ -582,6 +611,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
                     if (url != null) {
                         urls.put(fn, url);
                         // If loading a JAR file, then also cache the manifest
+                        //如果加载 JAR 文件，则还缓存清单
                         if (file.isFile()) {
                             mans.put(fn, loadManifest(fn));
                         }
@@ -605,6 +635,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
 
     /*
      * Returns the Manifest for the specified JAR file name.
+     * //返回指定 JAR 文件名的清单
      */
     private static Manifest loadManifest(String fn) {
         try (FileInputStream fis = new FileInputStream(fn);
@@ -617,12 +648,15 @@ public class Package implements java.lang.reflect.AnnotatedElement {
     }
 
     // The map of loaded system packages
+    //加载的系统包图
     private static Map<String, Package> pkgs = new HashMap<>(31);
 
     // Maps each directory or zip file name to its corresponding url
+    //将每个目录或 zip 文件名映射到其对应的 url
     private static Map<String, URL> urls = new HashMap<>(10);
 
     // Maps each code source url for a jar file to its manifest
+    //将 jar 文件的每个代码源 url 映射到其清单
     private static Map<String, Manifest> mans = new HashMap<>(10);
 
     private static native String getSystemPackage0(String name);
@@ -630,6 +664,7 @@ public class Package implements java.lang.reflect.AnnotatedElement {
 
     /*
      * Private storage for the package name and attributes.
+     * 包名称和属性的私有存储
      */
     private final String pkgName;
     private final String specTitle;

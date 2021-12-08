@@ -42,7 +42,7 @@ package java.util;
  * implementations place no fixed limits on the number of elements
  * they may contain, but this interface supports capacity-restricted
  * deques as well as those with no fixed size limit.
- *
+ * 1.支持两端元素插入和移除的线性集合
  * <p>This interface defines methods to access the elements at both
  * ends of the deque.  Methods are provided to insert, remove, and
  * examine the element.  Each of these methods exists in two forms:

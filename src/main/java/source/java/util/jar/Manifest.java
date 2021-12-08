@@ -41,7 +41,8 @@ import java.util.Iterator;
  * see the
  * <a href="../../../../technotes/guides/jar/jar.html">
  * Manifest format specification</a>.
- *
+ * 1.Manifest 类用于维护 Manifest 条目名称及其关联的属性。有主要的清单属性以及每个条目的属性。
+ * 有关清单格式的信息，请参阅清单格式规范
  * @author  David Connelly
  * @see     Attributes
  * @since   1.2

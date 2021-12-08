@@ -32,7 +32,10 @@ import java.lang.annotation.*;
  * method declaration in a supertype. If a method is annotated with
  * this annotation type compilers are required to generate an error
  * message unless at least one of the following conditions hold:
- *
+ *指示方法声明旨在覆盖超类型中的方法声明。
+ * 如果使用此注释类型对方法进行注释，则编译器需要生成错误消息，除非至少满足以下条件之一:
+ *  1)该方法确实覆盖或实现了在超类型中声明的方法
+ *  2)该方法具有一个签名，该签名与Object中声明的任何公共方法的签名等效
  * <ul><li>
  * The method does override or implement a method declared in a
  * supertype.
