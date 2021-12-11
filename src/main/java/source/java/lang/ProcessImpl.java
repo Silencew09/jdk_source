@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 
 /* This class is for the exclusive use of ProcessBuilder.start() to
  * create new processes.
- *
+ * 该类专供 ProcessBuilder.start() 创建新进程使用
  * @author Martin Buchholz
  * @since   1.5
  */
@@ -249,6 +249,9 @@ final class ProcessImpl extends Process {
 
         // For [.exe] or [.com] file the unpaired/internal ["]
         // in the argument is not a problem.
+        //关闭内部 ["] 的 MS 启发式。如果您需要内部 ["]，请使用显式 [cmd.exe] 调用。
+        // 示例：“cmd.exe”、“C”、“Extended_MS_Syntax” 对于 [.exe] 或 [.com] 文件，
+        // 参数中的 unpaired.internal ["] 不是问题。
         boolean argIsQuoted = isQuoted(
             (verificationType == VERIFICATION_CMD_BAT),
             arg, "Argument has embedded quote, use the explicit CMD.EXE call.");
@@ -331,9 +334,11 @@ final class ProcessImpl extends Process {
             // Legacy mode.
 
             // Normalize path if possible.
+            //如果可能，请规范化路径。
             String executablePath = new File(cmd[0]).getPath();
 
             // No worry about internal, unpaired ["], and redirection/piping.
+            //不用担心内部、未配对的 ["] 和重定向管道
             if (needsEscaping(VERIFICATION_LEGACY, executablePath) )
                 executablePath = quoteString(executablePath);
 
@@ -503,7 +508,8 @@ final class ProcessImpl extends Process {
      * Create a process using the win32 function CreateProcess.
      * The method is synchronized due to MS kb315939 problem.
      * All native handles should restore the inherit flag at the end of call.
-     *
+     * 使用 win32 函数 CreateProcess 创建一个进程。由于 MS kb315939 问题，该方法已同步。
+     * 所有本机句柄都应在调用结束时恢复继承标志
      * @param cmdstr the Windows command line
      * @param envblock NUL-separated, double-NUL-terminated list of
      *        environment strings in VAR=VALUE form

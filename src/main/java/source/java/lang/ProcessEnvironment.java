@@ -73,6 +73,7 @@ final class ProcessEnvironment extends HashMap<String,String>
 
     private static String validateName(String name) {
         // An initial `=' indicates a magic Windows variable name -- OK
+        //初始的 `=' 表示一个神奇的 Windows 变量名——好的
         if (name.indexOf('=', 1)   != -1 ||
             name.indexOf('\u0000') != -1)
             throw new IllegalArgumentException
@@ -199,6 +200,8 @@ final class ProcessEnvironment extends HashMap<String,String>
             // canonicalizes to lower case, while Windows
             // canonicalizes to upper case!  For example, "_" should
             // sort *after* "Z", not before.
+            //我们不能使用 String.compareToIgnoreCase 因为它规范化为小写，
+            // 而 Windows 规范化为大写！例如，“_”应该排在“Z”之后，而不是之前。
             int n1 = s1.length();
             int n2 = s2.length();
             int min = Math.min(n1, n2);

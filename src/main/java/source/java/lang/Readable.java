@@ -31,7 +31,7 @@ import java.io.IOException;
  * A <tt>Readable</tt> is a source of characters. Characters from
  * a <tt>Readable</tt> are made available to callers of the read
  * method via a {@link java.nio.CharBuffer CharBuffer}.
- *
+ * Readable是字符的来源。Readable中的字符通过 java.nio.CharBuffer提供给 read 方法的调用者。
  * @since 1.5
  */
 public interface Readable {
@@ -41,7 +41,7 @@ public interface Readable {
      * The buffer is used as a repository of characters as-is: the only
      * changes made are the results of a put operation. No flipping or
      * rewinding of the buffer is performed.
-     *
+     * 1.尝试将字符读入指定的字符缓冲区。缓冲区按原样用作字符存储库：所做的唯一更改是放置操作的结果。不执行缓冲区的翻转或倒带。
      * @param cb the buffer to read characters into
      * @return The number of {@code char} values added to the buffer,
      *                 or -1 if this source of characters is at its end

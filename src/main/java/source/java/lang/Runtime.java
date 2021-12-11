@@ -35,6 +35,8 @@ import sun.reflect.Reflection;
  * <code>Runtime</code> that allows the application to interface with
  * the environment in which the application is running. The current
  * runtime can be obtained from the <code>getRuntime</code> method.
+ * 1.每个 Java 应用程序都有一个Runtime类的单个实例，
+ * 它允许应用程序与应用程序运行的环境进行交互。当前运行时可以从getRuntime方法获得
  * <p>
  * An application cannot create its own instance of this class.
  *
@@ -50,7 +52,7 @@ public class Runtime {
      * Returns the runtime object associated with the current Java application.
      * Most of the methods of class <code>Runtime</code> are instance
      * methods and must be invoked with respect to the current runtime object.
-     *
+     * 1.返回与当前 Java 应用程序关联的运行时对象。 Runtime类的大多数方法都是实例方法，必须针对当前运行时对象调用。
      * @return  the <code>Runtime</code> object associated with the current
      *          Java application.
      */
@@ -59,6 +61,7 @@ public class Runtime {
     }
 
     /** Don't let anyone else instantiate this class */
+    //不要让其他人实例化这个类
     private Runtime() {}
 
     /**
@@ -66,7 +69,8 @@ public class Runtime {
      * shutdown sequence.  This method never returns normally.  The argument
      * serves as a status code; by convention, a nonzero status code indicates
      * abnormal termination.
-     *
+     * 1.通过启动其关闭序列来终止当前运行的 Java 虚拟机。此方法永远不会正常返回。
+     * 参数用作状态码；按照惯例，非零状态代码表示异常终止。
      * <p> The virtual machine's shutdown sequence consists of two phases.  In
      * the first phase all registered {@link #addShutdownHook shutdown hooks},
      * if any, are started in some unspecified order and allowed to run
@@ -74,17 +78,22 @@ public class Runtime {
      * finalizers are run if {@link #runFinalizersOnExit finalization-on-exit}
      * has been enabled.  Once this is done the virtual machine {@link #halt
      * halts}.
-     *
+     * 2.虚拟机的关闭顺序包括两个阶段。在第一阶段，所有注册的addShutdownHook 关闭钩子
+     * （如果有）都以某种未指定的顺序启动，并允许并发运行直到它们完成。在第二阶段，
+     * 如果runFinalizersOnExit finalization-on-exit已启用，则所有未调用的终结器都会运行。
+     * 完成此操作后，虚拟机暂停。
      * <p> If this method is invoked after the virtual machine has begun its
      * shutdown sequence then if shutdown hooks are being run this method will
      * block indefinitely.  If shutdown hooks have already been run and on-exit
      * finalization has been enabled then this method halts the virtual machine
      * with the given status code if the status is nonzero; otherwise, it
      * blocks indefinitely.
-     *
+     * 3.如果在虚拟机开始其关闭序列后调用此方法，则如果正在运行关闭挂钩，则此方法将无限期阻塞。
+     * 如果关闭钩子已经运行并且退出完成已经启用，那么如果状态非零，则此方法将停止具有给定状态代码的虚拟机；
+     * 否则，它会无限期地阻塞
      * <p> The <tt>{@link System#exit(int) System.exit}</tt> method is the
      * conventional and convenient means of invoking this method. <p>
-     *
+     * 4. System.exit(int)方法是调用此方法的常规且方便的方法
      * @param  status
      *         Termination status.  By convention, a nonzero status code
      *         indicates abnormal termination.
@@ -111,7 +120,7 @@ public class Runtime {
 
     /**
      * Registers a new virtual-machine shutdown hook.
-     *
+     * 1.注册一个新的虚拟机关闭钩子
      * <p> The Java virtual machine <i>shuts down</i> in response to two kinds
      * of events:
      *
@@ -124,7 +133,8 @@ public class Runtime {
      *   <li> The virtual machine is <i>terminated</i> in response to a
      *   user interrupt, such as typing <tt>^C</tt>, or a system-wide event,
      *   such as user logoff or system shutdown.
-     *
+     * 2.程序退出正常，当最后一个非守护线程退出时或者当exit （相当于，System.exit(int) ）方法被调用，
+     * 或虚拟机被终止以响应用户中断，例如键入^C，或系统范围的事件，例如用户注销或系统关掉。
      *   </ul>
      *
      * <p> A <i>shutdown hook</i> is simply an initialized but unstarted
@@ -136,16 +146,20 @@ public class Runtime {
      * continue to run during the shutdown sequence, as will non-daemon threads
      * if shutdown was initiated by invoking the <tt>{@link #exit exit}</tt>
      * method.
-     *
+     * 3.shutdown hook只是一个初始化但未启动的线程。当虚拟机开始其关闭序列时，
+     * 它将以某种未指定的顺序启动所有已注册的关闭挂钩，并让它们同时运行。当所有钩子都完成后，
+     * 如果启用了退出时终结，它将运行所有未调用的终结器。最后，虚拟机将停止。请注意，
+     * 守护线程将在关闭序列期间继续运行，如果关闭是通过调用 exit 方法启动的，那么非守护线程也将继续运行。
      * <p> Once the shutdown sequence has begun it can be stopped only by
      * invoking the <tt>{@link #halt halt}</tt> method, which forcibly
      * terminates the virtual machine.
-     *
+     * 4.一旦关闭序列开始，它只能通过调用halt方法来停止，该方法强制终止虚拟机。
      * <p> Once the shutdown sequence has begun it is impossible to register a
      * new shutdown hook or de-register a previously-registered hook.
      * Attempting either of these operations will cause an
      * <tt>{@link IllegalStateException}</tt> to be thrown.
-     *
+     * 5.一旦关闭序列开始，就不可能注册新的关闭挂钩或取消注册先前注册的挂钩。
+     * 尝试这些操作中的任何一个都会导致抛出 IllegalStateException。
      * <p> Shutdown hooks run at a delicate time in the life cycle of a virtual
      * machine and should therefore be coded defensively.  They should, in
      * particular, be written to be thread-safe and to avoid deadlocks insofar
@@ -154,7 +168,9 @@ public class Runtime {
      * the process of shutting down.  Attempts to use other thread-based
      * services such as the AWT event-dispatch thread, for example, may lead to
      * deadlocks.
-     *
+     * 6.关闭钩子在虚拟机生命周期的一个微妙时刻运行，因此应该进行防御性编码。特别是，它们应该被编写为线程安全的，
+     * 并尽可能避免死锁。他们也不应该盲目依赖可能已经注册了自己的关闭钩子的服务，因此他们自己可能会在关闭过程中。
+     * 例如，尝试使用其他基于线程的服务（例如 AWT 事件分派线程）可能会导致死锁。
      * <p> Shutdown hooks should also finish their work quickly.  When a
      * program invokes <tt>{@link #exit exit}</tt> the expectation is
      * that the virtual machine will promptly shut down and exit.  When the
@@ -163,7 +179,9 @@ public class Runtime {
      * which to shut down and exit.  It is therefore inadvisable to attempt any
      * user interaction or to perform a long-running computation in a shutdown
      * hook.
-     *
+     * 7.关闭钩子也应该快速完成它们的工作。当程序调用 exit时，期望虚拟机将立即关闭并退出。
+     * 当虚拟机由于用户注销或系统关闭而终止时，底层操作系统可能只允许关闭和退出的固定时间量。
+     * 因此，不建议尝试任何用户交互或在关闭挂钩中执行长时间运行的计算
      * <p> Uncaught exceptions are handled in shutdown hooks just as in any
      * other thread, by invoking the <tt>{@link ThreadGroup#uncaughtException
      * uncaughtException}</tt> method of the thread's <tt>{@link
@@ -171,7 +189,8 @@ public class Runtime {
      * prints the exception's stack trace to <tt>{@link System#err}</tt> and
      * terminates the thread; it does not cause the virtual machine to exit or
      * halt.
-     *
+     * 8.通过调用线程的 ThreadGroup对象的ThreadGroup.uncaughtException方法，在关闭钩子中处理未捕获的异常，
+     * 就像在任何其他线程中一样。此方法的默认实现将异常的堆栈跟踪打印到 System.err并终止线程；它不会导致虚拟机退出或停止
      * <p> In rare circumstances the virtual machine may <i>abort</i>, that is,
      * stop running without shutting down cleanly.  This occurs when the
      * virtual machine is terminated externally, for example with the
@@ -181,7 +200,10 @@ public class Runtime {
      * attempting to access nonexistent memory.  If the virtual machine aborts
      * then no guarantee can be made about whether or not any shutdown hooks
      * will be run. <p>
-     *
+     * 9.在极少数情况下，虚拟机可能中止，即停止运行而不完全关闭。当虚拟机从外部终止时会发生这种情况，
+     * 例如在 Unix 上使用 SIGKILL信号或在 Microsoft Windows 上使用 TerminateProcess调用。
+     * 如果本地方法出错，例如破坏内部数据结构或尝试访问不存在的内存，虚拟机也可能中止。
+     * 如果虚拟机中止，则无法保证是否会运行任何关闭挂钩。
      * @param   hook
      *          An initialized but unstarted <tt>{@link Thread}</tt> object
      *
@@ -213,7 +235,7 @@ public class Runtime {
 
     /**
      * De-registers a previously-registered virtual-machine shutdown hook. <p>
-     *
+     * 取消注册先前注册的虚拟机关闭挂钩
      * @param hook the hook to remove
      * @return <tt>true</tt> if the specified hook had previously been
      * registered and was successfully de-registered, <tt>false</tt>
@@ -242,14 +264,16 @@ public class Runtime {
     /**
      * Forcibly terminates the currently running Java virtual machine.  This
      * method never returns normally.
-     *
+     * 1.强制终止当前运行的 Java 虚拟机。此方法永远不会正常返回。
      * <p> This method should be used with extreme caution.  Unlike the
      * <tt>{@link #exit exit}</tt> method, this method does not cause shutdown
      * hooks to be started and does not run uninvoked finalizers if
      * finalization-on-exit has been enabled.  If the shutdown sequence has
      * already been initiated then this method does not wait for any running
      * shutdown hooks or finalizers to finish their work. <p>
-     *
+     *2.这种方法应该非常谨慎地使用。与 exit方法不同，此方法不会导致关闭挂钩启动，
+     * 并且如果启用了退出时终结，则不会运行未调用的终结器。如果关闭序列已经启动，
+     * 则此方法不会等待任何正在运行的关闭挂钩或终结器完成其工作。
      * @param  status
      *         Termination status.  By convention, a nonzero status code
      *         indicates abnormal termination.  If the <tt>{@link Runtime#exit
@@ -280,12 +304,13 @@ public class Runtime {
      * finalizers of all objects that have finalizers that have not yet been
      * automatically invoked are to be run before the Java runtime exits.
      * By default, finalization on exit is disabled.
-     *
+     * 1.退出时启用或禁用终结；这样做指定所有具有尚未自动调用的终结器的对象的终结器将在 Java 运行时退出之前运行。
+     * 默认情况下，退出时的终结是禁用的
      * <p>If there is a security manager,
      * its <code>checkExit</code> method is first called
      * with 0 as its argument to ensure the exit is allowed.
      * This could result in a SecurityException.
-     *
+     * 2.如果存在安全管理器，则首先调用其 checkExit方法，并使用 0 作为其参数以确保允许退出。这可能会导致 SecurityException。
      * @param value true to enable finalization on exit, false to disable
      * @deprecated  This method is inherently unsafe.  It may result in
      *      finalizers being called on live objects while other threads are
@@ -316,12 +341,12 @@ public class Runtime {
 
     /**
      * Executes the specified string command in a separate process.
-     *
+     * 1.在单独的进程中执行指定的字符串命令。
      * <p>This is a convenience method.  An invocation of the form
      * <tt>exec(command)</tt>
      * behaves in exactly the same way as the invocation
      * <tt>{@link #exec(String, String[], File) exec}(command, null, null)</tt>.
-     *
+     * 2.这是一种方便的方法。exec(command)形式的调用与调用exec(String, String[], File) exec}(command, null, null)。
      * @param   command   a specified system command.
      *
      * @return  A new {@link Process} object for managing the subprocess
@@ -350,12 +375,12 @@ public class Runtime {
     /**
      * Executes the specified string command in a separate process with the
      * specified environment.
-     *
+     * 1.在具有指定环境的单独进程中执行指定的字符串命令。
      * <p>This is a convenience method.  An invocation of the form
      * <tt>exec(command, envp)</tt>
      * behaves in exactly the same way as the invocation
      * <tt>{@link #exec(String, String[], File) exec}(command, envp, null)</tt>.
-     *
+     * 2.这是一种方便的方法。exec(command, envp)形式的调用与调用 exec(String, String[], File) exec}(command, envp, null )。
      * @param   command   a specified system command.
      *
      * @param   envp      array of strings, each element of which
@@ -391,13 +416,15 @@ public class Runtime {
     /**
      * Executes the specified string command in a separate process with the
      * specified environment and working directory.
-     *
+     * 1.在具有指定环境和工作目录的单独进程中执行指定的字符串命令
      * <p>This is a convenience method.  An invocation of the form
      * <tt>exec(command, envp, dir)</tt>
      * behaves in exactly the same way as the invocation
      * <tt>{@link #exec(String[], String[], File) exec}(cmdarray, envp, dir)</tt>,
      * where <code>cmdarray</code> is an array of all the tokens in
      * <code>command</code>.
+     * 2.这是一种方便的方法。exec(command, envp, dir)形式的调用与调用 exec(String[], String[], File)
+     * exec(cmdarray , envp, dir)，其中cmdarray是 command中所有标记的数组
      *
      * <p>More precisely, the <code>command</code> string is broken
      * into tokens using a {@link StringTokenizer} created by the call
@@ -405,7 +432,8 @@ public class Runtime {
      * further modification of the character categories.  The tokens
      * produced by the tokenizer are then placed in the new string
      * array <code>cmdarray</code>, in the same order.
-     *
+     * 3.更准确地说，command字符串使用由调用new StringTokenizer(command)创建的StringTokenizer分解为标记，
+     * 而没有进一步修改字符类别.然后将标记器生成的标记以相同的顺序放置在新的字符串数组cmdarray中。
      * @param   command   a specified system command.
      *
      * @param   envp      array of strings, each element of which
