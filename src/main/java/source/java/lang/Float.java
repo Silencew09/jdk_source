@@ -49,6 +49,7 @@ import sun.misc.DoubleConsts;
 public final class Float extends Number implements Comparable<Float> {
     /**
      * A constant holding the positive infinity of type
+     * 保持类型的正无穷大的常数
      * {@code float}. It is equal to the value returned by
      * {@code Float.intBitsToFloat(0x7f800000)}.
      * 保持float类型的正无穷大的常量。它等于 Float.intBitsToFloat(0x7f800000)返回的值
@@ -57,6 +58,7 @@ public final class Float extends Number implements Comparable<Float> {
 
     /**
      * A constant holding the negative infinity of type
+     * 保持类型的负无穷大的常数
      * {@code float}. It is equal to the value returned by
      * {@code Float.intBitsToFloat(0xff800000)}.
      * 一个常量，持有float类型的负无穷大。它等于Float.intBitsToFloat(0xff800000)返回的值
@@ -65,6 +67,7 @@ public final class Float extends Number implements Comparable<Float> {
 
     /**
      * A constant holding a Not-a-Number (NaN) value of type
+     * 保存类型为非数字 (NaN) 值的常量
      * {@code float}.  It is equivalent to the value returned by
      * {@code Float.intBitsToFloat(0x7fc00000)}.
      * 持有float类型的非数字 (NaN) 值的常量。相当于Float.intBitsToFloat(0x7fc00000)返回的值
@@ -73,6 +76,7 @@ public final class Float extends Number implements Comparable<Float> {
 
     /**
      * A constant holding the largest positive finite value of type
+     * 保持最大正有限值类型的常数
      * {@code float}, (2-2<sup>-23</sup>)&middot;2<sup>127</sup>.
      * It is equal to the hexadecimal floating-point literal
      * {@code 0x1.fffffeP+127f} and also equal to
