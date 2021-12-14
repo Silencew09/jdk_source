@@ -33,7 +33,7 @@ import sun.reflect.misc.ReflectUtil;
 /**
  * A description of a Serializable field from a Serializable class.  An array
  * of ObjectStreamFields is used to declare the Serializable fields of a class.
- *
+ * 1.Serializable 类中的 Serializable 字段的描述。 ObjectStreamFields 数组用于声明类的 Serializable 字段。
  * @author      Mike Warres
  * @author      Roger Riggs
  * @see ObjectStreamClass

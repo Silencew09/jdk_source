@@ -349,7 +349,8 @@ public final class StrictMath {
      * argument.  <li>If the argument is NaN or an infinity or
      * positive zero or negative zero, then the result is the same as
      * the argument.</ul>
-     *
+     * 返回小于或等于参数且等于数学整数的最大（最接近正无穷大）double 值。特殊情况：
+     * 如果参数值已经等于一个数学整数，则结果与参数相同。如果参数是 NaN 或无穷大或正零或负零，则结果与参数相同。
      * @param   a   a value.
      * @return  the largest (closest to positive infinity)
      *          floating-point value that less than or equal to the argument
@@ -361,7 +362,7 @@ public final class StrictMath {
 
     /**
      * Internal method to share logic between floor and ceil.
-     *
+     * 在 floor 和 ceil 之间共享逻辑的内部方法。
      * @param a the value to be floored or ceiled
      * @param negativeBoundary result for values in (-1, 0)
      * @param positiveBoundary result for values in (0, 1)
@@ -378,17 +379,20 @@ public final class StrictMath {
              * Absolute value of argument is less than 1.
              * floorOrceil(-0.0) => -0.0
              * floorOrceil(+0.0) => +0.0
+             * 参数的绝对值小于 1。 floorOrceil(-0.0) => -0.0 floorOrceil(+0.0) => +0.0
              */
             return ((a == 0.0) ? a :
                     ( (a < 0.0) ?  negativeBoundary : positiveBoundary) );
         } else if (exponent >= 52) {
             /*
              * Infinity, NaN, or a value so large it must be integral.
+             * 无穷大、NaN 或大到必须是整数的值
              */
             return a;
         }
         // Else the argument is either an integral value already XOR it
         // has to be rounded to one.
+        //否则参数要么是一个已经 XOR 的整数值，它必须四舍五入为 1
         assert exponent >= 0 && exponent <= 51;
 
         long doppel = Double.doubleToRawLongBits(a);
@@ -414,7 +418,10 @@ public final class StrictMath {
      * integer, then the result is the same as the argument.
      * <li>If the argument is NaN or an infinity or positive zero or negative
      * zero, then the result is the same as the argument.</ul>
-     *
+     * 1.返回值与参数最接近且等于数学整数的 double 值。如果作为数学整数的两个 double值与参数值同样接近，
+     * 则结果是偶数的整数值。特殊情况：
+     * 如果参数值已经等于一个数学整数，则结果与参数相同。
+     * 如果参数是 NaN 或无穷大或正零或负零，则结果与参数相同。
      * @param   a   a value.
      * @return  the closest floating-point value to {@code a} that is
      *          equal to a mathematical integer.
@@ -427,12 +434,15 @@ public final class StrictMath {
          * enough significand bits for a number that large to have any
          * fractional portion), an infinity, or a NaN.  In any of
          * these cases, rint of the argument is the argument.
-         *
+         * 1.如果 a 的绝对值不小于 2^52，那么它要么是一个有限整数
+         * （double 格式没有足够的有效位来处理一个大到没有小数部分的数字）、
+         * 一个无穷大或一个 NaN。在任何这些情况下，论点的 rint 就是论点
          * Otherwise, the sum (twoToThe52 + a ) will properly round
          * away any fractional portion of a since ulp(twoToThe52) ==
          * 1.0; subtracting out twoToThe52 from this sum will then be
          * exact and leave the rounded integer portion of a.
-         *
+         * 2.否则，总和 (twoToThe52 + a ) 将正确舍入 a 的任何小数部分，
+         * 因为 ulp(twoToThe52) == 1.0;从这个总和中减去 twoToThe52 将是精确的，并留下 a 的四舍五入的整数部分。
          * This method does *not* need to be declared strictfp to get
          * fully reproducible results.  Whether or not a method is
          * declared strictfp can only make a difference in the
@@ -445,6 +455,11 @@ public final class StrictMath {
          * cannot overflow or meaningfully underflow.  Finally, the
          * last multiply in the return statement is by plus or minus
          * 1.0, which is exact too.
+         * 3.此方法不需要声明为 strictfp 即可获得完全可重现的结果。如果某些操作会溢出或下溢，
+         * 那么是否声明了 strictfp 方法只会在返回结果中产生差异。操作 (twoToThe52 + a ) 不能溢出，
+         * 因为 a 的大值被筛选出来；由于 twoToThe52 太大，添加不能下溢。
+         * 减法 ((twoToThe52 + a ) - twoToThe52) 将与上面讨论的一样精确，
+         * 因此不会溢出或有意义的下溢。最后，return 语句中的最后一个乘法是加减 1.0，这也是精确的。
          */
         double twoToThe52 = (double)(1L << 52); // 2^52
         double sign = Math.copySign(1.0, a); // preserve sign info

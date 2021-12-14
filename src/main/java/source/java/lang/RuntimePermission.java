@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
  * contains a name (also referred to as a "target name") but
  * no actions list; you either have the named permission
  * or you don't.
- *
+ * 1.此类用于运行时权限。 RuntimePermission 包含名称（也称为“目标名称”）但不包含操作列表；您要么拥有指定权限，要么没有。
  * <P>
  * The target name is the name of the runtime permission (see below). The
  * naming convention follows the  hierarchical property naming convention.
@@ -43,13 +43,18 @@ import java.util.StringTokenizer;
  * may appear at the end of the name, following a ".", or by itself, to
  * signify a wildcard match. For example: "loadLibrary.*" and "*" signify a
  * wildcard match, while "*loadLibrary" and "a*b" do not.
+ * 2.目标名称是运行时权限的名称（见下文）。命名约定遵循分层属性命名约定。
+ * 此外，星号可能出现在名称的末尾，跟在“.”之后，或单独出现，以表示通配符匹配。
+ * 例如：“loadLibrary.*”。和 "*" 表示通配符匹配，而 "*loadLibrary" 和 "a*b" 不表示
  * <P>
  * The following table lists all the possible RuntimePermission target names,
  * and for each provides a description of what the permission allows
  * and a discussion of the risks of granting code the permission.
- *
+ * 3.下表列出了所有可能的 RuntimePermission 目标名称，
+ * 并为每个目标名称提供了权限所允许的内容的描述以及对授予代码权限的风险的讨论
  * <table border=1 cellpadding=5 summary="permission target name,
  *  what the target allows,and associated risks">
+ *  4.border=1 cellpadding=5 summary="权限目标名称、目标允许的内容以及相关风险
  * <tr>
  * <th>Permission Target Name</th>
  * <th>What the Permission Allows</th>
@@ -65,6 +70,8 @@ import java.util.StringTokenizer;
  * These newly loaded classes could be placed into any protection
  * domain by the class loader, thereby automatically granting the
  * classes the permissions for that domain.</td>
+ * 5.可以实例化自己的类加载器的恶意应用程序然后可以将自己的流氓类加载到系统中。
+ * 这些新加载的类可以被类加载器放置到任何保护域中，从而自动授予这些类对该域的权限
  * </tr>
  *
  * <tr>
@@ -76,6 +83,8 @@ import java.util.StringTokenizer;
  * having access to a class's class loader allows the attacker to
  * load other classes available to that class loader. The attacker
  * would typically otherwise not have access to those classes.</td>
+ * 6.这将授予攻击者获取特定类的类加载器的权限。这是危险的，因为访问类的类加载器允许攻击者加载该类加载器可用的其他类。
+ * 否则攻击者通常无法访问这些类
  * </tr>
  *
  * <tr>
@@ -86,6 +95,8 @@ import java.util.StringTokenizer;
  * class loader. Granting setContextClassLoader permission would allow
  * code to change which context class loader is used
  * for a particular thread, including system threads.</td>
+ * 7.当他们需要查找系统类加载器中可能不存在的资源时。授予 setContextClassLoader
+ * 权限将允许代码更改用于特定线程（包括系统线程）的上下文类加载器。
  * </tr>
  *
  * <tr>
@@ -96,6 +107,8 @@ import java.util.StringTokenizer;
  * class loader. Granting enableContextClassLoaderOverride permission would allow
  * a subclass of Thread to override the methods that are used
  * to get or set the context class loader for a particular thread.</td>
+ * 8.当他们需要查找系统类加载器中可能不存在的资源时。授予 enableContextClassLoaderOverride
+ * 权限将允许 Thread 的子类覆盖用于获取或设置特定线程的上下文类加载器的方法
  * </tr>
  *
  * <tr>
@@ -116,7 +129,8 @@ import java.util.StringTokenizer;
  * thereby bypassing checks that would have been enforced by the original
  * security manager.</td>
  * </tr>
- *
+ * 9.安全管理器是一个允许应用程序实现安全策略的类。授予 setSecurityManager 权限将允许代码通过安装不同的、
+ * 可能限制较少的安全管理器来更改使用的安全管理器，从而绕过本应由原始安全管理器强制执行的检查。
  * <tr>
  *   <td>createSecurityManager</td>
  *   <td>Creation of a new security manager</td>
@@ -356,7 +370,8 @@ public final class RuntimePermission extends BasicPermission {
      * "exit", "setFactory", etc. An asterisk
      * may appear at the end of the name, following a ".", or by itself, to
      * signify a wildcard match.
-     *
+     * 1.创建具有指定名称的新 RuntimePermission。该名称是 RuntimePermission 的符号名称，
+     * 例如“exit”、“setFactory”等。星号可能出现在名称的末尾，跟在“.”之后，或者单独出现，以表示通配符匹配
      * @param name the name of the RuntimePermission.
      *
      * @throws NullPointerException if <code>name</code> is <code>null</code>.
@@ -372,7 +387,8 @@ public final class RuntimePermission extends BasicPermission {
      * Creates a new RuntimePermission object with the specified name.
      * The name is the symbolic name of the RuntimePermission, and the
      * actions String is currently unused and should be null.
-     *
+     * 2.创建具有指定名称的新 RuntimePermission 对象。 name 是 RuntimePermission 的符号名称，
+     * actions String 当前未使用，应为 null。
      * @param name the name of the RuntimePermission.
      * @param actions should be null.
      *

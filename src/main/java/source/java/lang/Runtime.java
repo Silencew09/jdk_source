@@ -480,7 +480,7 @@ public class Runtime {
 
     /**
      * Executes the specified command and arguments in a separate process.
-     *
+     * 1.在单独的进程中执行指定的命令和参数
      * <p>This is a convenience method.  An invocation of the form
      * <tt>exec(cmdarray)</tt>
      * behaves in exactly the same way as the invocation
@@ -488,7 +488,7 @@ public class Runtime {
      *
      * @param   cmdarray  array containing the command to call and
      *                    its arguments.
-     *
+     * 2.这是一种方便的方法。 exec(cmdarray)形式的调用与调用 exec(String[], String[], File)
      * @return  A new {@link Process} object for managing the subprocess
      *
      * @throws  SecurityException
@@ -516,12 +516,12 @@ public class Runtime {
     /**
      * Executes the specified command and arguments in a separate process
      * with the specified environment.
-     *
+     * 1.在具有指定环境的单独进程中执行指定的命令和参数。
      * <p>This is a convenience method.  An invocation of the form
      * <tt>exec(cmdarray, envp)</tt>
      * behaves in exactly the same way as the invocation
      * <tt>{@link #exec(String[], String[], File) exec}(cmdarray, envp, null)</tt>.
-     *
+     * 2.这是一种方便的方法。 <tt>exec(cmdarray, envp)形式的调用与调用 exec(String[], String[], File)的行为完全相同, 空)<tt>。
      * @param   cmdarray  array containing the command to call and
      *                    its arguments.
      *
@@ -560,38 +560,41 @@ public class Runtime {
     /**
      * Executes the specified command and arguments in a separate process with
      * the specified environment and working directory.
-     *
+     * 1.在具有指定环境和工作目录的单独进程中执行指定的命令和参数
      * <p>Given an array of strings <code>cmdarray</code>, representing the
      * tokens of a command line, and an array of strings <code>envp</code>,
      * representing "environment" variable settings, this method creates
      * a new process in which to execute the specified command.
-     *
+     * 2.给定一个字符串数组cmdarray，代表命令行的标记，以及一个字符串数组envp，代表“环境”变量设置，
+     * 这个方法创建了一个新的进程，在其中执行指定的命令
      * <p>This method checks that <code>cmdarray</code> is a valid operating
      * system command.  Which commands are valid is system-dependent,
      * but at the very least the command must be a non-empty list of
      * non-null strings.
-     *
+     * 3.此方法检查cmdarray是否是有效的操作系统命令。哪些命令有效取决于系统，但至少命令必须是非空字符串的非空列表。
      * <p>If <tt>envp</tt> is <tt>null</tt>, the subprocess inherits the
      * environment settings of the current process.
-     *
+     * 4.如果envp为null，子进程继承当前进程的环境设置
      * <p>A minimal set of system dependent environment variables may
      * be required to start a process on some operating systems.
      * As a result, the subprocess may inherit additional environment variable
      * settings beyond those in the specified environment.
-     *
+     * 5.在某些操作系统上启动进程可能需要一组最小的系统相关环境变量。因此，
+     * 子进程可能会继承指定环境中的环境变量设置之外的其他环境变量设置。
      * <p>{@link ProcessBuilder#start()} is now the preferred way to
      * start a process with a modified environment.
-     *
+     * 6.ProcessBuilder.start()现在是使用修改后的环境启动进程的首选方式。
      * <p>The working directory of the new subprocess is specified by <tt>dir</tt>.
      * If <tt>dir</tt> is <tt>null</tt>, the subprocess inherits the
      * current working directory of the current process.
-     *
+     * 7.新子进程的工作目录由dir指定。如果dir为null，子进程继承当前进程的当前工作目录
      * <p>If a security manager exists, its
      * {@link SecurityManager#checkExec checkExec}
      * method is invoked with the first component of the array
      * <code>cmdarray</code> as its argument. This may result in a
      * {@link SecurityException} being thrown.
-     *
+     * 8.如果存在安全管理器，则使用数组cmdarray的第一个组件作为其参数调用其  SecurityManager.checkExec方法。
+     * 这可能会导致抛出 SecurityException
      * <p>Starting an operating system process is highly system-dependent.
      * Among the many things that can go wrong are:
      * <ul>
@@ -599,11 +602,14 @@ public class Runtime {
      * <li>Access to the program file was denied.
      * <li>The working directory does not exist.
      * </ul>
-     *
+     * 9.启动操作系统进程高度依赖于系统。可能出错的许多事情包括：
+     * 找不到操作系统程序文件。
+     * 对程序文件的访问被拒绝。
+     * 工作目录不存在。
      * <p>In such cases an exception will be thrown.  The exact nature
      * of the exception is system-dependent, but it will always be a
      * subclass of {@link IOException}.
-     *
+     * 10在这种情况下，将抛出异常。异常的确切性质取决于系统，但它始终是IOException的子类。
      *
      * @param   cmdarray  array containing the command to call and
      *                    its arguments.
@@ -650,12 +656,13 @@ public class Runtime {
 
     /**
      * Returns the number of processors available to the Java virtual machine.
-     *
+     * 1.返回 Java 虚拟机可用的处理器数
      * <p> This value may change during a particular invocation of the virtual
      * machine.  Applications that are sensitive to the number of available
      * processors should therefore occasionally poll this property and adjust
      * their resource usage appropriately. </p>
-     *
+     * 2.该值可能会在虚拟机的特定调用期间发生变化。因此，
+     * 对可用处理器数量敏感的应用程序应偶尔轮询此属性并适当调整其资源使用。
      * @return  the maximum number of processors available to the virtual
      *          machine; never smaller than one
      * @since 1.4
@@ -667,7 +674,7 @@ public class Runtime {
      * Calling the
      * <code>gc</code> method may result in increasing the value returned
      * by <code>freeMemory.</code>
-     *
+     * 返回 Java 虚拟机中的可用内存量。调用gc方法可能会导致freeMemory.返回的值增加
      * @return  an approximation to the total amount of memory currently
      *          available for future allocated objects, measured in bytes.
      */
@@ -677,10 +684,11 @@ public class Runtime {
      * Returns the total amount of memory in the Java virtual machine.
      * The value returned by this method may vary over time, depending on
      * the host environment.
+     * 1.返回 Java 虚拟机中的总内存量。此方法返回的值可能会随时间变化，具体取决于主机环
      * <p>
      * Note that the amount of memory required to hold an object of any
      * given type may be implementation-dependent.
-     *
+     * 2.请注意，保存任何给定类型的对象所需的内存量可能取决于实现
      * @return  the total amount of memory currently available for current
      *          and future objects, measured in bytes.
      */
@@ -690,7 +698,7 @@ public class Runtime {
      * Returns the maximum amount of memory that the Java virtual machine will
      * attempt to use.  If there is no inherent limit then the value {@link
      * java.lang.Long#MAX_VALUE} will be returned.
-     *
+     * 1.返回 Java 虚拟机将尝试使用的最大内存量。如果没有固有限制，则将返回值java.lang.LongMAX_VALUE。
      * @return  the maximum amount of memory that the virtual machine will
      *          attempt to use, measured in bytes
      * @since 1.4
@@ -704,18 +712,23 @@ public class Runtime {
      * they currently occupy available for quick reuse. When control
      * returns from the method call, the virtual machine has made
      * its best effort to recycle all discarded objects.
+     * 1.运行垃圾收集器。调用此方法表明 Java 虚拟机将努力回收未使用的对象，
+     * 以使它们当前占用的内存可用于快速重用。当控制从方法调用返回时，虚拟机已尽最大努力回收所有丢弃的对象
      * <p>
      * The name <code>gc</code> stands for "garbage
      * collector". The virtual machine performs this recycling
      * process automatically as needed, in a separate thread, even if the
      * <code>gc</code> method is not invoked explicitly.
+     * 2.名称gc代表“垃圾收集器”。虚拟机根据需要在单独的线程中自动执行此回收过程，即使gc方法未显式调用
      * <p>
      * The method {@link System#gc()} is the conventional and convenient
      * means of invoking this method.
+     * 方法System.gc()是调用此方法的常规且方便的方法。
      */
     public native void gc();
 
     /* Wormhole for calling java.lang.ref.Finalizer.runFinalization */
+    //调用 java.lang.ref.Finalizer.runFinalization 的虫洞
     private static native void runFinalization0();
 
     /**
@@ -726,14 +739,18 @@ public class Runtime {
      * methods have not yet been run. When control returns from the
      * method call, the virtual machine has made a best effort to
      * complete all outstanding finalizations.
+     * 1.运行任何挂起终结的对象的终结方法。调用此方法表明 Java 虚拟机将努力运行已发现
+     * 已被丢弃但其 finalize方法尚未运行的对象的finalize方法。当控制从方法调用返回时，
+     * 虚拟机已尽最大努力完成所有未完成的完成
      * <p>
      * The virtual machine performs the finalization process
      * automatically as needed, in a separate thread, if the
      * <code>runFinalization</code> method is not invoked explicitly.
+     * 2.如果runFinalization方法没有被显式调用，虚拟机会根据需要在单独的线程中自动执行终结过程。
      * <p>
      * The method {@link System#runFinalization()} is the conventional
      * and convenient means of invoking this method.
-     *
+     * 3方法System.runFinalization()是调用此方法的常规且方便的方法
      * @see     java.lang.Object#finalize()
      */
     public void runFinalization() {
@@ -750,11 +767,15 @@ public class Runtime {
      * The virtual machine may ignore this request if it does not support
      * this feature. The destination of the trace output is system
      * dependent.
+     * 1.EnablesDisables 跟踪指令。如果boolean参数为true，
+     * 则此方法建议 Java 虚拟机在执行时为虚拟机中的每条指令发出调试信息。此信息的格式，
+     * 以及它发送到的文件或其他输出流，取决于主机环境。如果虚拟机不支持此功能，它可能会忽略此请求。
+     * 跟踪输出的目的地取决于系统。
      * <p>
      * If the <code>boolean</code> argument is <code>false</code>, this
      * method causes the virtual machine to stop performing the
      * detailed instruction trace it is performing.
-     *
+     * 如果boolean参数为false，此方法会导致虚拟机停止执行它正在执行的详细指令跟踪。
      * @param   on   <code>true</code> to enable instruction tracing;
      *               <code>false</code> to disable this feature.
      */
@@ -769,9 +790,13 @@ public class Runtime {
      * stream to which it is emitted, depends on the host environment. The
      * virtual machine may ignore this request if it does not support
      * this feature.
+     * 1.EnablesDisables 跟踪方法调用。如果boolean参数为true，则此方法建议 Java 虚拟机在调用时
+     * 为虚拟机中的每个方法发出调试信息。此信息的格式，以及它发送到的文件或其他输出流，取决于主机环境。
+     * 如果虚拟机不支持此功能，它可能会忽略此请求
      * <p>
      * Calling this method with argument false suggests that the
      * virtual machine cease emitting per-call debugging information.
+     * 2.使用参数 false 调用此方法表明虚拟机停止发出每次调用调试信息。
      *
      * @param   on   <code>true</code> to enable instruction tracing;
      *               <code>false</code> to disable this feature.
@@ -783,7 +808,8 @@ public class Runtime {
      * argument must be an absolute path name.
      * (for example
      * <code>Runtime.getRuntime().load("/home/avh/lib/libX11.so");</code>).
-     *
+     * 1.加载由文件名参数指定的本机库。文件名参数必须是绝对路径名。
+     * （例如Runtime.getRuntime().load("homeavhliblibX11.so");）
      * If the filename argument, when stripped of any platform-specific library
      * prefix, path, and file extension, indicates a library whose name is,
      * for example, L, and a native library called L is statically linked
@@ -791,20 +817,27 @@ public class Runtime {
      * is invoked rather than attempting to load a dynamic library.
      * A filename matching the argument does not have to exist in the file
      * system. See the JNI Specification for more details.
+     * 2.如果 filename 参数在去除任何特定于平台的库前缀、路径和文件扩展名后表示名称为 L 的库，
+     * 并且名为 L 的本机库与 VM 静态链接，则 JNI_OnLoad_L 函数由库导出被调用而不是尝试加载动态库。
+     * 文件系统中不必存在与参数匹配的文件名。有关更多详细信息，请参阅 JNI 规范。
      *
      * Otherwise, the filename argument is mapped to a native library image in
      * an implementation-dependent manner.
+     * 3.否则，文件名参数将以依赖于实现的方式映射到本机库映像。
      * <p>
      * First, if there is a security manager, its <code>checkLink</code>
      * method is called with the <code>filename</code> as its argument.
      * This may result in a security exception.
+     * 4.首先，如果有一个安全管理器，它的checkLink方法将被调用，并将filename作为它的参数。这可能会导致安全异常
      * <p>
      * This is similar to the method {@link #loadLibrary(String)}, but it
      * accepts a general file name as an argument rather than just a library
      * name, allowing any file of native code to be loaded.
+     * 5.这类似于loadLibrary(String)方法，但它接受通用文件名作为参数而不仅仅是库名，允许加载任何本地代码文件。
      * <p>
      * The method {@link System#load(String)} is the conventional and
      * convenient means of invoking this method.
+     * 6.方法System.load(String)是调用此方法的常规且方便的方法
      *
      * @param      filename   the file to load.
      * @exception  SecurityException  if a security manager exists and its
@@ -844,14 +877,17 @@ public class Runtime {
      * called <code>libname</code> is statically linked with the VM, then the
      * JNI_OnLoad_<code>libname</code> function exported by the library is invoked.
      * See the JNI Specification for more details.
-     *
+     * 1.加载由libname参数指定的本机库。libname参数不得包含任何特定于平台的前缀、文件扩展名或路径。
+     * 如果名为libname的本机库与 VM 静态链接，则调用该库导出的 JNI_OnLoad_libname函数。有关更多详细信息，请参阅 JNI 规范。
      * Otherwise, the libname argument is loaded from a system library
      * location and mapped to a native library image in an implementation-
      * dependent manner.
+     * 2.否则，libname 参数将从系统库位置加载并以依赖于实现的方式映射到本机库映像。
      * <p>
      * First, if there is a security manager, its <code>checkLink</code>
      * method is called with the <code>libname</code> as its argument.
      * This may result in a security exception.
+     * 3.首先，如果有一个安全管理器，它的checkLink方法被调用，libname作为它的参数。这可能会导致安全异常。
      * <p>
      * The method {@link System#loadLibrary(String)} is the conventional
      * and convenient means of invoking this method. If native
@@ -861,13 +897,16 @@ public class Runtime {
      * <blockquote><pre>
      * static { System.loadLibrary("LibFile"); }
      * </pre></blockquote>
+     * 4.方法 System.loadLibrary(String)是调用此方法的常规且方便的方法。如果要在类的实现中使用本机方法，
+     * 标准策略是将本机代码放入库文件中（称为 LibFile），然后放入静态初始化程序：static { System.loadLibrary("LibFile"); }
      * within the class declaration. When the class is loaded and
      * initialized, the necessary native code implementation for the native
      * methods will then be loaded as well.
+     * 5.在类声明中。当类被加载和初始化时，本地方法的必要本地代码实现也将被加载
      * <p>
      * If this method is called more than once with the same library
      * name, the second and subsequent calls are ignored.
-     *
+     * 6.如果使用相同的库名多次调用此方法，则忽略第二次和后续调用
      * @param      libname   the name of the library.
      * @exception  SecurityException  if a security manager exists and its
      *             <code>checkLink</code> method doesn't allow
@@ -905,10 +944,12 @@ public class Runtime {
      * localized: as characters in the local character set are read from
      * the stream, they are automatically converted from the local
      * character set to Unicode.
+     * 1.创建输入流的本地化版本。此方法接受一个InputStream并返回一个 InputStream等价于所有方面的参数，
+     * 除了它是本地化的：当本地字符集中的字符从流中读取时，它们会自动从本地字符集转换为 Unicode。
      * <p>
      * If the argument is already a localized stream, it may be returned
      * as the result.
-     *
+     * 2.如果参数已经是一个本地化的流，它可能会作为结果返回。
      * @param      in InputStream to localize
      * @return     a localized input stream
      * @see        java.io.InputStream

@@ -11,19 +11,18 @@ public class offer68_2 {
  }
 
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-       TreeNode ancestor = root;
-       while(true){
-           if (ancestor.val>p.val && ancestor.val>q.val){
-               ancestor = ancestor.left;
-           }else  if (ancestor.val<p.val && ancestor.val<q.val){
-
-               ancestor = ancestor.right;
-           }else{
-               break;
-           }
-
-       }
-       return ancestor;
+      if (root == null || root == p || root == q ){
+          return root;
+      }
+      TreeNode left =lowestCommonAncestor(root.left,p,q);
+      TreeNode right =lowestCommonAncestor(root.right,p,q);
+      if (left == null ){
+          return right;
+      }
+      if (right == null ){
+          return left;
+      }
+       return root;
 
     }
 }
