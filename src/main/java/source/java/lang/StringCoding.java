@@ -45,6 +45,7 @@ import sun.nio.cs.ArrayEncoder;
 
 /**
  * Utility class for string encoding and decoding.
+ * 用于字符串编码和解码的实用程序类。
  */
 
 class StringCoding {
@@ -71,6 +72,7 @@ class StringCoding {
     }
 
     // Trim the given byte array to the given length
+    //将给定的字节数组修剪为给定的长度
     //
     private static byte[] safeTrim(byte[] ba, int len, Charset cs, boolean isTrusted) {
         if (len == ba.length && (isTrusted || System.getSecurityManager() == null))
@@ -80,6 +82,7 @@ class StringCoding {
     }
 
     // Trim the given char array to the given length
+    //将给定的字符数组修剪为给定的长度
     //
     private static char[] safeTrim(char[] ca, int len,
                                    Charset cs, boolean isTrusted) {
@@ -92,6 +95,7 @@ class StringCoding {
     private static int scale(int len, float expansionFactor) {
         // We need to perform double, not float, arithmetic; otherwise
         // we lose low order bits when len is larger than 2**24.
+        //我们需要执行double，而不是float，算术；否则，当 len 大于 224 时，我们会丢失低位。
         return (int)(len * (double)expansionFactor);
     }
 
@@ -111,6 +115,8 @@ class StringCoding {
             // Use sun.misc.MessageUtils rather than the Logging API or
             // System.err since this method may be called during VM
             // initialization before either is available.
+            //使用 sun.misc.MessageUtils 而不是 Logging API 或 System.err，
+            // 因为此方法可能会在 VM 初始化期间调用，然后才可用。
             MessageUtils.err("WARNING: Default charset " + csn +
                              " not supported, using ISO-8859-1 instead");
             warnUnsupportedCharset = false;

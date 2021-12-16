@@ -299,11 +299,13 @@ class ThreadGroup implements Thread.UncaughtExceptionHandler {
     /**
      * Determines if the currently running thread has permission to
      * modify this thread group.
+     * 1.确定当前运行的线程是否有权修改此线程组。
      * <p>
      * If there is a security manager, its <code>checkAccess</code> method
      * is called with this thread group as its argument. This may result
      * in throwing a <code>SecurityException</code>.
-     *
+     * 2.如果有一个安全管理器，它的checkAccess方法被调用，并使用这个线程组作为它的参数。
+     * 这可能会导致抛出SecurityException
      * @exception  SecurityException  if the current thread is not allowed to
      *               access this thread group.
      * @see        java.lang.SecurityManager#checkAccess(java.lang.ThreadGroup)
@@ -360,10 +362,10 @@ class ThreadGroup implements Thread.UncaughtExceptionHandler {
     /**
      * Copies into the specified array every active thread in this
      * thread group and its subgroups.
-     *
+     * 1.将此线程组及其子组中的每个活动线程复制到指定的数组中
      * <p> An invocation of this method behaves in exactly the same
      * way as the invocation
-     *
+     * 2.此方法的调用行为与调用完全相同
      * <blockquote>
      * {@linkplain #enumerate(Thread[], boolean) enumerate}{@code (list, true)}
      * </blockquote>

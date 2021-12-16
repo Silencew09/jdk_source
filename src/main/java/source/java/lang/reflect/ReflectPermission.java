@@ -31,6 +31,7 @@ package java.lang.reflect;
  * The following table
  * provides a summary description of what the permission allows,
  * and discusses the risks of granting code the permission.
+ * 1.反射操作的权限类。下表简要描述了权限允许的内容，并讨论了授予代码权限的风险
  *
  * <table border=1 cellpadding=5 summary="Table shows permission target name, what the permission allows, and associated risks">
  * <tr>
@@ -59,7 +60,12 @@ package java.lang.reflect;
  * </tr>
  *
  * </table>
- *
+ *权限目标名称	            |权限允许的内容	|                                  | 允许此权限的风险
+ * 抑制访问检查	             |能够抑制对类中的字段和方法的标准 Java 语言访问检查；
+ *                           不仅允许访问公共成员，还允许访问默认（包）访问、
+ *                           受保护和私有成员。	                                |这是危险的，因为信息（可能是机密的）并且恶意代码可以访问通常不可用的方法。
+ * newProxyInPackage.{包名}	  |能够在指定的包中创建代理实例，代理类实现的非公共接口。	|这使代码可以访问它通常无法访问的包中的类，并且动态代理类位于系统保护域中。
+ *                                                                              恶意代码可能会使用这些类来帮助其破坏系统的安全性。
  * @see java.security.Permission
  * @see java.security.BasicPermission
  * @see AccessibleObject
@@ -78,7 +84,7 @@ class ReflectPermission extends java.security.BasicPermission {
 
     /**
      * Constructs a ReflectPermission with the specified name.
-     *
+     * 构造具有指定名称的 ReflectPermission
      * @param name the name of the ReflectPermission
      *
      * @throws NullPointerException if {@code name} is {@code null}.
@@ -91,7 +97,7 @@ class ReflectPermission extends java.security.BasicPermission {
     /**
      * Constructs a ReflectPermission with the specified name and actions.
      * The actions should be null; they are ignored.
-     *
+     * 构造具有指定名称和操作的 ReflectPermission。动作应该为空；他们被忽略了
      * @param name the name of the ReflectPermission
      *
      * @param actions should be null

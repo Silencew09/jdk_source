@@ -28,6 +28,7 @@ package java.lang.reflect;
 /**
  * {@code GenericArrayType} represents an array type whose component
  * type is either a parameterized type or a type variable.
+ * GenericArrayType表示一个数组类型，其组件类型要么是参数化类型，要么是类型变量。
  * @since 1.5
  */
 public interface GenericArrayType extends Type {
@@ -39,7 +40,9 @@ public interface GenericArrayType extends Type {
      * semantics of the creation process for parameterized types and
      * see {@link java.lang.reflect.TypeVariable TypeVariable} for the
      * creation process for type variables.
-     *
+     * 1.返回表示此数组的组件类型的 Type对象。此方法创建数组的组件类型。
+     * 参数化类型的创建过程语义参见java.lang.reflect.ParameterizedType的声明，
+     * 类型变量的创建过程参见java.lang.reflect.TypeVariable的声明
      * @return  a {@code Type} object representing the component type
      *     of this array
      * @throws TypeNotPresentException if the underlying array type's

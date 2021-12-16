@@ -72,7 +72,7 @@ import sun.util.locale.provider.ResourceBundleBasedAdapter;
  * is a locale-sensitive operation&mdash; the number should be formatted
  * according to the customs and conventions of the user's native country,
  * region, or culture.
- *
+ * 1.Locale对象表示特定的地理、政治或文化区域
  * <p> The {@code Locale} class implements IETF BCP 47 which is composed of
  * <a href="http://tools.ietf.org/html/rfc4647">RFC 4647 "Matching of Language
  * Tags"</a> and <a href="http://tools.ietf.org/html/rfc5646">RFC 5646 "Tags
