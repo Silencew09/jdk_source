@@ -22,4 +22,18 @@ public class offer66 {
         return re;
 
     }
+
+    public static void main(String[] args) {
+        T t = new T(1);
+
+    }
+
+   static class T{
+
+        int i;
+
+       public T(int i) {
+           this.i = i;
+       }
+   }
 }

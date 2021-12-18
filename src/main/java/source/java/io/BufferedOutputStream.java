@@ -30,7 +30,8 @@ package java.io;
  * an output stream, an application can write bytes to the underlying
  * output stream without necessarily causing a call to the underlying
  * system for each byte written.
- *
+ * 该类实现了一个缓冲输出流。通过设置这样的输出流，应用程序可以将字节写入底层输出流，
+ * 而不必为写入的每个字节调用底层系统
  * @author  Arthur van Hoff
  * @since   JDK1.0
  */
@@ -38,6 +39,7 @@ public
 class BufferedOutputStream extends FilterOutputStream {
     /**
      * The internal buffer where data is stored.
+     * 存储数据的内部缓冲区。
      */
     protected byte buf[];
 
@@ -46,6 +48,8 @@ class BufferedOutputStream extends FilterOutputStream {
      * in the range <tt>0</tt> through <tt>buf.length</tt>; elements
      * <tt>buf[0]</tt> through <tt>buf[count-1]</tt> contain valid
      * byte data.
+     * 缓冲区中的有效字节数。这个值总是在0到buf.length的范围内；
+     * 元素buf[0]到buf[count-1]包含有效的字节数据
      */
     protected int count;
 

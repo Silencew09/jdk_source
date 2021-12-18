@@ -30,7 +30,9 @@ import sun.reflect.ConstructorAccessor;
 
 /** Package-private class implementing the
     sun.reflect.LangReflectAccess interface, allowing the java.lang
-    package to instantiate objects in this package. */
+    package to instantiate objects in this package.
+ 包私有类实现了 sun.reflect.LangReflectAccess 接口，允许 java.lang 包实例化这个包中的对象
+ */
 
 class ReflectAccess implements sun.reflect.LangReflectAccess {
     public Field newField(Class<?> declaringClass,
@@ -135,6 +137,7 @@ class ReflectAccess implements sun.reflect.LangReflectAccess {
     //
     // Copying routines, needed to quickly fabricate new Field,
     // Method, and Constructor objects from templates
+    //复制例程，需要从模板快速构建新的 Field、Method 和 Constructor 对象
     //
     public Method      copyMethod(Method arg) {
         return arg.copy();
