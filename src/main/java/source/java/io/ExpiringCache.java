@@ -33,10 +33,12 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+//缓存过期
 class ExpiringCache {
     private long millisUntilExpiration;
     private Map<String,Entry> map;
     // Clear out old entries every few queries
+    //每隔几个查询清除旧条目
     private int queryCount;
     private int queryOverflow = 300;
     private int MAX_ENTRIES = 200;

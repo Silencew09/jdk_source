@@ -47,7 +47,10 @@ import java.nio.charset.UnsupportedCharsetException;
  * <p> Methods in this class never throw I/O exceptions, although some of its
  * constructors may.  The client may inquire as to whether any errors have
  * occurred by invoking {@link #checkError checkError()}.
- *
+ * 1.将对象的格式化表示打印到文本输出流。
+ * 2.此类实现了PrintStream所有打印方法。 它不包含写入原始字节的方法，程序应该使用未编码的字节流。
+ * 3.与PrintStream类不同，如果启用自动刷新，则仅在调用println 、 printf或format方法之一时才会执行，而不是在碰巧输出换行符时执行。 这些方法使用平台自己的行分隔符概念而不是换行符。
+ * 4.此类中的方法从不抛出 I/O 异常，尽管它的一些构造函数可能会。 客户端可以通过调用checkError()来查询是否发生了任何错误。
  * @author      Frank Yellin
  * @author      Mark Reinhold
  * @since       JDK1.1
@@ -58,7 +61,7 @@ public class PrintWriter extends Writer {
     /**
      * The underlying character-output stream of this
      * <code>PrintWriter</code>.
-     *
+     * 此PrintWriter的基础字符输出流。
      * @since 1.2
      */
     protected Writer out;
@@ -71,11 +74,13 @@ public class PrintWriter extends Writer {
     /**
      * Line separator string.  This is the value of the line.separator
      * property at the moment that the stream was created.
+     * 行分隔符字符串。 这是创建流时 line.separator 属性的值。
      */
     private final String lineSeparator;
 
     /**
      * Returns a charset object for the given charset name.
+     * 返回给定字符集名称的字符集对象
      * @throws NullPointerException          is csn is null
      * @throws UnsupportedEncodingException  if the charset is not supported
      */
@@ -93,7 +98,7 @@ public class PrintWriter extends Writer {
 
     /**
      * Creates a new PrintWriter, without automatic line flushing.
-     *
+     * 创建一个新的 PrintWriter，没有自动行刷新。
      * @param  out        A character-output stream
      */
     public PrintWriter (Writer out) {
@@ -102,7 +107,7 @@ public class PrintWriter extends Writer {
 
     /**
      * Creates a new PrintWriter.
-     *
+     * 创建一个新的 PrintWriter。
      * @param  out        A character-output stream
      * @param  autoFlush  A boolean; if true, the <tt>println</tt>,
      *                    <tt>printf</tt>, or <tt>format</tt> methods will
@@ -122,7 +127,8 @@ public class PrintWriter extends Writer {
      * existing OutputStream.  This convenience constructor creates the
      * necessary intermediate OutputStreamWriter, which will convert characters
      * into bytes using the default character encoding.
-     *
+     * 从现有的 OutputStream 创建一个没有自动行刷新的新 PrintWriter。
+     * 这个方便的构造函数创建了必要的中间 OutputStreamWriter，它将使用默认字符编码将字符转换为字节
      * @param  out        An output stream
      *
      * @see java.io.OutputStreamWriter#OutputStreamWriter(java.io.OutputStream)
@@ -136,7 +142,8 @@ public class PrintWriter extends Writer {
      * convenience constructor creates the necessary intermediate
      * OutputStreamWriter, which will convert characters into bytes using the
      * default character encoding.
-     *
+     * 从现有的 OutputStream 创建一个新的 PrintWriter。
+     * 这个方便的构造函数创建了必要的中间 OutputStreamWriter，它将使用默认字符编码将字符转换为字节
      * @param  out        An output stream
      * @param  autoFlush  A boolean; if true, the <tt>println</tt>,
      *                    <tt>printf</tt>, or <tt>format</tt> methods will
@@ -160,7 +167,8 @@ public class PrintWriter extends Writer {
      * which will encode characters using the {@linkplain
      * java.nio.charset.Charset#defaultCharset() default charset} for this
      * instance of the Java virtual machine.
-     *
+     * 使用指定的文件名创建一个新的 PrintWriter，不自动刷新行。
+     * 这个方便的构造函数创建了必要的中间OutputStreamWriter ，它将使用这个 Java 虚拟机实例的默认字符集对字符进行编码
      * @param  fileName
      *         The name of the file to use as the destination of this writer.
      *         If the file exists then it will be truncated to zero size;
@@ -199,7 +207,8 @@ public class PrintWriter extends Writer {
      * the necessary intermediate {@link java.io.OutputStreamWriter
      * OutputStreamWriter}, which will encode characters using the provided
      * charset.
-     *
+     * 使用指定的文件名和字符集创建一个新的 PrintWriter，不自动刷新行。
+     * 这个方便的构造函数创建了必要的中间OutputStreamWriter ，它将使用提供的字符集对字符进行编码
      * @param  fileName
      *         The name of the file to use as the destination of this writer.
      *         If the file exists then it will be truncated to zero size;
@@ -239,7 +248,8 @@ public class PrintWriter extends Writer {
      * which will encode characters using the {@linkplain
      * java.nio.charset.Charset#defaultCharset() default charset} for this
      * instance of the Java virtual machine.
-     *
+     * 使用指定的文件创建一个新的 PrintWriter，不自动刷新行。
+     * 这个方便的构造函数创建了必要的中间OutputStreamWriter ，它将使用这个 Java 虚拟机实例的默认字符集对字符进行编码
      * @param  file
      *         The file to use as the destination of this writer.  If the file
      *         exists then it will be truncated to zero size; otherwise, a new
@@ -270,7 +280,8 @@ public class PrintWriter extends Writer {
      * necessary intermediate {@link java.io.OutputStreamWriter
      * OutputStreamWriter}, which will encode characters using the provided
      * charset.
-     *
+     * 使用指定的文件和字符集创建一个新的 PrintWriter，不自动刷新行。
+     * 这个方便的构造函数创建了必要的中间OutputStreamWriter ，它将使用提供的字符集对字符进行编码
      * @param  file
      *         The file to use as the destination of this writer.  If the file
      *         exists then it will be truncated to zero size; otherwise, a new
@@ -304,6 +315,7 @@ public class PrintWriter extends Writer {
     }
 
     /** Checks to make sure that the stream has not been closed */
+    //检查以确保流尚未关闭
     private void ensureOpen() throws IOException {
         if (out == null)
             throw new IOException("Stream closed");
@@ -311,6 +323,7 @@ public class PrintWriter extends Writer {
 
     /**
      * Flushes the stream.
+     * 冲洗流
      * @see #checkError()
      */
     public void flush() {
@@ -328,7 +341,7 @@ public class PrintWriter extends Writer {
     /**
      * Closes the stream and releases any system resources associated
      * with it. Closing a previously closed stream has no effect.
-     *
+     * 关闭流并释放与其关联的所有系统资源。 关闭先前关闭的流没有任何效果
      * @see #checkError()
      */
     public void close() {
@@ -347,7 +360,7 @@ public class PrintWriter extends Writer {
 
     /**
      * Flushes the stream if it's not closed and checks its error state.
-     *
+     * 如果流未关闭，则刷新流并检查其错误状态。
      * @return <code>true</code> if the print stream has encountered an error,
      *          either on the underlying output stream or during a format
      *          conversion.
@@ -367,7 +380,8 @@ public class PrintWriter extends Writer {
 
     /**
      * Indicates that an error has occurred.
-     *
+     * 表示发生了错误。
+     * 此方法将导致checkError()后续调用返回true，直到调用clearError()
      * <p> This method will cause subsequent invocations of {@link
      * #checkError()} to return <tt>true</tt> until {@link
      * #clearError()} is invoked.
@@ -378,7 +392,8 @@ public class PrintWriter extends Writer {
 
     /**
      * Clears the error state of this stream.
-     *
+     * 清除此流的错误状态。
+     * 此方法将导致checkError()后续调用返回false，直到另一个写入操作失败并调用setError()
      * <p> This method will cause subsequent invocations of {@link
      * #checkError()} to return <tt>false</tt> until another write
      * operation fails and invokes {@link #setError()}.
@@ -396,6 +411,7 @@ public class PrintWriter extends Writer {
 
     /**
      * Writes a single character.
+     * 写入单个字符。
      * @param c int specifying a character to be written.
      */
     public void write(int c) {
@@ -415,6 +431,7 @@ public class PrintWriter extends Writer {
 
     /**
      * Writes A Portion of an array of characters.
+     * 写入字符数组的一部分。
      * @param buf Array of characters
      * @param off Offset from which to start writing characters
      * @param len Number of characters to write
@@ -437,6 +454,7 @@ public class PrintWriter extends Writer {
     /**
      * Writes an array of characters.  This method cannot be inherited from the
      * Writer class because it must suppress I/O exceptions.
+     * 写入字符数组。 此方法不能从 Writer 类继承，因为它必须抑制 I/O 异常。
      * @param buf Array of characters to be written
      */
     public void write(char buf[]) {
@@ -445,6 +463,7 @@ public class PrintWriter extends Writer {
 
     /**
      * Writes a portion of a string.
+     * 写入字符串的一部分。
      * @param s A String
      * @param off Offset from which to start writing characters
      * @param len Number of characters to write
@@ -467,6 +486,7 @@ public class PrintWriter extends Writer {
     /**
      * Writes a string.  This method cannot be inherited from the Writer class
      * because it must suppress I/O exceptions.
+     * 写入一个字符串。 此方法不能从 Writer 类继承，因为它必须抑制 I/O 异常。
      * @param s String to be written
      */
     public void write(String s) {
@@ -498,7 +518,8 @@ public class PrintWriter extends Writer {
      * according to the platform's default character encoding, and these bytes
      * are written in exactly the manner of the <code>{@link
      * #write(int)}</code> method.
-     *
+     * 打印一个布尔值。 String.valueOf(boolean)生成的字符串根据平台默认的字符编码转换为字节，
+     * 这些字节的写入方式与write(int)方法完全一致。
      * @param      b   The <code>boolean</code> to be printed
      */
     public void print(boolean b) {
@@ -510,7 +531,7 @@ public class PrintWriter extends Writer {
      * according to the platform's default character encoding, and these bytes
      * are written in exactly the manner of the <code>{@link
      * #write(int)}</code> method.
-     *
+     * 打印一个字符。 字符根据平台默认的字符编码被翻译成一个或多个字节，这些字节完全按照write(int)方法的方式write(int)
      * @param      c   The <code>char</code> to be printed
      */
     public void print(char c) {
@@ -523,7 +544,8 @@ public class PrintWriter extends Writer {
      * to the platform's default character encoding, and these bytes are
      * written in exactly the manner of the <code>{@link #write(int)}</code>
      * method.
-     *
+     * 打印一个整数。 String.valueOf(int)生成的字符串根据平台默认的字符编码转换为字节，
+     * 这些字节的写入方式与write(int)方法完全相同
      * @param      i   The <code>int</code> to be printed
      * @see        java.lang.Integer#toString(int)
      */
@@ -537,7 +559,8 @@ public class PrintWriter extends Writer {
      * according to the platform's default character encoding, and these bytes
      * are written in exactly the manner of the <code>{@link #write(int)}</code>
      * method.
-     *
+     * 打印一个长整数。 String.valueOf(long)生成的字符串根据平台默认的字符编码转换为字节，
+     * 这些字节的写入方式与write(int)方法完全一致
      * @param      l   The <code>long</code> to be printed
      * @see        java.lang.Long#toString(long)
      */
@@ -551,7 +574,8 @@ public class PrintWriter extends Writer {
      * according to the platform's default character encoding, and these bytes
      * are written in exactly the manner of the <code>{@link #write(int)}</code>
      * method.
-     *
+     * 打印一个浮点数。 String.valueOf(float)生成的字符串根据平台默认的字符编码转换为字节，
+     * 这些字节的写入方式与write(int)方法完全一致。
      * @param      f   The <code>float</code> to be printed
      * @see        java.lang.Float#toString(float)
      */
@@ -565,7 +589,8 @@ public class PrintWriter extends Writer {
      * bytes according to the platform's default character encoding, and these
      * bytes are written in exactly the manner of the <code>{@link
      * #write(int)}</code> method.
-     *
+     * 打印双精度浮点数。 String.valueOf(double)生成的字符串根据平台默认的字符编码转换为字节，
+     * 这些字节的写入方式与write(int)方法完全一致
      * @param      d   The <code>double</code> to be printed
      * @see        java.lang.Double#toString(double)
      */
@@ -578,7 +603,7 @@ public class PrintWriter extends Writer {
      * according to the platform's default character encoding, and these bytes
      * are written in exactly the manner of the <code>{@link #write(int)}</code>
      * method.
-     *
+     * 打印字符数组。 字符根据平台默认的字符编码转换为字节，这些字节的写入方式与write(int)方法完全相同。
      * @param      s   The array of chars to be printed
      *
      * @throws  NullPointerException  If <code>s</code> is <code>null</code>
@@ -593,7 +618,8 @@ public class PrintWriter extends Writer {
      * converted into bytes according to the platform's default character
      * encoding, and these bytes are written in exactly the manner of the
      * <code>{@link #write(int)}</code> method.
-     *
+     * 打印一个字符串。 如果参数为null则打印字符串"null" 。
+     * 否则，根据平台的默认字符编码将字符串的字符转换为字节，并且这些字节完全按照write(int)方法的方式write(int)
      * @param      s   The <code>String</code> to be printed
      */
     public void print(String s) {
@@ -609,7 +635,7 @@ public class PrintWriter extends Writer {
      * according to the platform's default character encoding, and these bytes
      * are written in exactly the manner of the <code>{@link #write(int)}</code>
      * method.
-     *
+     * 打印一个对象。 String.valueOf(Object)方法生成的字符串根据平台默认的字符编码转换为字节，这些字节的写入方式与write(int)方法完全相同。
      * @param      obj   The <code>Object</code> to be printed
      * @see        java.lang.Object#toString()
      */
@@ -624,6 +650,7 @@ public class PrintWriter extends Writer {
      * line separator string is defined by the system property
      * <code>line.separator</code>, and is not necessarily a single newline
      * character (<code>'\n'</code>).
+     * 通过写入行分隔符字符串终止当前行。 行分隔符字符串由系统属性line.separator定义，不一定是单个换行符 ( '\n' )。
      */
     public void println() {
         newLine();
@@ -633,7 +660,7 @@ public class PrintWriter extends Writer {
      * Prints a boolean value and then terminates the line.  This method behaves
      * as though it invokes <code>{@link #print(boolean)}</code> and then
      * <code>{@link #println()}</code>.
-     *
+     * 打印一个布尔值，然后终止该行。 此方法的行为就像它先调用print(boolean)然后调用println()
      * @param x the <code>boolean</code> value to be printed
      */
     public void println(boolean x) {
@@ -647,7 +674,7 @@ public class PrintWriter extends Writer {
      * Prints a character and then terminates the line.  This method behaves as
      * though it invokes <code>{@link #print(char)}</code> and then <code>{@link
      * #println()}</code>.
-     *
+     * 打印一个字符，然后终止该行。 此方法的行为就像它先调用print(char)然后调用println()
      * @param x the <code>char</code> value to be printed
      */
     public void println(char x) {
@@ -661,7 +688,7 @@ public class PrintWriter extends Writer {
      * Prints an integer and then terminates the line.  This method behaves as
      * though it invokes <code>{@link #print(int)}</code> and then <code>{@link
      * #println()}</code>.
-     *
+     * 打印一个整数，然后终止该行。 这个方法的行为就像它先调用print(int)然后调用println()
      * @param x the <code>int</code> value to be printed
      */
     public void println(int x) {
@@ -675,7 +702,7 @@ public class PrintWriter extends Writer {
      * Prints a long integer and then terminates the line.  This method behaves
      * as though it invokes <code>{@link #print(long)}</code> and then
      * <code>{@link #println()}</code>.
-     *
+     * 打印一个长整数，然后终止该行。 这个方法的行为就像它先调用print(long)然后调用println()
      * @param x the <code>long</code> value to be printed
      */
     public void println(long x) {
@@ -689,7 +716,7 @@ public class PrintWriter extends Writer {
      * Prints a floating-point number and then terminates the line.  This method
      * behaves as though it invokes <code>{@link #print(float)}</code> and then
      * <code>{@link #println()}</code>.
-     *
+     * 打印一个浮点数，然后终止该行。 这个方法的行为就像它先调用print(float)然后调用println()
      * @param x the <code>float</code> value to be printed
      */
     public void println(float x) {
@@ -703,7 +730,7 @@ public class PrintWriter extends Writer {
      * Prints a double-precision floating-point number and then terminates the
      * line.  This method behaves as though it invokes <code>{@link
      * #print(double)}</code> and then <code>{@link #println()}</code>.
-     *
+     * 打印一个双精度浮点数，然后终止该行。 此方法的行为就像它先调用print(double)然后调用println()
      * @param x the <code>double</code> value to be printed
      */
     public void println(double x) {
@@ -717,7 +744,7 @@ public class PrintWriter extends Writer {
      * Prints an array of characters and then terminates the line.  This method
      * behaves as though it invokes <code>{@link #print(char[])}</code> and then
      * <code>{@link #println()}</code>.
-     *
+     * 打印一个字符数组，然后终止该行。 此方法的行为就像它先调用print(char[]) ，然后调用println()
      * @param x the array of <code>char</code> values to be printed
      */
     public void println(char x[]) {
@@ -731,7 +758,7 @@ public class PrintWriter extends Writer {
      * Prints a String and then terminates the line.  This method behaves as
      * though it invokes <code>{@link #print(String)}</code> and then
      * <code>{@link #println()}</code>.
-     *
+     * 打印一个字符串，然后终止该行。 这个方法的行为就像它先调用print(String)然后调用println()
      * @param x the <code>String</code> value to be printed
      */
     public void println(String x) {
@@ -747,7 +774,8 @@ public class PrintWriter extends Writer {
      * then behaves as
      * though it invokes <code>{@link #print(String)}</code> and then
      * <code>{@link #println()}</code>.
-     *
+     * 打印一个对象，然后终止该行。
+     * 此方法首先调用 String.valueOf(x) 以获取打印对象的字符串值，然后其行为就像调用print(String)和println() 。
      * @param x  The <code>Object</code> to be printed.
      */
     public void println(Object x) {
@@ -768,7 +796,9 @@ public class PrintWriter extends Writer {
      *
      * <pre>
      *     out.format(format, args) </pre>
-     *
+     * 使用指定的格式字符串和参数将格式化字符串写入此编写器的便捷方法。 如果启用自动刷新，则调用此方法将刷新输出缓冲区。
+     * 以out.printf(format, args)形式调用此方法的行为与调用方式完全相同
+     *            out.format(format, args)
      * @param  format
      *         A format string as described in <a
      *         href="../util/Formatter.html#syntax">Format string syntax</a>.
@@ -814,7 +844,9 @@ public class PrintWriter extends Writer {
      *
      * <pre>
      *     out.format(l, format, args) </pre>
-     *
+     * 使用指定的格式字符串和参数将格式化字符串写入此编写器的便捷方法。 如果启用自动刷新，则调用此方法将刷新输出缓冲区。
+     * 以out.printf(l, format, args)形式调用此方法的行为与调用方式完全相同
+     *            out.format(l, format, args)
      * @param  l
      *         The {@linkplain java.util.Locale locale} to apply during
      *         formatting.  If <tt>l</tt> is <tt>null</tt> then no localization
@@ -863,7 +895,8 @@ public class PrintWriter extends Writer {
      * <p> The locale always used is the one returned by {@link
      * java.util.Locale#getDefault() Locale.getDefault()}, regardless of any
      * previous invocations of other formatting methods on this object.
-     *
+     * 使用指定的格式字符串和参数将格式化的字符串写入此编写器。 如果启用自动刷新，则调用此方法将刷新输出缓冲区。
+     * 始终使用的语言环境是Locale.getDefault()返回的语言环境，无论之前对此对象上的其他格式化方法的调用如何
      * @param  format
      *         A format string as described in <a
      *         href="../util/Formatter.html#syntax">Format string syntax</a>.
@@ -918,7 +951,7 @@ public class PrintWriter extends Writer {
      * Writes a formatted string to this writer using the specified format
      * string and arguments.  If automatic flushing is enabled, calls to this
      * method will flush the output buffer.
-     *
+     * 使用指定的格式字符串和参数将格式化的字符串写入此编写器。 如果启用自动刷新，则调用此方法将刷新输出缓冲区。
      * @param  l
      *         The {@linkplain java.util.Locale locale} to apply during
      *         formatting.  If <tt>l</tt> is <tt>null</tt> then no localization
@@ -987,7 +1020,11 @@ public class PrintWriter extends Writer {
      * appended. For instance, invoking the <tt>toString</tt> method of a
      * character buffer will return a subsequence whose content depends upon
      * the buffer's position and limit.
-     *
+     * 将指定的字符序列附加到此编写器。
+     * 以out.append(csq)形式调用此方法的行为与调用方式完全相同
+     *            out.write(csq.toString())
+     * 根据字符序列csq的toString规范，可能不会附加整个序列。
+     * 例如，调用字符缓冲区的toString方法将返回一个子序列，其内容取决于缓冲区的位置和限制。
      * @param  csq
      *         The character sequence to append.  If <tt>csq</tt> is
      *         <tt>null</tt>, then the four characters <tt>"null"</tt> are
@@ -1014,7 +1051,9 @@ public class PrintWriter extends Writer {
      *
      * <pre>
      *     out.write(csq.subSequence(start, end).toString()) </pre>
-     *
+     * 将指定字符序列的子序列附加到此编写器。
+     * 当csq不为null时，以out.append(csq, start, end)形式调用此方法，其行为与调用完全相同
+     *            out.write(csq.subSequence(start, end).toString())
      * @param  csq
      *         The character sequence from which a subsequence will be
      *         appended.  If <tt>csq</tt> is <tt>null</tt>, then characters
@@ -1051,7 +1090,9 @@ public class PrintWriter extends Writer {
      *
      * <pre>
      *     out.write(c) </pre>
-     *
+     * 将指定的字符附加到此编写器。
+     * 以out.append(c)形式调用此方法的行为与调用完全相同
+     *            out.write(c)
      * @param  c
      *         The 16-bit character to append
      *

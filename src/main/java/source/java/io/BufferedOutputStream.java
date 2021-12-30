@@ -56,7 +56,7 @@ class BufferedOutputStream extends FilterOutputStream {
     /**
      * Creates a new buffered output stream to write data to the
      * specified underlying output stream.
-     *
+     * 创建一个新的缓冲输出流以将数据写入指定的底层输出流
      * @param   out   the underlying output stream.
      */
     public BufferedOutputStream(OutputStream out) {
@@ -67,6 +67,7 @@ class BufferedOutputStream extends FilterOutputStream {
      * Creates a new buffered output stream to write data to the
      * specified underlying output stream with the specified buffer
      * size.
+     * 创建一个新的缓冲输出流，以将数据写入具有指定缓冲区大小的指定底层输出流。
      *
      * @param   out    the underlying output stream.
      * @param   size   the buffer size.
@@ -81,6 +82,7 @@ class BufferedOutputStream extends FilterOutputStream {
     }
 
     /** Flush the internal buffer */
+    //刷新内部缓冲区
     private void flushBuffer() throws IOException {
         if (count > 0) {
             out.write(buf, 0, count);
@@ -90,7 +92,7 @@ class BufferedOutputStream extends FilterOutputStream {
 
     /**
      * Writes the specified byte to this buffered output stream.
-     *
+     * 将指定字节写入此缓冲输出流
      * @param      b   the byte to be written.
      * @exception  IOException  if an I/O error occurs.
      */
@@ -104,6 +106,7 @@ class BufferedOutputStream extends FilterOutputStream {
     /**
      * Writes <code>len</code> bytes from the specified byte array
      * starting at offset <code>off</code> to this buffered output stream.
+     * 1.将len字节从从偏移量off开始的指定字节数组写入此缓冲输出流
      *
      * <p> Ordinarily this method stores bytes from the given array into this
      * stream's buffer, flushing the buffer to the underlying output stream as
@@ -111,7 +114,9 @@ class BufferedOutputStream extends FilterOutputStream {
      * buffer, however, then this method will flush the buffer and write the
      * bytes directly to the underlying output stream.  Thus redundant
      * <code>BufferedOutputStream</code>s will not copy data unnecessarily.
-     *
+     * 2.通常，此方法将给定数组中的字节存储到此流的缓冲区中，根据需要将缓冲区刷新到底层输出流。
+     * 但是，如果请求的长度至少与此流的缓冲区一样大，则此方法将刷新缓冲区并将字节直接写入底层输出流。
+     * 因此冗余的BufferedOutputStream (s) 不会不必要地复制数据
      * @param      b     the data.
      * @param      off   the start offset in the data.
      * @param      len   the number of bytes to write.
@@ -122,6 +127,7 @@ class BufferedOutputStream extends FilterOutputStream {
             /* If the request length exceeds the size of the output buffer,
                flush the output buffer and then write the data directly.
                In this way buffered streams will cascade harmlessly. */
+            //如果请求长度超过输出缓冲区的大小，则刷新输出缓冲区，然后直接写入数据。这样缓冲的流将无害地级联
             flushBuffer();
             out.write(b, off, len);
             return;
@@ -136,7 +142,7 @@ class BufferedOutputStream extends FilterOutputStream {
     /**
      * Flushes this buffered output stream. This forces any buffered
      * output bytes to be written out to the underlying output stream.
-     *
+     * 刷新这个缓冲的输出流。这会强制将任何缓冲的输出字节写出到基础输出流。
      * @exception  IOException  if an I/O error occurs.
      * @see        java.io.FilterOutputStream#out
      */

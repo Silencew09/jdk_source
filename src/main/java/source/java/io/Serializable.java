@@ -157,7 +157,65 @@ package java.io;
  * classes cannot declare an explicit serialVersionUID, so they always have
  * the default computed value, but the requirement for matching
  * serialVersionUID values is waived for array classes.
+ * 1.类的可序列化由实现 java.io.Serializable 接口的类启用。
+ * 2.未实现此接口的类将不会对其任何状态进行序列化或反序列化。
+ * 3.可序列化类的所有子类型本身都是可序列化的。 序列化接口没有方法或字段，仅用于标识可序列化的语义。
+ * 4.为了允许不可序列化的类的子类型被序列化，子类型可能负责保存和恢复超类型的公共、受保护和（如果可访问）包字段的状态。
+ * 仅当它扩展的类具有可访问的无参数构造函数来初始化类的状态时，子类型才可能承担此责任。
+ * 如果不是这种情况，则声明类 Serializable 是错误的。 该错误将在运行时被检测到。
+ * 5.在反序列化期间，不可序列化类的字段将使用类的公共或受保护的无参数构造函数进行初始化。
+ * 可序列化的子类必须可以访问无参数构造函数。 可序列化子类的字段将从流中恢复。
+ * 6.遍历图时，可能会遇到不支持Serializable接口的对象。
+ * 在这种情况下，将抛出 NotSerializableException 并标识不可序列化对象的类。
+ * 7.在序列化和反序列化过程中需要特殊处理的类必须实现具有以下确切签名的特殊方法：
+ *    private void writeObject(java.io.ObjectOutputStream out)
+ *        throws IOException
+ *    private void readObject(java.io.ObjectInputStream in)
+ *        throws IOException, ClassNotFoundException;
+ *    private void readObjectNoData()
+ *        throws ObjectStreamException;
  *
+ * 8.writeObject 方法负责为其特定类写入对象的状态，以便相应的 readObject 方法可以恢复它。
+ * 保存对象字段的默认机制可以通过调用 out.defaultWriteObject 来调用。
+ * 该方法不需要关心属于它的超类或子类的状态。
+ * 通过使用 writeObject 方法或使用 DataOutput 支持的原始数据类型的方法将各个字段写入 ObjectOutputStream 来保存状态。
+ * 9.readObject 方法负责从流中读取并恢复类字段。
+ * 它可以调用 in.defaultReadObject 来调用默认机制来恢复对象的非静态和非瞬态字段。
+ * defaultReadObject 方法使用流中的信息将保存在流中的对象的字段分配给当前对象中相应命名的字段。
+ * 这可以处理类已经演变为添加新字段的情况。 该方法不需要关心属于它的超类或子类的状态。
+ * 通过使用 writeObject 方法或使用 DataOutput 支持的原始数据类型的方法将各个字段写入 ObjectOutputStream 来保存状态。
+ * 10.readObjectNoData 方法负责在序列化流未将给定类列为被反序列化对象的超类的情况下为其特定类初始化对象的状态。
+ * 在接收方使用与发送方不同版本的反序列化实例类的情况下，可能会发生这种情况，并且接收方的版本扩展了发送方版本未扩展的类。
+ * 如果序列化流被篡改，也可能发生这种情况； 因此，尽管存在“敌对”或不完整的源流，
+ * 但 readObjectNoData 可用于正确初始化反序列化对象。
+ * 在将对象写入流时需要指定要使用的替代对象的可序列化类应使用确切的签名实现此特殊方法：
+ *    ANY-ACCESS-MODIFIER Object writeReplace() throws ObjectStreamException;
+ *
+ *11. 如果该方法存在并且可以从被序列化的对象的类中定义的方法访问，则该 writeReplace 方法由序列化调用。
+ * 因此，该方法可以具有私有的、受保护的和包私有的访问。 对该方法的子类访问遵循 java 可访问性规则。
+ *12.当从流中读取它的实例时需要指定替换的类应该使用确切的签名实现这个特殊的方法。
+ *    ANY-ACCESS-MODIFIER Object readResolve() throws ObjectStreamException;
+ *
+ * 13.此 readResolve 方法遵循与 writeReplace 相同的调用规则和可访问性规则。
+ * 序列化运行时将每个可序列化类与一个称为 serialVersionUID 的版本号相关联，
+ * 在反序列化期间使用该版本号来验证序列化对象的发送方和接收方是否已为该对象加载了与序列化兼容的类。
+ * 如果接收方为对象加载了一个类，该类的 serialVersionUID 与相应发送方的类不同，
+ * 则反序列化将导致InvalidClassException 。
+ * 一个可序列化的类可以通过声明一个名为"serialVersionUID"的字段来显式声明它自己的serialVersionUID，
+ * 该字段必须是静态的、最终的并且类型为long ：
+ *    ANY-ACCESS-MODIFIER static final long serialVersionUID = 42L;
+ *
+ * 14.如果可序列化类未显式声明 serialVersionUID，
+ * 则序列化运行时将根据该类的各个方面计算该类的默认 serialVersionUID 值，如 Java(TM) 对象序列化规范中所述。
+ * 但是，强烈建议所有可序列化的类显式声明 serialVersionUID 值，
+ * 因为默认的 serialVersionUID 计算对可能因编译器实现而异的类详细信息高度敏感，
+ * 因此可能会在反序列化期间导致意外的InvalidClassException 。
+ * 因此，为了保证在不同的 Java 编译器实现中具有一致的 serialVersionUID 值，
+ * 可序列化类必须声明一个显式的 serialVersionUID 值。
+ * 还强烈建议显式 serialVersionUID 声明尽可能使用private修饰符，
+ * 因为此类声明仅适用于立即声明的类——serialVersionUID 字段作为继承成员没有用。
+ * 数组类无法声明显式的 serialVersionUID，因此它们始终具有默认的计算值，
+ * 但数组类放弃了匹配 serialVersionUID 值的要求
  * @author  unascribed
  * @see java.io.ObjectOutputStream
  * @see java.io.ObjectInputStream

@@ -44,23 +44,27 @@ import sun.reflect.misc.ReflectUtil;
  * ObjectInputStream.  Persistent storage of objects can be accomplished by
  * using a file for the stream.  If the stream is a network socket stream, the
  * objects can be reconstituted on another host or in another process.
- *
+ * 1.ObjectOutputStream 将 Java 对象的原始数据类型和图形写入 OutputStream。
+ * 可以使用 ObjectInputStream 读取（重构）对象。对象的持久存储可以通过对流使用文件来实现。
+ * 如果流是网络套接字流，则可以在另一个主机或另一个进程中重构对象
  * <p>Only objects that support the java.io.Serializable interface can be
  * written to streams.  The class of each serializable object is encoded
  * including the class name and signature of the class, the values of the
  * object's fields and arrays, and the closure of any other objects referenced
  * from the initial objects.
- *
+ * 2.只有支持 java.io.Serializable 接口的对象才能写入流。
+ * 每个可序列化对象的类都被编码，包括类名和类的签名、对象字段和数组的值，以及从初始对象引用的任何其他对象的闭包
  * <p>The method writeObject is used to write an object to the stream.  Any
  * object, including Strings and arrays, is written with writeObject. Multiple
  * objects or primitives can be written to the stream.  The objects must be
  * read back from the corresponding ObjectInputstream with the same types and
  * in the same order as they were written.
- *
+ * 3.方法 writeObject 用于将对象写入流。任何对象，包括字符串和数组，都是用 writeObject 编写的。
+ * 可以将多个对象或原语写入流。对象必须从相应的 ObjectInputstream 中以相同的类型和与写入它们的顺序相同的顺序读回
  * <p>Primitive data types can also be written to the stream using the
  * appropriate methods from DataOutput. Strings can also be written using the
  * writeUTF method.
- *
+ * 4.还可以使用 DataOutput 中的适当方法将原始数据类型写入流。也可以使用 writeUTF 方法编写字符串
  * <p>The default serialization mechanism for an object writes the class of the
  * object, the class signature, and the values of all non-transient and
  * non-static fields.  References to other objects (except in transient or
@@ -68,7 +72,9 @@ import sun.reflect.misc.ReflectUtil;
  * to a single object are encoded using a reference sharing mechanism so that
  * graphs of objects can be restored to the same shape as when the original was
  * written.
- *
+ * 5.对象的默认序列化机制写入对象的类、类签名以及所有非瞬态和非静态字段的值。
+ * 对其他对象的引用（瞬态或静态字段除外）会导致这些对象也被写入。
+ * 对单个对象的多个引用使用引用共享机制进行编码，以便对象的图形可以恢复到与原始对象相同的形状
  * <p>For example to write an object that can be read by the example in
  * ObjectInputStream:
  * <br>
@@ -82,7 +88,15 @@ import sun.reflect.misc.ReflectUtil;
  *
  *      oos.close();
  * </pre>
+ *6.For example to write an object that can be read by the example in ObjectInputStream:
+ *         FileOutputStream fos = new FileOutputStream("t.tmp");
+ *         ObjectOutputStream oos = new ObjectOutputStream(fos);
  *
+ *         oos.writeInt(12345);
+ *         oos.writeObject("Today");
+ *         oos.writeObject(new Date());
+ *
+ *         oos.close();
  * <p>Classes that require special handling during the serialization and
  * deserialization process must implement special methods with these exact
  * signatures:
@@ -95,7 +109,10 @@ import sun.reflect.misc.ReflectUtil;
  * private void readObjectNoData()
  *     throws ObjectStreamException;
  * </pre>
- *
+ *7.在序列化和反序列化过程中需要特殊处理的类必须实现具有以下确切签名的特殊方法：
+ *  private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException;
+ *  private void writeObject(java.io.ObjectOutputStream stream) throws IOException
+ *  private void readObjectNoData() throws ObjectStreamException;
  * <p>The writeObject method is responsible for writing the state of the object
  * for its particular class so that the corresponding readObject method can
  * restore it.  The method does not need to concern itself with the state
@@ -103,7 +120,9 @@ import sun.reflect.misc.ReflectUtil;
  * writing the individual fields to the ObjectOutputStream using the
  * writeObject method or by using the methods for primitive data types
  * supported by DataOutput.
- *
+ * 8.writeObject 方法负责为其特定类写入对象的状态，以便相应的 readObject 方法可以恢复它。
+ * 该方法不需要关心属于对象的超类或子类的状态。
+ * 通过使用 writeObject 方法或使用 DataOutput 支持的原始数据类型的方法将各个字段写入 ObjectOutputStream 来保存状态
  * <p>Serialization does not write out the fields of any object that does not
  * implement the java.io.Serializable interface.  Subclasses of Objects that
  * are not serializable can be serializable. In this case the non-serializable
@@ -112,12 +131,16 @@ import sun.reflect.misc.ReflectUtil;
  * the state of the non-serializable class. It is frequently the case that the
  * fields of that class are accessible (public, package, or protected) or that
  * there are get and set methods that can be used to restore the state.
- *
+ * 9.序列化不会写出任何未实现 java.io.Serializable 接口的对象的字段。
+ * 不可序列化的对象的子类可以是可序列化的。在这种情况下，不可序列化的类必须有一个无参数构造函数以允许初始化其字段。
+ * 在这种情况下，子类负责保存和恢复不可序列化类的状态。
+ * 通常情况下，该类的字段是可访问的（公共的、包的或受保护的），或者存在可用于恢复状态的 get 和 set 方法
  * <p>Serialization of an object can be prevented by implementing writeObject
  * and readObject methods that throw the NotSerializableException.  The
  * exception will be caught by the ObjectOutputStream and abort the
  * serialization process.
- *
+ * 10.可以通过实现抛出 NotSerializableException 的 writeObject 和 readObject 方法来防止对象的序列化。
+ * 异常将被 ObjectOutputStream 捕获并中止序列化过程
  * <p>Implementing the Externalizable interface allows the object to assume
  * complete control over the contents and format of the object's serialized
  * form.  The methods of the Externalizable interface, writeExternal and
@@ -125,7 +148,10 @@ import sun.reflect.misc.ReflectUtil;
  * implemented by a class they can write and read their own state using all of
  * the methods of ObjectOutput and ObjectInput.  It is the responsibility of
  * the objects to handle any versioning that occurs.
- *
+ * 11.实现 Externalizable 接口允许对象完全控制对象序列化形式的内容和格式。
+ * 调用 Externalizable 接口的方法 writeExternal 和 readExternal 来保存和恢复对象状态。当
+ * 由类实现时，它们可以使用 ObjectOutput 和 ObjectInput 的所有方法写入和读取自己的状态。
+ * 对象有责任处理发生的任何版本控制
  * <p>Enum constants are serialized differently than ordinary serializable or
  * externalizable objects.  The serialized form of an enum constant consists
  * solely of its name; field values of the constant are not transmitted.  To
@@ -138,7 +164,13 @@ import sun.reflect.misc.ReflectUtil;
  * during serialization.  Similarly, any serialPersistentFields or
  * serialVersionUID field declarations are also ignored--all enum types have a
  * fixed serialVersionUID of 0L.
- *
+ * 12.枚举常量的序列化方式与普通的可序列化或外部化对象不同。枚举常量的序列化形式仅由其名称组成；
+ * 不传输常量的字段值。为了序列化一个枚举常量，ObjectOutputStream 写入由常量的 name 方法返回的字符串。
+ * 与其他可序列化或可外部化的对象一样，枚举常量可以作为随后出现在序列化流中的反向引用的目标。
+ * 枚举常量序列化的过程无法自定义；
+ * 在序列化期间，将忽略枚举类型定义的任何特定于类的 writeObject 和 writeReplace 方法。
+ * 类似地，任何serialPersistentFields 或serialVersionUID 字段声明也将
+ * 被忽略——所有枚举类型都有一个固定的0L 的serialVersionUID
  * <p>Primitive data, excluding serializable fields and externalizable data, is
  * written to the ObjectOutputStream in block-data records. A block data record
  * is composed of a header and data. The block data header consists of a marker
@@ -149,7 +181,12 @@ import sun.reflect.misc.ReflectUtil;
  * block-data mode.  Calls to the ObjectOutputStream methods writeObject,
  * defaultWriteObject and writeFields initially terminate any existing
  * block-data record.
- *
+ * 13.原始数据（不包括可序列化字段和可外部化数据）以块数据记录的形式写入 ObjectOutputStream。
+ * 块数据记录由头和数据组成。块数据头由一个标记和跟在头后面的字节数组成。
+ * 连续的原始数据写入合并为一个块数据记录。
+ * 用于块数据记录的块因子将为 1024 字节。每个块数据记录最多可填充 1024 个字节，
+ * 或者在块数据模式终止时写入。
+ * 对 ObjectOutputStream 方法 writeObject、defaultWriteObject 和 writeFields 的调用最初会终止任何现有的块数据记录
  * @author      Mike Warres
  * @author      Roger Riggs
  * @see java.io.DataOutput
@@ -165,31 +202,41 @@ public class ObjectOutputStream
 
     private static class Caches {
         /** cache of subclass security audit results */
+        //子类安全审计结果的缓存
         static final ConcurrentMap<WeakClassKey,Boolean> subclassAudits =
             new ConcurrentHashMap<>();
 
         /** queue for WeakReferences to audited subclasses */
+        //WeakReferences 到已审计子类的队列
         static final ReferenceQueue<Class<?>> subclassAuditsQueue =
             new ReferenceQueue<>();
     }
 
     /** filter stream for handling block data conversion */
+    //用于处理块数据转换的过滤流
     private final BlockDataOutputStream bout;
     /** obj -> wire handle map */
+    //obj -> 线柄图
     private final HandleTable handles;
     /** obj -> replacement obj map */
+    //obj -> 替换 obj 映射
     private final ReplaceTable subs;
     /** stream protocol version */
+    //流协议版本
     private int protocol = PROTOCOL_VERSION_2;
     /** recursion depth */
+    //递归深度
     private int depth;
 
     /** buffer for writing primitive field values */
+    //用于写入原始字段值的缓冲区
     private byte[] primVals;
 
     /** if true, invoke writeObjectOverride() instead of writeObject() */
+    //如果为 true，则调用 writeObjectOverride() 而不是 writeObject()
     private final boolean enableOverride;
     /** if true, invoke replaceObject() */
+    //如果为真，则调用 replaceObject()
     private boolean enableReplace;
 
     // values below valid only during upcalls to writeObject()/writeExternal()
@@ -197,17 +244,22 @@ public class ObjectOutputStream
      * Context during upcalls to class-defined writeObject methods; holds
      * object currently being serialized and descriptor for current class.
      * Null when not during writeObject upcall.
+     * 以下值仅在调用 writeObject()writeExternal() 上下文期间对类定义的 writeObject 方法调用期间有效；
+     * 保存当前正在序列化的对象和当前类的描述符。不在 writeObject upcall 期间时为 Null
      */
     private SerialCallbackContext curContext;
     /** current PutField object */
+    //当前 PutField 对象
     private PutFieldImpl curPut;
 
     /** custom storage for debug trace info */
+    //用于调试跟踪信息的自定义存储
     private final DebugTraceInfoStack debugInfoStack;
 
     /**
      * value of "sun.io.serialization.extendedDebugInfo" property,
      * as true or false for extended information about exception's place
+     * “sun.io.serialization.extendedDebugInfo”属性的值，对于有关异常位置的扩展信息，为真或假
      */
     private static final boolean extendedDebugInfo =
         java.security.AccessController.doPrivileged(
@@ -220,13 +272,16 @@ public class ObjectOutputStream
      * underlying stream; callers may wish to flush the stream immediately to
      * ensure that constructors for receiving ObjectInputStreams will not block
      * when reading the header.
-     *
+     * 1.创建一个写入指定 OutputStream 的 ObjectOutputStream。
+     * 此构造函数将序列化流标头写入底层流；调用者可能希望立即刷新流，以确保接收 ObjectInputStreams 的构造函数在读取标头时不会阻塞
      * <p>If a security manager is installed, this constructor will check for
      * the "enableSubclassImplementation" SerializablePermission when invoked
      * directly or indirectly by the constructor of a subclass which overrides
      * the ObjectOutputStream.putFields or ObjectOutputStream.writeUnshared
      * methods.
-     *
+     * 2.如果安装了安全管理器，则在由覆盖 ObjectOutputStream.putFields 或
+     * ObjectOutputStream.writeUnshared 方法的子类的构造函数直接或间接调用时，
+     * 此构造函数将检查“enableSubclassImplementation”SerializablePermission
      * @param   out output stream to write to
      * @throws  IOException if an I/O error occurs while writing stream header
      * @throws  SecurityException if untrusted subclass illegally overrides
@@ -557,28 +612,36 @@ public class ObjectOutputStream
      * original call to replaceObject.  To ensure that the private state of
      * objects is not unintentionally exposed, only trusted streams may use
      * replaceObject.
-     *
+     * 1.此方法将允许 ObjectOutputStream 的受信任子类在序列化期间用一个对象替换另一个对象。
+     * 在调用 enableReplaceObject 之前，替换对象是禁用的。
+     * enableReplaceObject 方法检查请求进行替换的流是否可信。
+     * 写入序列化流的每个对象的第一次出现被传递给replaceObject。
+     * 对该对象的后续引用被替换为原始调用replaceObject 所返回的对象。
+     * 为了确保对象的私有状态不会被无意暴露，只有受信任的流才可以使用 replaceObject
      * <p>The ObjectOutputStream.writeObject method takes a parameter of type
      * Object (as opposed to type Serializable) to allow for cases where
      * non-serializable objects are replaced by serializable ones.
-     *
+     * 2.ObjectOutputStream.writeObject 方法采用 Object 类型（与 Serializable 类型相反）的参数，
+     * 以允许将不可序列化对象替换为可序列化对象的情况
      * <p>When a subclass is replacing objects it must insure that either a
      * complementary substitution must be made during deserialization or that
      * the substituted object is compatible with every field where the
      * reference will be stored.  Objects whose type is not a subclass of the
      * type of the field or array element abort the serialization by raising an
      * exception and the object is not be stored.
-     *
+     * 3.当子类替换对象时，它必须确保在反序列化期间必须进行补充替换，或者替换的对象与将存储引用的每个字段兼容。
+     * 类型不是字段或数组元素类型的子类的对象会通过引发异常来中止序列化，并且不会存储该对象
      * <p>This method is called only once when each object is first
      * encountered.  All subsequent references to the object will be redirected
      * to the new object. This method should return the object to be
      * substituted or the original object.
-     *
+     * 4.此方法仅在第一次遇到每个对象时调用一次。对该对象的所有后续引用都将重定向到新对象。此方法应返回要替换的对象或原始对象
      * <p>Null can be returned as the object to be substituted, but may cause
      * NullReferenceException in classes that contain references to the
      * original object since they may be expecting an object instead of
      * null.
-     *
+     * 5.Null 可以作为要替换的对象返回，但在包含对原始对象的引用的类中可能会导致 NullReferenceException，
+     * 因为它们可能需要一个对象而不是 null
      * @param   obj the object to be replaced
      * @return  the alternate object that replaced the specified one
      * @throws  IOException Any exception thrown by the underlying
@@ -1036,6 +1099,8 @@ public class ObjectOutputStream
      * without violating security constraints: the subclass must not override
      * security-sensitive non-final methods, or else the
      * "enableSubclassImplementation" SerializablePermission is checked.
+     * 验证可以在不违反安全约束的情况下构造此（可能是子类）实例：
+     * 子类不得覆盖安全敏感的非最终方法，否则检查“enableSubclassImplementation”SerializablePermission
      */
     private void verifySubclass() {
         Class<?> cl = getClass();
@@ -1063,6 +1128,8 @@ public class ObjectOutputStream
      * Performs reflective checks on given subclass to verify that it doesn't
      * override security-sensitive non-final methods.  Returns true if subclass
      * is "safe", false otherwise.
+     * 对给定的子类执行反射检查以验证它没有覆盖安全敏感的非最终方法。
+     * 如果子类是“安全的”，则返回真，否则返回假
      */
     private static boolean auditSubclass(final Class<?> subcl) {
         Boolean result = AccessController.doPrivileged(
@@ -1093,6 +1160,7 @@ public class ObjectOutputStream
 
     /**
      * Clears internal data structures.
+     * 清除内部数据结构
      */
     private void clear() {
         subs.clear();
@@ -1101,6 +1169,7 @@ public class ObjectOutputStream
 
     /**
      * Underlying writeObject/writeUnshared implementation.
+     * 底层 writeObjectwriteUnshared 实现
      */
     private void writeObject0(Object obj, boolean unshared)
         throws IOException
@@ -1109,6 +1178,7 @@ public class ObjectOutputStream
         depth++;
         try {
             // handle previously written and non-replaceable objects
+            //处理以前编写的和不可替换的对象
             int h;
             if ((obj = subs.lookup(obj)) == null) {
                 writeNull();
@@ -1125,11 +1195,13 @@ public class ObjectOutputStream
             }
 
             // check for replacement object
+            //检查替换对象
             Object orig = obj;
             Class<?> cl = obj.getClass();
             ObjectStreamClass desc;
             for (;;) {
                 // REMIND: skip this check for strings/arrays?
+                //提醒：跳过对字符串数组的检查？
                 Class<?> repCl;
                 desc = ObjectStreamClass.lookup(cl, true);
                 if (!desc.hasWriteReplaceMethod() ||
@@ -1150,6 +1222,7 @@ public class ObjectOutputStream
             }
 
             // if object replaced, run through original checks a second time
+            //如果对象被替换，则第二次运行原始检查
             if (obj != orig) {
                 subs.assign(orig, obj);
                 if (obj == null) {
@@ -1168,6 +1241,7 @@ public class ObjectOutputStream
             }
 
             // remaining cases
+            //剩余案件
             if (obj instanceof String) {
                 writeString((String) obj, unshared);
             } else if (cl.isArray()) {
@@ -1192,6 +1266,7 @@ public class ObjectOutputStream
 
     /**
      * Writes null code to stream.
+     * 将空代码写入流
      */
     private void writeNull() throws IOException {
         bout.writeByte(TC_NULL);
@@ -1199,6 +1274,7 @@ public class ObjectOutputStream
 
     /**
      * Writes given object handle to stream.
+     * 将给定的对象句柄写入流
      */
     private void writeHandle(int handle) throws IOException {
         bout.writeByte(TC_REFERENCE);
@@ -1207,6 +1283,7 @@ public class ObjectOutputStream
 
     /**
      * Writes representation of given class to stream.
+     * 将给定类的表示写入流
      */
     private void writeClass(Class<?> cl, boolean unshared) throws IOException {
         bout.writeByte(TC_CLASS);
@@ -1216,6 +1293,7 @@ public class ObjectOutputStream
 
     /**
      * Writes representation of given class descriptor to stream.
+     * 将给定类描述符的表示写入流
      */
     private void writeClassDesc(ObjectStreamClass desc, boolean unshared)
         throws IOException
@@ -1297,6 +1375,7 @@ public class ObjectOutputStream
     /**
      * Writes given string to stream, using standard or long UTF format
      * depending on string length.
+     * 使用标准或长 UTF 格式将给定的字符串写入流，具体取决于字符串长度
      */
     private void writeString(String str, boolean unshared) throws IOException {
         handles.assign(unshared ? null : str);
@@ -1312,6 +1391,7 @@ public class ObjectOutputStream
 
     /**
      * Writes given array object to stream.
+     * 将给定的数组对象写入流
      */
     private void writeArray(Object array,
                             ObjectStreamClass desc,
@@ -1392,6 +1472,7 @@ public class ObjectOutputStream
 
     /**
      * Writes given enum constant to stream.
+     * 将给定的枚举常量写入流
      */
     private void writeEnum(Enum<?> en,
                            ObjectStreamClass desc,
@@ -1409,6 +1490,7 @@ public class ObjectOutputStream
      * Writes representation of a "ordinary" (i.e., not a String, Class,
      * ObjectStreamClass, array, or enum constant) serializable object to the
      * stream.
+     * 将“普通”（即，不是字符串、类、ObjectStreamClass、数组或枚举常量）可序列化对象的表示形式写入流
      */
     private void writeOrdinaryObject(Object obj,
                                      ObjectStreamClass desc,
@@ -1441,6 +1523,7 @@ public class ObjectOutputStream
     /**
      * Writes externalizable data of given object by invoking its
      * writeExternal() method.
+     * 通过调用其 writeExternal() 方法写入给定对象的可外部化数据
      */
     private void writeExternalData(Externalizable obj) throws IOException {
         PutFieldImpl oldPut = curPut;
@@ -1473,6 +1556,7 @@ public class ObjectOutputStream
     /**
      * Writes instance data for each serializable class of given object, from
      * superclass to subclass.
+     * 为给定对象的每个可序列化类写入实例数据，从超类到子类
      */
     private void writeSerialData(Object obj, ObjectStreamClass desc)
         throws IOException
@@ -1515,6 +1599,7 @@ public class ObjectOutputStream
      * Fetches and writes values of serializable fields of given object to
      * stream.  The given class descriptor specifies which field values to
      * write, and in which order they should be written.
+     * 获取给定对象的可序列化字段的值并将其写入流。给定的类描述符指定要写入的字段值，以及它们的写入顺序
      */
     private void defaultWriteFields(Object obj, ObjectStreamClass desc)
         throws IOException
@@ -1558,6 +1643,7 @@ public class ObjectOutputStream
     /**
      * Attempts to write to stream fatal IOException that has caused
      * serialization to abort.
+     * 尝试写入导致序列化中止的致命 IOException 流
      */
     private void writeFatalException(IOException ex) throws IOException {
         /*
@@ -1569,6 +1655,11 @@ public class ObjectOutputStream
          * rarely (if ever) actually thrown--the "root" exceptions from
          * underlying streams were thrown instead.  This historical behavior is
          * followed here for consistency.
+         * 注意：序列化规范规定，如果在尝试将原始致命异常序列化到流时发生第二个 IOException，
+         * 则应抛出 StreamCorruptedException（第 2.1 节）。
+         * 然而，由于之前序列化实现中的一个错误，StreamCorruptedExceptions 很少
+         * （如果有的话）实际上被抛出——而是从底层流中抛出“根”异常。
+         * 此处遵循此历史行为以保持一致性。
          */
         clear();
         boolean oldMode = bout.setBlockDataMode(false);
@@ -1585,6 +1676,7 @@ public class ObjectOutputStream
      * Converts specified span of float values into byte values.
      */
     // REMIND: remove once hotspot inlines Float.floatToIntBits
+    //将指定范围的浮点值转换为字节值。提醒：删除一次热点内联 Float.floatToIntBits
     private static native void floatsToBytes(float[] src, int srcpos,
                                              byte[] dst, int dstpos,
                                              int nfloats);
@@ -1593,25 +1685,31 @@ public class ObjectOutputStream
      * Converts specified span of double values into byte values.
      */
     // REMIND: remove once hotspot inlines Double.doubleToLongBits
+    //将双精度值的指定范围转换为字节值。提醒：删除一次热点内联 Double.doubleToLongBits
     private static native void doublesToBytes(double[] src, int srcpos,
                                               byte[] dst, int dstpos,
                                               int ndoubles);
 
     /**
      * Default PutField implementation.
+     * 默认 PutField 实现
      */
     private class PutFieldImpl extends PutField {
 
         /** class descriptor describing serializable fields */
+        //描述可序列化字段的类描述符
         private final ObjectStreamClass desc;
         /** primitive field values */
+        //原始字段值
         private final byte[] primVals;
         /** object field values */
+        //对象字段值
         private final Object[] objVals;
 
         /**
          * Creates PutFieldImpl object for writing fields defined in given
          * class descriptor.
+         * 创建 PutFieldImpl 对象，用于写入在给定类描述符中定义的字段
          */
         PutFieldImpl(ObjectStreamClass desc) {
             this.desc = desc;
@@ -1656,6 +1754,7 @@ public class ObjectOutputStream
         }
 
         // deprecated in ObjectOutputStream.PutField
+        //在 ObjectOutputStream.PutField 中弃用
         public void write(ObjectOutput out) throws IOException {
             /*
              * Applications should *not* use this method to write PutField
@@ -1665,12 +1764,17 @@ public class ObjectOutputStream
              * broken implementation is being retained solely for behavioral
              * compatibility, in order to support applications which use
              * OOS.PutField.write() for writing only non-primitive data.
-             *
+             * 1.应用程序不应使用此方法写入 PutField 数据，因为如果 PutField 对象写入任何原始数据，
+             * 它将导致流损坏（因为块数据模式未正确设置，如在 OOS.writeFields() 中所做的那样）。
+             * 保留此损坏的实现仅是为了行为兼容性，以支持使用 OOS.PutField.write() 仅写入非原始数据的应用程序
              * Serialization of unshared objects is not implemented here since
              * it is not necessary for backwards compatibility; also, unshared
              * semantics may not be supported by the given ObjectOutput
              * instance.  Applications which write unshared objects using the
              * PutField API must use OOS.writeFields().
+             * 2.这里没有实现非共享对象的序列化，因为它不是向后兼容所必需的；
+             * 此外，给定的 ObjectOutput 实例可能不支持非共享语义。
+             * 使用 PutField API 写入非共享对象的应用程序必须使用 OOS.writeFields()
              */
             if (ObjectOutputStream.this != out) {
                 throw new IllegalArgumentException("wrong stream");
@@ -1690,6 +1794,7 @@ public class ObjectOutputStream
 
         /**
          * Writes buffered primitive data and object fields to stream.
+         * 将缓冲的原始数据和对象字段写入流
          */
         void writeFields() throws IOException {
             bout.write(primVals, 0, primVals.length, false);
@@ -1719,6 +1824,9 @@ public class ObjectOutputStream
          * of null matches all types, Object.class matches all non-primitive
          * types, and any other non-null type matches assignable types only.
          * Throws IllegalArgumentException if no matching field found.
+         * 返回具有给定名称和类型的字段的偏移量。
+         * 指定类型的 null 匹配所有类型，Object.class 匹配所有非原始类型，任何其他非 null 类型仅匹配可分配类型。
+         * 如果找不到匹配的字段，则抛出 IllegalArgumentException
          */
         private int getFieldOffset(String name, Class<?> type) {
             ObjectStreamField field = desc.getField(name, type);
@@ -1735,37 +1843,51 @@ public class ObjectOutputStream
      * same format as DataOutputStream; in "block data" mode, outputs data
      * bracketed by block data markers (see object serialization specification
      * for details).
+     * 有两种模式的缓冲输出流：在默认模式下，以与DataOutputStream相同的格式输出数据；
+     * 在“块数据”模式下，输出由块数据标记括起来的数据（有关详细信息，请参阅对象序列化规范）
      */
     private static class BlockDataOutputStream
         extends OutputStream implements DataOutput
     {
         /** maximum data block length */
+        //最大数据块长度
         private static final int MAX_BLOCK_SIZE = 1024;
-        /** maximum data block header length */
+        /** maximum data block header length
+         * //最大数据块头长度
+         */
         private static final int MAX_HEADER_SIZE = 5;
         /** (tunable) length of char buffer (for writing strings) */
+        //（可调）字符缓冲区的长度（用于写入字符串)
         private static final int CHAR_BUF_SIZE = 256;
 
         /** buffer for writing general/block data */
+        //用于写入通用/块数据的缓冲区
         private final byte[] buf = new byte[MAX_BLOCK_SIZE];
         /** buffer for writing block data headers */
+        //用于写入块数据头的缓冲区
         private final byte[] hbuf = new byte[MAX_HEADER_SIZE];
         /** char buffer for fast string writes */
+        //用于快速字符串写入的字符缓冲区
         private final char[] cbuf = new char[CHAR_BUF_SIZE];
 
         /** block data mode */
+        //块数据模式
         private boolean blkmode = false;
         /** current offset into buf */
+        //当前偏移到 buf
         private int pos = 0;
 
         /** underlying output stream */
+        //底层输出流
         private final OutputStream out;
         /** loopback stream (for data writes that span data blocks) */
+        //环回流（用于跨越数据块的数据写入）
         private final DataOutputStream dout;
 
         /**
          * Creates new BlockDataOutputStream on top of given underlying stream.
          * Block data mode is turned off by default.
+         * 在给定的底层流之上创建新的 BlockDataOutputStream。 块数据模式默认关闭
          */
         BlockDataOutputStream(OutputStream out) {
             this.out = out;
@@ -1778,6 +1900,9 @@ public class ObjectOutputStream
          * the old mode, no action is taken.  If the new mode differs from the
          * old mode, any buffered data is flushed before switching to the new
          * mode.
+         * 将块数据模式设置为给定模式（true == on，false == off）并返回先前的模式值。
+         * 如果新模式与旧模式相同，则不执行任何操作。
+         * 如果新模式与旧模式不同，则在切换到新模式之前刷新所有缓冲数据
          */
         boolean setBlockDataMode(boolean mode) throws IOException {
             if (blkmode == mode) {
@@ -1791,6 +1916,7 @@ public class ObjectOutputStream
         /**
          * Returns true if the stream is currently in block data mode, false
          * otherwise.
+         * 如果流当前处于块数据模式，则返回 true，否则返回 false
          */
         boolean getBlockDataMode() {
             return blkmode;
@@ -1833,6 +1959,8 @@ public class ObjectOutputStream
          * true, copies the values to an intermediate buffer before writing
          * them to underlying stream (to avoid exposing a reference to the
          * original byte array).
+         * 从给定数组写入指定范围的字节值。
+         * 如果 copy 为真，则在将值写入底层流之前将值复制到中间缓冲区（以避免暴露对原始字节数组的引用）
          */
         void write(byte[] b, int off, int len, boolean copy)
             throws IOException
@@ -1866,6 +1994,7 @@ public class ObjectOutputStream
         /**
          * Writes all buffered data from this stream to the underlying stream,
          * but does not flush underlying stream.
+         * 将此流中的所有缓冲数据写入底层流，但不刷新底层流
          */
         void drain() throws IOException {
             if (pos == 0) {
@@ -1882,6 +2011,7 @@ public class ObjectOutputStream
          * Writes block data header.  Data blocks shorter than 256 bytes are
          * prefixed with a 2-byte header; all others start with a 5-byte
          * header.
+         * 写入块数据头。 短于 256 字节的数据块以 2 字节的报头为前缀； 所有其他的都以 5 字节的标头开头
          */
         private void writeBlockHeader(int len) throws IOException {
             if (len <= 0xFF) {
@@ -1902,7 +2032,6 @@ public class ObjectOutputStream
          * DataOutputStream, except that they partition written data into data
          * blocks when in block data mode.
          */
-
         public void writeBoolean(boolean v) throws IOException {
             if (pos >= MAX_BLOCK_SIZE) {
                 drain();
@@ -2131,6 +2260,7 @@ public class ObjectOutputStream
 
         /**
          * Returns the length in bytes of the UTF encoding of the given string.
+         * 返回给定字符串的 UTF 编码的字节长度。
          */
         long getUTFLength(String s) {
             int len = s.length();
@@ -2158,6 +2288,8 @@ public class ObjectOutputStream
          * situations where the UTF encoding length of the string is already
          * known; specifying it explicitly avoids a prescan of the string to
          * determine its UTF length.
+         * 以 UTF 格式写入给定的字符串。
+         * 该方法用于字符串的UTF编码长度已知的情况； 明确指定它可以避免对字符串进行预扫描以确定其 UTF 长度。
          */
         void writeUTF(String s, long utflen) throws IOException {
             if (utflen > 0xFFFFL) {
@@ -2175,6 +2307,8 @@ public class ObjectOutputStream
          * Writes given string in "long" UTF format.  "Long" UTF format is
          * identical to standard UTF, except that it uses an 8 byte header
          * (instead of the standard 2 bytes) to convey the UTF encoding length.
+         * 以“长”UTF 格式写入给定字符串。
+         * “长”UTF 格式与标准 UTF 相同，不同之处在于它使用 8 字节的标头（而不是标准的 2 字节）来传达 UTF 编码长度
          */
         void writeLongUTF(String s) throws IOException {
             writeLongUTF(s, getUTFLength(s));
@@ -2183,6 +2317,7 @@ public class ObjectOutputStream
         /**
          * Writes given string in "long" UTF format, where the UTF encoding
          * length of the string is already known.
+         * 以“长”UTF 格式写入给定字符串，其中字符串的 UTF 编码长度已知
          */
         void writeLongUTF(String s, long utflen) throws IOException {
             writeLong(utflen);
@@ -2196,6 +2331,7 @@ public class ObjectOutputStream
         /**
          * Writes the "body" (i.e., the UTF representation minus the 2-byte or
          * 8-byte length header) of the UTF encoding for the given string.
+         * 写入给定字符串的 UTF 编码的“主体”（即 UTF 表示减去 2 字节或 8 字节长度的标头）
          */
         private void writeUTFBody(String s) throws IOException {
             int limit = MAX_BLOCK_SIZE - 3;
@@ -2239,6 +2375,7 @@ public class ObjectOutputStream
     /**
      * Lightweight identity hash table which maps objects to integer handles,
      * assigned in ascending order.
+     * 将对象映射到整数句柄的轻量级身份哈希表，按升序分配
      */
     private static class HandleTable {
 
@@ -2257,6 +2394,7 @@ public class ObjectOutputStream
 
         /**
          * Creates new HandleTable with given capacity and load factor.
+         * 使用给定的容量和负载因子创建新的 HandleTable
          */
         HandleTable(int initialCapacity, float loadFactor) {
             this.loadFactor = loadFactor;
@@ -2270,6 +2408,7 @@ public class ObjectOutputStream
         /**
          * Assigns next available handle to given object, and returns handle
          * value.  Handles are assigned in ascending order starting at 0.
+         * 将下一个可用句柄分配给给定对象，并返回句柄值。 句柄从 0 开始按升序分配
          */
         int assign(Object obj) {
             if (size >= next.length) {
@@ -2285,6 +2424,7 @@ public class ObjectOutputStream
         /**
          * Looks up and returns handle associated with given object, or -1 if
          * no mapping found.
+         * 查找并返回与给定对象关联的句柄，如果未找到映射，则返回 -1。
          */
         int lookup(Object obj) {
             if (size == 0) {
@@ -2301,6 +2441,7 @@ public class ObjectOutputStream
 
         /**
          * Resets table to its initial (empty) state.
+         * 将表重置为其初始（空）状态。
          */
         void clear() {
             Arrays.fill(spine, -1);
@@ -2310,6 +2451,7 @@ public class ObjectOutputStream
 
         /**
          * Returns the number of mappings currently in table.
+         * 返回表中当前的映射数。
          */
         int size() {
             return size;
@@ -2318,6 +2460,7 @@ public class ObjectOutputStream
         /**
          * Inserts mapping object -> handle mapping into table.  Assumes table
          * is large enough to accommodate new mapping.
+         * 插入映射对象 -> 处理映射到表中。 假设表足够大以容纳新映射
          */
         private void insert(Object obj, int handle) {
             int index = hash(obj) % spine.length;
@@ -2329,6 +2472,7 @@ public class ObjectOutputStream
         /**
          * Expands the hash "spine" -- equivalent to increasing the number of
          * buckets in a conventional hash table.
+         * 扩展散列“脊椎”——相当于增加传统散列表中的桶数
          */
         private void growSpine() {
             spine = new int[(spine.length << 1) + 1];
@@ -2341,6 +2485,7 @@ public class ObjectOutputStream
 
         /**
          * Increases hash table capacity by lengthening entry arrays.
+         * 通过加长条目数组来增加哈希表容量。
          */
         private void growEntries() {
             int newLength = (next.length << 1) + 1;
@@ -2355,6 +2500,7 @@ public class ObjectOutputStream
 
         /**
          * Returns hash value for given object.
+         * 返回给定对象的哈希值。
          */
         private int hash(Object obj) {
             return System.identityHashCode(obj) & 0x7FFFFFFF;
@@ -2364,6 +2510,7 @@ public class ObjectOutputStream
     /**
      * Lightweight identity hash table which maps objects to replacement
      * objects.
+     * 将对象映射到替换对象的轻量级身份哈希表
      */
     private static class ReplaceTable {
 
@@ -2374,6 +2521,7 @@ public class ObjectOutputStream
 
         /**
          * Creates new ReplaceTable with given capacity and load factor.
+         * 使用给定的容量和负载因子创建新的 ReplaceTable
          */
         ReplaceTable(int initialCapacity, float loadFactor) {
             htab = new HandleTable(initialCapacity, loadFactor);
@@ -2382,6 +2530,7 @@ public class ObjectOutputStream
 
         /**
          * Enters mapping from object to replacement object.
+         * 输入从对象到替换对象的映射。
          */
         void assign(Object obj, Object rep) {
             int index = htab.assign(obj);
@@ -2394,6 +2543,7 @@ public class ObjectOutputStream
         /**
          * Looks up and returns replacement for given object.  If no
          * replacement is found, returns the lookup object itself.
+         * 查找并返回给定对象的替换。 如果未找到替换，则返回查找对象本身。
          */
         Object lookup(Object obj) {
             int index = htab.lookup(obj);
@@ -2402,6 +2552,7 @@ public class ObjectOutputStream
 
         /**
          * Resets table to its initial (empty) state.
+         * 将表重置为其初始（空）状态
          */
         void clear() {
             Arrays.fill(reps, 0, htab.size(), null);
@@ -2410,6 +2561,7 @@ public class ObjectOutputStream
 
         /**
          * Returns the number of mappings currently in table.
+         * 返回表中当前的映射数
          */
         int size() {
             return htab.size();
@@ -2417,6 +2569,7 @@ public class ObjectOutputStream
 
         /**
          * Increases table capacity.
+         * 增加桌子容量。
          */
         private void grow() {
             Object[] newReps = new Object[(reps.length << 1) + 1];
@@ -2428,6 +2581,7 @@ public class ObjectOutputStream
     /**
      * Stack to keep debug information about the state of the
      * serialization process, for embedding in exception messages.
+     * 堆栈以保留有关序列化过程状态的调试信息，用于嵌入异常消息。
      */
     private static class DebugTraceInfoStack {
         private final List<String> stack;
@@ -2438,6 +2592,7 @@ public class ObjectOutputStream
 
         /**
          * Removes all of the elements from enclosed list.
+         * 从封闭列表中删除所有元素。
          */
         void clear() {
             stack.clear();
@@ -2445,6 +2600,7 @@ public class ObjectOutputStream
 
         /**
          * Removes the object at the top of enclosed list.
+         * 删除封闭列表顶部的对象
          */
         void pop() {
             stack.remove(stack.size()-1);
@@ -2452,6 +2608,7 @@ public class ObjectOutputStream
 
         /**
          * Pushes a String onto the top of enclosed list.
+         * 将字符串推送到封闭列表的顶部。
          */
         void push(String entry) {
             stack.add("\t- " + entry);
@@ -2459,6 +2616,7 @@ public class ObjectOutputStream
 
         /**
          * Returns a string representation of this object
+         * 返回此对象的字符串表示形式
          */
         public String toString() {
             StringBuilder buffer = new StringBuilder();

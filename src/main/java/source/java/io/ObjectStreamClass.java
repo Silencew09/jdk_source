@@ -795,6 +795,7 @@ public class ObjectStreamClass implements Serializable {
      * Throws an InvalidClassException if objects whose class is represented by
      * this descriptor should not be allowed to serialize.  This method does
      * not apply to serialization of enum constants.
+     * 如果不允许序列化其类由该描述符表示的对象，则抛出 InvalidClassException。此方法不适用于枚举常量的序列化
      */
     void checkSerialize() throws InvalidClassException {
         requireInitialized();
@@ -809,6 +810,9 @@ public class ObjectStreamClass implements Serializable {
      * (e.g., if the class declares serializable fields that do not correspond
      * to actual fields, and hence must use the GetField API).  This method
      * does not apply to deserialization of enum constants.
+     * 如果不应允许其类由此描述符表示的对象使用默认序列化
+     * （例如，如果类声明与实际字段不对应的可序列化字段，因此必须使用 GetField API），
+     * 则抛出 InvalidClassException。此方法不适用于枚举常量的反序列化
      */
     void checkDefaultSerialize() throws InvalidClassException {
         requireInitialized();
@@ -972,6 +976,7 @@ public class ObjectStreamClass implements Serializable {
     /**
      * Returns true if represented class is serializable or externalizable and
      * defines a conformant writeReplace method.  Otherwise, returns false.
+     * 如果表示的类是可序列化的或可外部化的，并且定义了一致的 writeReplace 方法，则返回 true。否则，返回假。
      */
     boolean hasWriteReplaceMethod() {
         requireInitialized();
@@ -1108,6 +1113,8 @@ public class ObjectStreamClass implements Serializable {
      * returns the result.  Throws UnsupportedOperationException if this class
      * descriptor is not associated with a class, or if the class is
      * non-serializable or does not define writeReplace.
+     * 调用所表示的可序列化类的 writeReplace 方法并返回结果。
+     * 如果此类描述符未与类关联，或者类不可序列化或未定义 writeReplace，则抛出 UnsupportedOperationException
      */
     Object invokeWriteReplace(Object obj)
         throws IOException, UnsupportedOperationException
@@ -1254,6 +1261,7 @@ public class ObjectStreamClass implements Serializable {
     /**
      * Returns aggregate size (in bytes) of marshalled primitive field values
      * for represented class.
+     * 返回所表示的类的编组原始字段值的聚合大小（以字节为单位）
      */
     int getPrimDataSize() {
         return primDataSize;
@@ -1272,6 +1280,8 @@ public class ObjectStreamClass implements Serializable {
      * marshals them into byte array buf starting at offset 0.  It is the
      * responsibility of the caller to ensure that obj is of the proper type if
      * non-null.
+     * 获取对象 obj 的可序列化原始字段值并将它们编组到字节数组 buf 中，从偏移量 0 开始
+     * 。调用者有责任确保 obj 为正确类型（如果非空）
      */
     void getPrimFieldValues(Object obj, byte[] buf) {
         fieldRefl.getPrimFieldValues(obj, buf);
@@ -1282,6 +1292,8 @@ public class ObjectStreamClass implements Serializable {
      * unmarshalled from byte array buf starting at offset 0.  It is the
      * responsibility of the caller to ensure that obj is of the proper type if
      * non-null.
+     * 使用从偏移量 0 开始的字节数组 buf 解组的值设置对象 obj 的可序列化原始字段。
+     * 调用者有责任确保 obj 为正确类型（如果非空
      */
     void setPrimFieldValues(Object obj, byte[] buf) {
         fieldRefl.setPrimFieldValues(obj, buf);
@@ -2320,6 +2332,7 @@ public class ObjectStreamClass implements Serializable {
     /**
      * Removes from the specified map any keys that have been enqueued
      * on the specified reference queue.
+     * 从指定的映射中删除已在指定的引用队列中排队的任何键
      */
     static void processQueue(ReferenceQueue<Class<?>> queue,
                              ConcurrentMap<? extends

@@ -31,7 +31,8 @@ package java.io;
  * subclass must implement are write(char[], int, int), flush(), and close().
  * Most subclasses, however, will override some of the methods defined here in
  * order to provide higher efficiency, additional functionality, or both.
- *
+ * 用于写入字符流的抽象类。 子类必须实现的唯一方法是 write(char[], int, int)、flush() 和 close()。
+ * 然而，大多数子类会覆盖这里定义的一些方法，以提供更高的效率、附加功能或两者兼而有之。
  * @see Writer
  * @see   BufferedWriter
  * @see   CharArrayWriter
@@ -51,11 +52,13 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
 
     /**
      * Temporary buffer used to hold writes of strings and single characters
+     * 用于保存字符串和单个字符写入的临时缓冲区
      */
     private char[] writeBuffer;
 
     /**
      * Size of writeBuffer, must be >= 1
+     * writeBuffer 的大小，必须 >= 1
      */
     private static final int WRITE_BUFFER_SIZE = 1024;
 
@@ -65,12 +68,16 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      * itself to protect critical sections.  A subclass should therefore use
      * the object in this field rather than <tt>this</tt> or a synchronized
      * method.
+     * 用于同步此流上的操作的对象。
+     * 为了提高效率，字符流对象可以使用除自身以外的对象来保护临界区。
+     * 因此，子类应该使用此字段中的对象而不是this或同步方法
      */
     protected Object lock;
 
     /**
      * Creates a new character-stream writer whose critical sections will
      * synchronize on the writer itself.
+     * 创建一个新的字符流编写器，其临界区将在编写器本身上同步。
      */
     protected Writer() {
         this.lock = this;
@@ -79,7 +86,7 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
     /**
      * Creates a new character-stream writer whose critical sections will
      * synchronize on the given object.
-     *
+     * 创建一个新的字符流编写器，其临界区将在给定对象上同步。
      * @param  lock
      *         Object to synchronize on
      */
@@ -97,7 +104,8 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      *
      * <p> Subclasses that intend to support efficient single-character output
      * should override this method.
-     *
+     * 写入单个字符。 要写入的字符包含在给定整数值的低 16 位中； 16 个高位被忽略。
+     * 打算支持高效单字符输出的子类应覆盖此方法。
      * @param  c
      *         int specifying a character to be written
      *
@@ -116,7 +124,7 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
 
     /**
      * Writes an array of characters.
-     *
+     * 写入字符数组。
      * @param  cbuf
      *         Array of characters to be written
      *
@@ -129,7 +137,7 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
 
     /**
      * Writes a portion of an array of characters.
-     *
+     * 写入字符数组的一部分。
      * @param  cbuf
      *         Array of characters
      *
@@ -146,7 +154,7 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
 
     /**
      * Writes a string.
-     *
+     * 写入一个字符串。
      * @param  str
      *         String to be written
      *
@@ -159,7 +167,7 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
 
     /**
      * Writes a portion of a string.
-     *
+     * 写入字符串的一部分。
      * @param  str
      *         A String
      *
@@ -207,7 +215,11 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      * appended. For instance, invoking the <tt>toString</tt> method of a
      * character buffer will return a subsequence whose content depends upon
      * the buffer's position and limit.
-     *
+     * 将指定的字符序列附加到此编写器。
+     * 以out.append(csq)形式调用此方法的行为与调用方式完全相同
+     *            out.write(csq.toString())
+     * 根据字符序列csq的toString规范，可能不会附加整个序列。
+     * 例如，调用字符缓冲区的toString方法将返回一个子序列，其内容取决于缓冲区的位置和限制。
      * @param  csq
      *         The character sequence to append.  If <tt>csq</tt> is
      *         <tt>null</tt>, then the four characters <tt>"null"</tt> are
@@ -238,7 +250,9 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      *
      * <pre>
      *     out.write(csq.subSequence(start, end).toString()) </pre>
-     *
+     * 将指定字符序列的子序列附加到此编写器。 可附加的。
+     * 当csq不为null时，以out.append(csq, start, end)形式调用此方法的行为与调用方式完全相同
+     *            out.write(csq.subSequence(start, end).toString())
      * @param  csq
      *         The character sequence from which a subsequence will be
      *         appended.  If <tt>csq</tt> is <tt>null</tt>, then characters
@@ -278,7 +292,9 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      *
      * <pre>
      *     out.write(c) </pre>
-     *
+     * 将指定的字符附加到此编写器。
+     * 以out.append(c)形式调用此方法的行为与调用完全相同
+     *            out.write(c)
      * @param  c
      *         The 16-bit character to append
      *
@@ -306,7 +322,11 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      * stream guarantees only that bytes previously written to the stream are
      * passed to the operating system for writing; it does not guarantee that
      * they are actually written to a physical device such as a disk drive.
-     *
+     * 1.冲洗流。 如果流已将来自各种 write() 方法的任何字符保存在缓冲区中，则立即将它们写入其预期目的地。
+     * 然后，如果该目标是另一个字符或字节流，则刷新它。
+     * 2.因此，一次 flush() 调用将刷新 Writers 和 OutputStreams 链中的所有缓冲区。
+     * 3.如果此流的预期目标是底层操作系统提供的抽象，
+     * 例如文件，则刷新流仅保证先前写入流的字节传递给操作系统进行写入； 它不保证它们确实被写入物理设备，例如磁盘驱动器。
      * @throws  IOException
      *          If an I/O error occurs
      */
@@ -316,7 +336,9 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      * Closes the stream, flushing it first. Once the stream has been closed,
      * further write() or flush() invocations will cause an IOException to be
      * thrown. Closing a previously closed stream has no effect.
-     *
+     * 关闭流，首先刷新它。
+     * 一旦流关闭，进一步的 write() 或 flush() 调用将导致抛出 IOException 。
+     * 关闭先前关闭的流没有任何效果。
      * @throws  IOException
      *          If an I/O error occurs
      */

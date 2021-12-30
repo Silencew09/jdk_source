@@ -33,7 +33,7 @@ import sun.nio.cs.StreamEncoder;
 /**
  * Methods to access the character-based console device, if any, associated
  * with the current Java virtual machine.
- *
+ * 1.访问与当前 Java 虚拟机关联的基于字符的控制台设备（如果有）的方法
  * <p> Whether a virtual machine has a console is dependent upon the
  * underlying platform and also upon the manner in which the virtual
  * machine is invoked.  If the virtual machine is started from an
@@ -43,11 +43,16 @@ import sun.nio.cs.StreamEncoder;
  * was launched.  If the virtual machine is started automatically, for
  * example by a background job scheduler, then it will typically not
  * have a console.
+ * 2.虚拟机是否有控制台取决于底层平台以及调用虚拟机的方式。如果虚拟机从交互式命令行启动而不重定向标准输入和输出流，
+ * 那么它的控制台将存在并且通常将连接到启动虚拟机的键盘和显示器。如果虚拟机是自动启动的，
+ * 例如由后台作业调度程序启动，那么它通常没有控制台
  * <p>
  * If this virtual machine has a console then it is represented by a
  * unique instance of this class which can be obtained by invoking the
  * {@link java.lang.System#console()} method.  If no console device is
  * available then an invocation of that method will return <tt>null</tt>.
+ * 3.如果此虚拟机具有控制台，则它由此类的唯一实例表示，可以通过调用 java.lang.System.console()方法获得该实例。
+ * 如果没有可用的控制台设备，则调用该方法将返回 null
  * <p>
  * Read and write operations are synchronized to guarantee the atomic
  * completion of critical operations; therefore invoking methods
@@ -55,26 +60,33 @@ import sun.nio.cs.StreamEncoder;
  * {@link #printf printf()} as well as the read, format and write operations
  * on the objects returned by {@link #reader()} and {@link #writer()} may
  * block in multithreaded scenarios.
+ * 4.读写操作同步，保证关键操作原子完成；因此调用方法 readLine(),readPassword(), format(),
+ *  printf()以及对返回对象的读取、格式化和写入操作by reader()和 writer()可能会在多线程场景中阻塞
  * <p>
  * Invoking <tt>close()</tt> on the objects returned by the {@link #reader()}
  * and the {@link #writer()} will not close the underlying stream of those
  * objects.
+ * 5.在 reader()和writer()返回的对象上调用close()不会关闭这些对象的底层流。
  * <p>
  * The console-read methods return <tt>null</tt> when the end of the
  * console input stream is reached, for example by typing control-D on
  * Unix or control-Z on Windows.  Subsequent read operations will succeed
  * if additional characters are later entered on the console's input
  * device.
+ * 6.当到达控制台输入流的末尾时，控制台读取方法返回null，例如通过在 Unix 上键入
+ * control-D 或在 Windows 上键入 control-Z。如果稍后在控制台的输入设备上输入其他字符，则后续读取操作将成功
  * <p>
  * Unless otherwise specified, passing a <tt>null</tt> argument to any method
  * in this class will cause a {@link NullPointerException} to be thrown.
+ * 7.除非另有说明，否则将null参数传递给此类中的任何方法将导致抛出NullPointerException
  * <p>
  * <b>Security note:</b>
  * If an application needs to read a password or other secure data, it should
  * use {@link #readPassword()} or {@link #readPassword(String, Object...)} and
  * manually zero the returned character array after processing to minimize the
  * lifetime of sensitive data in memory.
- *
+ * 8.安全注意事项：如果应用程序需要读取密码或其他安全数据，则应使用readPassword()或
+ * readPassword(String, Object...)并手动将返回的字符归零处理后的数组以最小化内存中敏感数据的生命周期
  * <blockquote><pre>{@code
  * Console cons;
  * char[] passwd;
@@ -94,6 +106,7 @@ public final class Console implements Flushable
    /**
     * Retrieves the unique {@link java.io.PrintWriter PrintWriter} object
     * associated with this console.
+    * 检索与此控制台关联的唯一 java.io.PrintWriter对象。
     *
     * @return  The printwriter associated with this console
     */
@@ -104,6 +117,7 @@ public final class Console implements Flushable
    /**
     * Retrieves the unique {@link java.io.Reader Reader} object associated
     * with this console.
+    * 1.检索与此控制台关联的唯一 java.io.Reader对象
     * <p>
     * This method is intended to be used by sophisticated applications, for
     * example, a {@link java.util.Scanner} object which utilizes the rich
@@ -114,6 +128,9 @@ public final class Console implements Flushable
     *     Scanner sc = new Scanner(con.reader());
     *     ...
     * }
+    * 2.此方法旨在由复杂的应用程序使用，例如，一个java.util.Scanner对象，
+    * 它利用了Scanner提供的丰富的解析扫描功能：Console con = System.console();
+    * if (con != null) { Scanner sc = new Scanner(con.reader()); ... }
     * </pre></blockquote>
     * <p>
     * For simple applications requiring only line-oriented reading, use
@@ -129,7 +146,11 @@ public final class Console implements Flushable
     * A line bound is considered to be any one of a line feed (<tt>'\n'</tt>),
     * a carriage return (<tt>'\r'</tt>), a carriage return followed immediately
     * by a linefeed, or an end of stream.
-    *
+    * 3.对于只需要面向行读取的简单应用程序，请使用readLine。批量读取操作java.io.Reader.read(char[]) read(char[]),
+    * java.io.Reader.read(char[], int, int) 和java.io.Reader.read(java.nio.CharBuffer
+    * 不会在每次调用时读取超出行边界的字符，即使目标缓冲区有更多字符的空间。Reader的 read方法可能会阻塞，
+    * 如果没有在控制台的输入设备上输入或到达行边界。换行符被认为是换行符 ('\n')、回车符 ('\r')、
+    * 回车符和换行符中的任何一个，或流结束
     * @return  The reader associated with this console
     */
     public Reader reader() {
@@ -139,7 +160,7 @@ public final class Console implements Flushable
    /**
     * Writes a formatted string to this console's output stream using
     * the specified format string and arguments.
-    *
+    * 使用指定的格式字符串和参数将格式化字符串写入此控制台的输出流
     * @param  fmt
     *         A format string as described in <a
     *         href="../util/Formatter.html#syntax">Format string syntax</a>
@@ -174,11 +195,11 @@ public final class Console implements Flushable
    /**
     * A convenience method to write a formatted string to this console's
     * output stream using the specified format string and arguments.
-    *
+    * 1.使用指定的格式字符串和参数将格式化字符串写入此控制台的输出流的便捷方法
     * <p> An invocation of this method of the form <tt>con.printf(format,
     * args)</tt> behaves in exactly the same way as the invocation of
     * <pre>con.format(format, args)</pre>.
-    *
+    * 2.以con.printf(format, args)形式调用此方法的行为与调用con.format(format, args)完全相同
     * @param  format
     *         A format string as described in <a
     *         href="../util/Formatter.html#syntax">Format string syntax</a>.
@@ -212,7 +233,7 @@ public final class Console implements Flushable
    /**
     * Provides a formatted prompt, then reads a single line of text from the
     * console.
-    *
+    * 提供格式化提示，然后从控制台读取单行文本
     * @param  fmt
     *         A format string as described in <a
     *         href="../util/Formatter.html#syntax">Format string syntax</a>.
@@ -260,6 +281,7 @@ public final class Console implements Flushable
 
    /**
     * Reads a single line of text from the console.
+    * 从控制台读取一行文本
     *
     * @throws IOError
     *         If an I/O error occurs.
@@ -275,7 +297,7 @@ public final class Console implements Flushable
    /**
     * Provides a formatted prompt, then reads a password or passphrase from
     * the console with echoing disabled.
-    *
+    * 提供格式化的提示，然后在禁用回显的情况下从控制台读取密码或密码。
     * @param  fmt
     *         A format string as described in <a
     *         href="../util/Formatter.html#syntax">Format string syntax</a>
@@ -340,7 +362,7 @@ public final class Console implements Flushable
 
    /**
     * Reads a password or passphrase from the console with echoing disabled
-    *
+    * 在禁用回显的情况下从控制台读取密码或密码
     * @throws IOError
     *         If an I/O error occurs.
     *
@@ -355,6 +377,7 @@ public final class Console implements Flushable
     /**
      * Flushes the console and forces any buffered output to be written
      * immediately .
+     * 刷新控制台并强制立即写入任何缓冲的输出
      */
     public void flush() {
         pw.flush();
@@ -415,6 +438,7 @@ public final class Console implements Flushable
         public void close () {}
         public boolean ready() throws IOException {
             //in.ready synchronizes on readLock already
+            //in.ready 已经在 readLock 上同步了
             return in.ready();
         }
 
@@ -445,6 +469,8 @@ public final class Console implements Flushable
                                  * we're in canonical mode so each "fill" should
                                  * come back with an eol. if there no lf or nl at
                                  * the end of returned bytes we reached an eof.
+                                 * 我们处于规范模式，因此每个“填充”都应该返回一个 eol。
+                                 * 如果在返回字节的末尾没有 lf 或 nl，我们就达到了 eof。
                                  */
                                 eof = true;
                             }
@@ -458,6 +484,7 @@ public final class Console implements Flushable
                         /*
                          * if invoked by our readline, skip the leftover, otherwise
                          * return the LF.
+                         * 如果被我们的 readline 调用，跳过剩余的，否则返回 LF
                          */
                         nextChar++;
                     }
@@ -472,6 +499,8 @@ public final class Console implements Flushable
                                 /* no space left even the next is LF, so return
                                  * whatever we have if the invoker is not our
                                  * readLine()
+                                 * 即使下一个是 LF，也没有剩余空间，因此如果调用者不是我们的 readLine()，
+                                 * 则返回我们拥有的任何内容
                                  */
                                 if (cbuf == rcb) {
                                     cbuf = grow();
@@ -488,6 +517,8 @@ public final class Console implements Flushable
                                  * don't miss a LF, if there is one, it's possible
                                  * that it got cut off during last round reading
                                  * simply because the read in buffer was full.
+                                 * 我们有一个 CR 并且我们到达了缓冲区读取的末尾，
+                                 * 填充以确保我们不会错过 LF，如果有，它可能在上一轮读取期间被切断，因为缓冲区中的读取是满的
                                  */
                                 nChars = in.read(cb, 0, cb.length);
                                 nextChar = 0;
@@ -514,10 +545,12 @@ public final class Console implements Flushable
     }
 
     // Set up JavaIOAccess in SharedSecrets
+    //在 SharedSecrets 中设置 JavaIOAccess
     static {
         try {
             // Add a shutdown hook to restore console's echo state should
             // it be necessary.
+            //如果有必要，添加一个关闭钩子来恢复控制台的回声状态
             sun.misc.SharedSecrets.getJavaLangAccess()
                 .registerShutdownHook(0 /* shutdown hook invocation order */,
                     false /* only register if shutdown is not in progress */,

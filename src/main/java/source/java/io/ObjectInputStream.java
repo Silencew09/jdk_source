@@ -196,7 +196,76 @@ import sun.reflect.misc.ReflectUtil;
  * methods defined by enum types are ignored during deserialization.
  * Similarly, any serialPersistentFields or serialVersionUID field declarations
  * are also ignored--all enum types have a fixed serialVersionUID of 0L.
+ * 1.ObjectInputStream 反序列化之前使用 ObjectOutputStream 编写的原始数据和对象。
+ * 2.当分别与 FileOutputStream 和 FileInputStream 一起使用时，ObjectOutputStream 和 ObjectInputStream
+ * 可以为应用程序提供对象图的持久存储。 ObjectInputStream 用于恢复之前序列化的那些对象。
+ * 2.其他用途包括使用套接字流在主机之间传递对象或用于在远程通信系统中编组和解组参数和参数。
+ * 3.ObjectInputStream 确保从流创建的图中所有对象的类型与 Java 虚拟机中存在的类相匹配。
+ * 4.使用标准机制根据需要加载类。
+ * 只能从流中读取支持 java.io.Serializable 或 java.io.Externalizable 接口的对象。
+ *5. readObject方法用于从流中读取对象。 应该使用 Java 的安全转换来获得所需的类型。
+ * 6.在 Java 中，字符串和数组是对象，在序列化过程中被视为对象。 读取时，它们需要转换为预期的类型。
+ * 可以使用 DataInput 上的适当方法从流中读取原始数据类型。
+ * 7.对象的默认反序列化机制将每个字段的内容恢复为写入时的值和类型。
+ * 反序列化过程会忽略声明为瞬态或静态的字段。 对其他对象的引用会导致根据需要从流中读取这些对象。
+ * 使用引用共享机制正确恢复对象图。 反序列化时总是分配新对象，这样可以防止现有对象被覆盖。
+ *8. 读取一个对象类似于运行一个新对象的构造函数。 为对象分配内存并初始化为零 (NULL)。
+ * 为不可序列化的类调用无参数构造函数，然后从流中恢复可序列化类的字段，
+ * 从最接近 java.lang.object 的可序列化类开始，并以对象的最具体的类结束。
+ * 例如，从 ObjectOutputStream 中的示例写入的流中读取：
+ *         FileInputStream fis = new FileInputStream("t.tmp");
+ *         ObjectInputStream ois = new ObjectInputStream(fis);
  *
+ *         int i = ois.readInt();
+ *         String today = (String) ois.readObject();
+ *         Date date = (Date) ois.readObject();
+ *
+ *         ois.close();
+ *
+ * 9.类通过实现 java.io.Serializable 或 java.io.Externalizable 接口来控制它们的序列化方式。
+ * 实现 Serializable 接口允许对象序列化保存和恢复对象的整个状态，并允许类在写入流的时间和读取流的时间之间演变。
+ * 它会自动遍历对象之间的引用，保存和恢复整个图形。
+ * 10.在序列化和反序列化过程中需要特殊处理的可序列化类应该实现以下方法：
+ *    private void writeObject(java.io.ObjectOutputStream stream)
+ *        throws IOException;
+ *    private void readObject(java.io.ObjectInputStream stream)
+ *        throws IOException, ClassNotFoundException;
+ *    private void readObjectNoData()
+ *        throws ObjectStreamException;
+ *
+ * 11.readObject 方法负责使用由相应的 writeObject 方法写入流的数据读取和恢复其特定类的对象的状态。
+ * 12.该方法不需要关心属于它的超类或子类的状态。
+ * 13通过从 ObjectInputStream 中读取各个字段的数据并分配给对象的适当字段来恢复状态。
+ * 14.DataInput 支持读取原始数据类型。
+ * 15.任何读取超出由相应 writeObject 方法写入的自定义数据边界的对象数据的尝试都将导致抛出 OptionalDataException，
+ * eof 字段值为 true。 超出分配数据末尾的非对象读取将以与指示流结束相同的方式反映数据的结束：
+ * 字节读取将返回 -1 作为读取的字节或读取的字节数，以及原始数据读取将抛出 EOFExceptions。
+ * 如果没有对应的 writeObject 方法，则默认序列化数据的结束标志着分配数据的结束。
+ * 16.从 readExternal 方法中发出的原始和对象读取调用的行为方式相同——如果流已经位于相应 writeExternal 方法写入的数据的末尾，
+ * 则对象读取将抛出 OptionalDataExceptions 并将 eof 设置为 true，字节读取将返回 -1，
+ * 原始读取将抛出 EOFExceptions。
+ * 请注意，此行为不适用于使用旧的ObjectStreamConstants.PROTOCOL_VERSION_1协议写入的流，
+ * 其中 writeExternal 方法写入的数据的结尾未划分，因此无法检测。
+ * 17.readObjectNoData 方法负责在序列化流未将给定类列为被反序列化对象的超类的情况下为其特定类初始化对象的状态。
+ * 在接收方使用与发送方不同版本的反序列化实例类的情况下，可能会发生这种情况，并且接收方的版本扩展了发送方版本未扩展的类。
+ * 如果序列化流被篡改，也可能发生这种情况； 因此，尽管存在“敌对”或不完整的源流，但 readObjectNoData 可用于正确初始化反序列化对象。
+ * 序列化不会读取或分配值给未实现 java.io.Serializable 接口的任何对象的字段。
+ * 不可序列化的对象的子类可以是可序列化的。 在这种情况下，不可序列化的类必须有一个无参数构造函数以允许初始化其字段。
+ * 在这种情况下，子类负责保存和恢复不可序列化类的状态。
+ * 18.通常情况下，该类的字段是可访问的（公共的、包的或受保护的），或者存在可用于恢复状态的 get 和 set 方法。
+ * 反序列化对象时发生的任何异常都将被 ObjectInputStream 捕获并中止读取过程。
+ * 实现 Externalizable 接口允许对象完全控制对象序列化形式的内容和格式。
+ * 调用 Externalizable 接口的方法 writeExternal 和 readExternal 来保存和恢复对象状态。
+ * 当由类实现时，它们可以使用 ObjectOutput 和 ObjectInput 的所有方法写入和读取自己的状态。
+ * 对象有责任处理发生的任何版本控制。
+ * 19.枚举常量的反序列化不同于普通的可序列化或外部化对象。
+ * 枚举常量的序列化形式仅由其名称组成； 不传输常量的字段值。
+ * 为了反序列化一个枚举常量，ObjectInputStream 从流中读取常量名；
+ * 然后通过使用枚举常量的基类型和接收到的常量名称作为参数调用静态方法Enum.valueOf(Class, String)来获得反序列化的常量。
+ * 与其他可序列化或可外部化的对象一样，枚举常量可以作为随后出现在序列化流中的反向引用的目标。
+ * 枚举常量的反序列化过程无法自定义：在反序列化过程中，
+ * 将忽略枚举类型定义的任何特定于类的 readObject、readObjectNoData 和 readResolve 方法。 类
+ * 似地，任何serialPersistentFields 或serialVersionUID 字段声明也将被忽略——所有枚举类型都有一个固定的0L 的serialVersionUID
  * @author      Mike Warres
  * @author      Roger Riggs
  * @see java.io.DataInput
@@ -209,12 +278,15 @@ public class ObjectInputStream
     extends InputStream implements ObjectInput, ObjectStreamConstants
 {
     /** handle value representing null */
+    //表示空值的句柄值
     private static final int NULL_HANDLE = -1;
 
     /** marker for unshared objects in internal handle table */
+    //内部句柄表中未共享对象的标记
     private static final Object unsharedMarker = new Object();
 
     /** table mapping primitive type names to corresponding class objects */
+    //表将原始类型名称映射到相应的类对象
     private static final HashMap<String, Class<?>> primClasses
         = new HashMap<>(8, 1.0F);
     static {
@@ -231,42 +303,56 @@ public class ObjectInputStream
 
     private static class Caches {
         /** cache of subclass security audit results */
+        //子类安全审计结果的缓存
         static final ConcurrentMap<WeakClassKey,Boolean> subclassAudits =
             new ConcurrentHashMap<>();
 
         /** queue for WeakReferences to audited subclasses */
+        //WeakReferences 到已审计子类的队列
         static final ReferenceQueue<Class<?>> subclassAuditsQueue =
             new ReferenceQueue<>();
     }
 
     /** filter stream for handling block data conversion */
+    //用于处理块数据转换的过滤流
     private final BlockDataInputStream bin;
     /** validation callback list */
+    //验证回调列表
     private final ValidationList vlist;
     /** recursion depth */
+    //递归深度
     private int depth;
     /** whether stream is closed */
+    //流是否关闭
     private boolean closed;
 
     /** wire handle -> obj/exception map */
+    //线句柄 -> obj/异常映射
     private final HandleTable handles;
     /** scratch field for passing handle values up/down call stack */
+    //用于向上/向下调用堆栈传递句柄值的临时字段
     private int passHandle = NULL_HANDLE;
     /** flag set when at end of field value block with no TC_ENDBLOCKDATA */
+    //在没有 TC_ENDBLOCKDATA 的字段值块末尾时设置标志
     private boolean defaultDataEnd = false;
 
     /** buffer for reading primitive field values */
+    //用于读取原始字段值的缓冲区
     private byte[] primVals;
 
     /** if true, invoke readObjectOverride() instead of readObject() */
+    //如果为 true，则调用 readObjectOverride() 而不是 readObject()
     private final boolean enableOverride;
     /** if true, invoke resolveObject() */
+    //如果为真，则调用 resolveObject()
     private boolean enableResolve;
 
     /**
      * Context during upcalls to class-defined readObject methods; holds
      * object currently being deserialized and descriptor for current class.
      * Null when not during readObject upcall.
+     * 调用类定义的 readObject 方法期间的上下文；
+     * 保存当前正在反序列化的对象和当前类的描述符。 不在 readObject upcall 期间时为 Null。
      */
     private SerialCallbackContext curContext;
 
@@ -275,13 +361,16 @@ public class ObjectInputStream
      * A serialization stream header is read from the stream and verified.
      * This constructor will block until the corresponding ObjectOutputStream
      * has written and flushed the header.
-     *
+     * 1.创建一个从指定的 InputStream 读取的 ObjectInputStream。从流中读取并验证序列化流标头。
+     * 此构造函数将阻塞，直到相应的 ObjectOutputStream 已写入并刷新标头
      * <p>If a security manager is installed, this constructor will check for
      * the "enableSubclassImplementation" SerializablePermission when invoked
      * directly or indirectly by the constructor of a subclass which overrides
      * the ObjectInputStream.readFields or ObjectInputStream.readUnshared
      * methods.
-     *
+     * 2.如果安装了安全管理器，则在由覆盖 ObjectInputStream.readFields 或 ObjectInputStream.readUnshared
+     * 方法的子类的构造函数直接或间接调用时，
+     * 此构造函数将检查“enableSubclassImplementation”SerializablePermission
      * @param   in input stream to read from
      * @throws  StreamCorruptedException if the stream header is incorrect
      * @throws  IOException if an I/O error occurs while reading stream header
@@ -306,12 +395,13 @@ public class ObjectInputStream
      * Provide a way for subclasses that are completely reimplementing
      * ObjectInputStream to not have to allocate private data just used by this
      * implementation of ObjectInputStream.
-     *
+     * 1.为完全重新实现 ObjectInputStream 的子类提供一种方法，使其不必分配此 ObjectInputStream 实现刚刚使用的私有数据
      * <p>If there is a security manager installed, this method first calls the
      * security manager's <code>checkPermission</code> method with the
      * <code>SerializablePermission("enableSubclassImplementation")</code>
      * permission to ensure it's ok to enable subclassing.
-     *
+     * 2.如果安装了安全管理器，此方法首先使用SerializablePermission("enableSubclassImplementation")
+     * 权限调用安全管理器的checkPermission方法，以确保可以启用子类化
      * @throws  SecurityException if a security manager exists and its
      *          <code>checkPermission</code> method denies enabling
      *          subclassing.
@@ -338,18 +428,24 @@ public class ObjectInputStream
      * and readObject methods.  Objects referenced by this object are read
      * transitively so that a complete equivalent graph of objects is
      * reconstructed by readObject.
-     *
+     * 1.从 ObjectInputStream 中读取一个对象。
+     * 读取对象的类、类的签名以及类及其所有超类型的非瞬态和非静态字段的值。
+     * 可以使用 writeObject 和 readObject 方法覆盖类的默认反序列化。
+     * 被这个对象引用的对象被传递性地读取，以便通过 readObject 重建一个完整的等价对象图。
      * <p>The root object is completely restored when all of its fields and the
      * objects it references are completely restored.  At this point the object
      * validation callbacks are executed in order based on their registered
      * priorities. The callbacks are registered by objects (in the readObject
      * special methods) as they are individually restored.
-     *
+     * 2.当根对象的所有字段和它引用的对象完全恢复时，根对象也完全恢复。
+     * 此时，对象验证回调将根据其注册的优先级按顺序执行。
+     * 回调由对象注册（在 readObject 特殊方法中），因为它们被单独恢复
      * <p>Exceptions are thrown for problems with the InputStream and for
      * classes that should not be deserialized.  All exceptions are fatal to
      * the InputStream and leave it in an indeterminate state; it is up to the
      * caller to ignore or recover the stream state.
-     *
+     * 3.对于 InputStream 的问题和不应反序列化的类，将引发异常。
+     * 所有异常对 InputStream 都是致命的，并使其处于不确定状态；忽略或恢复流状态取决于调用者。
      * @throws  ClassNotFoundException Class of a serialized object cannot be
      *          found.
      * @throws  InvalidClassException Something is wrong with a class used by
@@ -393,7 +489,8 @@ public class ObjectInputStream
      * constructed ObjectOutputStream using the protected no-arg constructor.
      * The subclass is expected to provide an override method with the modifier
      * "final".
-     *
+     * 此方法由 ObjectOutputStream 的受信任子类调用，这些子类使用受保护的无参数构造函数构造 ObjectOutputStream。
+     * 子类应提供带有修饰符“final”的覆盖方法
      * @return  the Object read from the stream.
      * @throws  ClassNotFoundException Class definition of a serialized object
      *          cannot be found.
@@ -426,6 +523,12 @@ public class ObjectInputStream
      *       to deserialize back-references to the stream handle deserialized
      *       by readUnshared will cause an ObjectStreamException to be thrown.
      * </ul>
+     * 1.从 ObjectInputStream 读取“非共享”对象。此方法与 readObject 相同，
+     * 除了它阻止对 readObject 和 readUnshared 的后续调用返回对通过此调用获得的反序列化实例的附加引用。
+     * 具体来说：如果调用 readUnshared 来反序列化反向引用（先前已写入流的对象的流表示），
+     * 则将抛出 ObjectStreamException。
+     * 如果 readUnshared 成功返回，则任何后续反序列化对 readUnshared 反序列化的流句柄的
+     * 反向引用的尝试都将导致抛出 ObjectStreamException
      * Deserializing an object via readUnshared invalidates the stream handle
      * associated with the returned object.  Note that this in itself does not
      * always guarantee that the reference returned by readUnshared is unique;
@@ -438,13 +541,22 @@ public class ObjectInputStream
      * array object is unique and cannot be obtained a second time from an
      * invocation of readObject or readUnshared on the ObjectInputStream,
      * even if the underlying data stream has been manipulated.
-     *
+     * 2.通过 readUnshared 反序列化对象会使与返回的对象关联的流句柄无效。
+     * 请注意，这本身并不总是保证 readUnshared 返回的引用是唯一的；
+     * 反序列化的对象可以定义一个 readResolve 方法，该方法返回一个对其他方可见的对象，
+     * 或者 readUnshared 可以返回一个 Class 对象或枚举常量，可在流的其他地方或通过外部方式获得。
+     * 如果反序列化对象定义了一个 readResolve 方法并且该方法的调用返回一个数组，
+     * 则 readUnshared 返回该数组的浅克隆；这保证了返回的数组对象是唯一的，
+     * 并且不能通过对 ObjectInputStream 的 readObject 或 readUnshared 的调用再次获得，
+     * 即使底层数据流已被操作
      * <p>ObjectInputStream subclasses which override this method can only be
      * constructed in security contexts possessing the
      * "enableSubclassImplementation" SerializablePermission; any attempt to
      * instantiate such a subclass without this permission will cause a
      * SecurityException to be thrown.
-     *
+     * 3.覆盖此方法的 ObjectInputStream 子类只能在拥有
+     * “enableSubclassImplementation”SerializablePermission 的安全上下文中构造；
+     * 任何在没有此权限的情况下实例化此类子类的尝试都将导致抛出 SecurityException。
      * @return  reference to deserialized object
      * @throws  ClassNotFoundException if class of an object to deserialize
      *          cannot be found
@@ -483,7 +595,8 @@ public class ObjectInputStream
      * this stream.  This may only be called from the readObject method of the
      * class being deserialized. It will throw the NotActiveException if it is
      * called otherwise.
-     *
+     * 从此流中读取当前类的非静态和非瞬态字段。这只能从被反序列化的类的 readObject 方法调用。
+     * 如果以其他方式调用，它将抛出 NotActiveException
      * @throws  ClassNotFoundException if the class of a serialized object
      *          could not be found.
      * @throws  IOException if an I/O error occurs.
@@ -1290,6 +1403,7 @@ public class ObjectInputStream
 
     /**
      * Clears internal data structures.
+     * 清除内部数据结构
      */
     private void clear() {
         handles.clear();
@@ -1991,6 +2105,8 @@ public class ObjectInputStream
      * Reads in values of serializable fields declared by given class
      * descriptor.  If obj is non-null, sets field values in obj.  Expects that
      * passHandle is set to obj's handle before this method is called.
+     * 读入由给定类描述符声明的可序列化字段的值。如果 obj 非空，则在 obj 中设置字段值。
+     * 期望在调用此方法之前将 passHandle 设置为 obj 的句柄
      */
     private void defaultReadFields(Object obj, ObjectStreamClass desc)
         throws IOException
@@ -2030,6 +2146,8 @@ public class ObjectInputStream
      * Reads in and returns IOException that caused serialization to abort.
      * All stream state is discarded prior to reading in fatal exception.  Sets
      * passHandle to fatal exception's handle.
+     * 读入并返回导致序列化中止的 IOException。在读取致命异常之前丢弃所有流状态。
+     * 将 passHandle 设置为致命异常的句柄
      */
     private IOException readFatalException() throws IOException {
         if (bin.readByte() != TC_EXCEPTION) {
@@ -2043,6 +2161,8 @@ public class ObjectInputStream
      * If recursion depth is 0, clears internal data structures; otherwise,
      * throws a StreamCorruptedException.  This method is called when a
      * TC_RESET typecode is encountered.
+     * 如果递归深度为 0，则清除内部数据结构；否则，抛出 StreamCorruptedException。
+     * 当遇到 TC_RESET 类型代码时调用此方法
      */
     private void handleReset() throws StreamCorruptedException {
         if (depth > 0) {
@@ -2054,7 +2174,7 @@ public class ObjectInputStream
 
     /**
      * Converts specified span of bytes into float values.
-     */
+     */ //将指定的字节范围转换为浮点值。提醒：删除一次热点内联 Float.intBitsToFloat
     // REMIND: remove once hotspot inlines Float.intBitsToFloat
     private static native void bytesToFloats(byte[] src, int srcpos,
                                              float[] dst, int dstpos,
@@ -2062,8 +2182,10 @@ public class ObjectInputStream
 
     /**
      * Converts specified span of bytes into double values.
+     * 将指定的字节范围转换为双精度值
      */
     // REMIND: remove once hotspot inlines Double.longBitsToDouble
+    //提醒：删除一次热点内联 Double.longBitsToDouble
     private static native void bytesToDoubles(byte[] src, int srcpos,
                                               double[] dst, int dstpos,
                                               int ndoubles);
@@ -2078,6 +2200,10 @@ public class ObjectInputStream
      *
      * This method should not be removed or its signature changed without
      * corresponding modifications to the above class.
+     * 返回执行堆栈中的第一个非空类加载器（不计算生成的反射实现类的类加载器），
+     * 如果堆栈中只有来自空类加载器的代码，则返回 null。此方法也由以下 RMI-IIOP 类通过反射调用：
+     * com.sun.corba.se.internal.util.JDKClassLoader 不应对上述类进行相应修改，
+     * 不应删除此方法或更改其签名
      */
     private static ClassLoader latestUserDefinedLoader() {
         return sun.misc.VM.latestUserDefinedLoader();
@@ -2085,21 +2211,27 @@ public class ObjectInputStream
 
     /**
      * Default GetField implementation.
+     * 默认 GetField 实现
      */
     private class GetFieldImpl extends GetField {
 
         /** class descriptor describing serializable fields */
+        //描述可序列化字段的类描述符
         private final ObjectStreamClass desc;
         /** primitive field values */
+        //原始字段值
         private final byte[] primVals;
         /** object field values */
+        //对象字段值
         private final Object[] objVals;
         /** object field value handles */
+        //对象字段值句柄
         private final int[] objHandles;
 
         /**
          * Creates GetFieldImpl object for reading fields defined in given
          * class descriptor.
+         * 创建 GetFieldImpl 对象以读取给定类描述符中定义的字段
          */
         GetFieldImpl(ObjectStreamClass desc) {
             this.desc = desc;
@@ -2170,6 +2302,7 @@ public class ObjectInputStream
 
         /**
          * Reads primitive and object field values from stream.
+         * 从流中读取原始和对象字段值
          */
         void readFields() throws IOException {
             bin.readFully(primVals, 0, primVals.length, false);
@@ -2193,6 +2326,10 @@ public class ObjectInputStream
          * descriptor but a matching field is present in the associated local
          * class descriptor, returns -1.  Throws IllegalArgumentException if
          * neither incoming nor local class descriptor contains a match.
+         * 返回具有给定名称和类型的字段的偏移量。指定类型的 null 匹配所有类型，Object.class 匹配所有非原始类型，
+         * 任何其他非 null 类型仅匹配可分配类型。如果在（传入）类描述符中找不到匹配字段，
+         * 但在关联的本地类描述符中存在匹配字段，则返回 -1。
+         * 如果传入的类描述符和本地类描述符都不包含匹配项，则抛出 IllegalArgumentException。
          */
         private int getFieldOffset(String name, Class<?> type) {
             ObjectStreamField field = desc.getField(name, type);
@@ -2210,6 +2347,7 @@ public class ObjectInputStream
     /**
      * Prioritized list of callbacks to be performed once object graph has been
      * completely deserialized.
+     * 对象图完全反序列化后要执行的优先回调列表
      */
     private static class ValidationList {
 
@@ -2230,10 +2368,12 @@ public class ObjectInputStream
         }
 
         /** linked list of callbacks */
+        //回调链表
         private Callback list;
 
         /**
          * Creates new (empty) ValidationList.
+         * //创建新的（空）验证列表
          */
         ValidationList() {
         }
@@ -2241,6 +2381,7 @@ public class ObjectInputStream
         /**
          * Registers callback.  Throws InvalidObjectException if callback
          * object is null.
+         * 注册回调。如果回调对象为空，则抛出 InvalidObjectException
          */
         void register(ObjectInputValidation obj, int priority)
             throws InvalidObjectException
@@ -2268,6 +2409,8 @@ public class ObjectInputStream
          * priorities may be called in any order.  If any of the callbacks
          * throws an InvalidObjectException, the callback process is terminated
          * and the exception propagated upwards.
+         * 调用所有已注册的回调并清除回调列表。优先级高的回调先被调用；可以按任何顺序调用具有相同优先级的那些。
+         * 如果任何回调抛出 InvalidObjectException，回调过程将终止并且异常向上传播
          */
         void doCallbacks() throws InvalidObjectException {
             try {
@@ -2290,6 +2433,7 @@ public class ObjectInputStream
 
         /**
          * Resets the callback list to its initial (empty) state.
+         * 将回调列表重置为其初始（空）状态
          */
         public void clear() {
             list = null;
@@ -2298,16 +2442,19 @@ public class ObjectInputStream
 
     /**
      * Input stream supporting single-byte peek operations.
+     * 支持单字节窥视操作的输入流
      */
     private static class PeekInputStream extends InputStream {
 
         /** underlying stream */
+        //底层流
         private final InputStream in;
         /** peeked byte */
         private int peekb = -1;
 
         /**
          * Creates new PeekInputStream on top of given underlying stream.
+         * //在给定的底层流之上创建新的 PeekInputStream
          */
         PeekInputStream(InputStream in) {
             this.in = in;
@@ -2316,6 +2463,7 @@ public class ObjectInputStream
         /**
          * Peeks at next byte value in stream.  Similar to read(), except
          * that it does not consume the read value.
+         * 查看流中的下一个字节值。与 read() 类似，不同之处在于它不消耗读取值
          */
         int peek() throws IOException {
             return (peekb >= 0) ? peekb : (peekb = in.read());
@@ -2385,45 +2533,62 @@ public class ObjectInputStream
      * for details).  Buffering depends on block data mode: when in default
      * mode, no data is buffered in advance; when in block data mode, all data
      * for the current data block is read in at once (and buffered).
+     * 输入流有两种模式：默认模式下，输入与DataOutputStream格式相同的数据；
+     * 在“块数据”模式下，输入由块数据标记括起来的数据（有关详细信息，请参阅对象序列化规范）。
+     * 缓冲取决于块数据模式：默认模式下，不预先缓冲数据；在块数据模式下，当前数据块的所有数据都被一次性读入（并缓冲）
      */
     private class BlockDataInputStream
         extends InputStream implements DataInput
     {
         /** maximum data block length */
+        //最大数据块长度
         private static final int MAX_BLOCK_SIZE = 1024;
         /** maximum data block header length */
+        //最大数据块头长度
         private static final int MAX_HEADER_SIZE = 5;
         /** (tunable) length of char buffer (for reading strings) */
+        //（可调）字符缓冲区的长度（用于读取字符串）
         private static final int CHAR_BUF_SIZE = 256;
         /** readBlockHeader() return value indicating header read may block */
+        //readBlockHeader() 返回值指示标头读取可能会阻塞
         private static final int HEADER_BLOCKED = -2;
 
         /** buffer for reading general/block data */
+        //用于读取通用块数据的缓冲区
         private final byte[] buf = new byte[MAX_BLOCK_SIZE];
         /** buffer for reading block data headers */
+        //用于读取块数据头的缓冲区
         private final byte[] hbuf = new byte[MAX_HEADER_SIZE];
         /** char buffer for fast string reads */
+        //用于快速字符串读取的字符缓冲区
         private final char[] cbuf = new char[CHAR_BUF_SIZE];
 
         /** block data mode */
+        //块数据模式
         private boolean blkmode = false;
 
         // block data state fields; values meaningful only when blkmode true
         /** current offset into buf */
+        //块数据状态字段；仅当 blkmode 真正当前偏移到 buf 时才有意义的值
         private int pos = 0;
         /** end offset of valid data in buf, or -1 if no more block data */
+        //buf 中有效数据的结束偏移量，如果没有更多块数据，则为 -1
         private int end = -1;
         /** number of bytes in current block yet to be read from stream */
+        //当前块中尚未从流中读取的字节数
         private int unread = 0;
 
         /** underlying stream (wrapped in peekable filter stream) */
+        //底层流（包装在 peekable 过滤流中）
         private final PeekInputStream in;
         /** loopback stream (for data reads that span data blocks) */
+        //环回流（用于跨数据块的数据读取）
         private final DataInputStream din;
 
         /**
          * Creates new BlockDataInputStream on top of given underlying stream.
          * Block data mode is turned off by default.
+         * 在给定的底层流之上创建新的 BlockDataInputStream。块数据模式默认关闭
          */
         BlockDataInputStream(InputStream in) {
             this.in = new PeekInputStream(in);
@@ -2436,6 +2601,9 @@ public class ObjectInputStream
          * the old mode, no action is taken.  Throws IllegalStateException if
          * block data mode is being switched from on to off while unconsumed
          * block data is still present in the stream.
+         * 将块数据模式设置为给定模式（true == on，false == off）并返回先前的模式值。
+         * 如果新模式与旧模式相同，则不执行任何操作。
+         * 如果块数据模式从打开切换到关闭而流中仍然存在未使用的块数据，则抛出 IllegalStateException。
          */
         boolean setBlockDataMode(boolean newmode) throws IOException {
             if (blkmode == newmode) {
@@ -2455,6 +2623,7 @@ public class ObjectInputStream
         /**
          * Returns true if the stream is currently in block data mode, false
          * otherwise.
+         * 如果流当前处于块数据模式，则返回 true，否则返回 false。
          */
         boolean getBlockDataMode() {
             return blkmode;
@@ -2464,6 +2633,8 @@ public class ObjectInputStream
          * If in block data mode, skips to the end of the current group of data
          * blocks (but does not unset block data mode).  If not in block data
          * mode, throws an IllegalStateException.
+         * 如果处于块数据模式，则跳到当前数据块组的末尾（但不会取消设置块数据模式）。
+         * 如果不是块数据模式，则抛出 IllegalStateException
          */
         void skipBlockData() throws IOException {
             if (!blkmode) {
@@ -2480,6 +2651,8 @@ public class ObjectInputStream
          * blocking, returns HEADER_BLOCKED, else if the next element in the
          * stream is a block data header, returns the block data length
          * specified by the header, else returns -1.
+         * 尝试读入下一个区块数据头（如果有）。如果 canBlock 为 false 并且在没有可能阻塞的情况下无法读取完整的头，
+         * 则返回 HEADER_BLOCKED，否则如果流中的下一个元素是块数据头，则返回由头指定的块数据长度，否则返回 -1
          */
         private int readBlockHeader(boolean canBlock) throws IOException {
             if (defaultDataEnd) {
@@ -2488,6 +2661,8 @@ public class ObjectInputStream
                  * value block written via default serialization; since there
                  * is no terminating TC_ENDBLOCKDATA tag, simulate
                  * end-of-custom-data behavior explicitly.
+                 * 修复 4360508：流当前位于通过默认序列化写入的字段值块的末尾；
+                 * 由于没有终止 TC_ENDBLOCKDATA 标记，因此显式模拟自定义数据结束行为。
                  */
                 return -1;
             }
@@ -2525,6 +2700,9 @@ public class ObjectInputStream
                          * Unfortunately, this case must be parsed at a lower
                          * level than other typecodes, since primitive data
                          * reads may span data blocks separated by a TC_RESET.
+                         * TC_RESET 可能发生在数据块之间。不幸的是，
+                         * 这种情况必须在比其他类型代码更低的级别进行解析，
+                         * 因为原始数据读取可能跨越由 TC_RESET 分隔的数据块
                          */
                         case TC_RESET:
                             in.read();
@@ -2552,6 +2730,9 @@ public class ObjectInputStream
          * unread fields to reflect the new amount of available block data; if
          * the next element in the stream is not a data block, sets pos and
          * unread to 0 and end to -1.
+         * 用块数据重新填充内部缓冲区 buf。调用时 buf 中的任何数据都被视为已消耗。
+         * 设置 pos、end 和 unread 字段以反映新的可用块数据量；如果流中的下一个元素不是数据块，
+         * 则将 pos 和 unread 设置为 0，将 end 设置为 -1
          */
         private void refill() throws IOException {
             try {
@@ -2590,6 +2771,7 @@ public class ObjectInputStream
          * If in block data mode, returns the number of unconsumed bytes
          * remaining in the current data block.  If not in block data mode,
          * throws an IllegalStateException.
+         * 如果处于块数据模式，则返回当前数据块中剩余的未消耗字节数。如果不是块数据模式，则抛出 IllegalStateException
          */
         int currentBlockRemaining() {
             if (blkmode) {
@@ -2603,6 +2785,7 @@ public class ObjectInputStream
          * Peeks at (but does not consume) and returns the next byte value in
          * the stream, or -1 if the end of the stream/block data (if in block
          * data mode) has been reached.
+         * 偷看（但不消耗）并返回流中的下一个字节值，如果已到达流块数据的末尾（如果处于块数据模式），则返回 -1。
          */
         int peek() throws IOException {
             if (blkmode) {
@@ -2619,6 +2802,7 @@ public class ObjectInputStream
          * Peeks at (but does not consume) and returns the next byte value in
          * the stream, or throws EOFException if end of stream/block data has
          * been reached.
+         * 偷看（但不消耗）并返回流中的下一个字节值，如果已到达流块数据的末尾，则抛出 EOFException
          */
         byte peekByte() throws IOException {
             int val = peek();
@@ -2630,11 +2814,13 @@ public class ObjectInputStream
 
 
         /* ----------------- generic input stream methods ------------------ */
+        //通用输入流方法
         /*
          * The following methods are equivalent to their counterparts in
          * InputStream, except that they interpret data block boundaries and
          * read the requested data from within data blocks when in block data
          * mode.
+         * 以下方法等效于 InputStream 中的对应方法，不同之处在于它们在块数据模式下解释数据块边界并从数据块内读取请求的数据。
          */
 
         public int read() throws IOException {
@@ -2721,6 +2907,9 @@ public class ObjectInputStream
          * been reached.  If copy is true, reads values into an intermediate
          * buffer before copying them to b (to avoid exposing a reference to
          * b).
+         * 尝试在偏移量 off 处将 len 字节读入字节数组 b。
+         * 返回读取的字节数，如果已到达流块数据的末尾，则返回 -1。如果 copy 为真，
+         * 则在将值复制到 b 之前将值读入中间缓冲区（以避免暴露对 b 的引用）
          */
         int read(byte[] b, int off, int len, boolean copy) throws IOException {
             if (len == 0) {
@@ -2748,11 +2937,14 @@ public class ObjectInputStream
         }
 
         /* ----------------- primitive data input methods ------------------ */
+        //原始数据输入法
         /*
          * The following methods are equivalent to their counterparts in
          * DataInputStream, except that they interpret data block boundaries
          * and read the requested data from within data blocks when in block
          * data mode.
+         * 以下方法等效于它们在 DataInputStream 中的对应方法，
+         * 不同之处在于它们在块数据模式下解释数据块边界并从数据块内读取请求的数据。
          */
 
         public void readFully(byte[] b) throws IOException {
@@ -2894,15 +3086,18 @@ public class ObjectInputStream
 
         @SuppressWarnings("deprecation")
         public String readLine() throws IOException {
-            return din.readLine();      // deprecated, not worth optimizing
+            return din.readLine();      // deprecated, not worth optimizing 已弃用，不值得优化
         }
 
         /* -------------- primitive data array input methods --------------- */
+        //原始数据数组输入方法
         /*
          * The following methods read in spans of primitive data values.
          * Though equivalent to calling the corresponding primitive read
          * methods repeatedly, these methods are optimized for reading groups
          * of primitive data values more efficiently.
+         * 以下方法读取原始数据值的跨度。虽然相当于重复调用相应的原始读取方法，
+         * 但这些方法针对更有效地读取原始数据值组进行了优化
          */
 
         void readBooleans(boolean[] v, int off, int len) throws IOException {
@@ -3058,6 +3253,8 @@ public class ObjectInputStream
          * Reads in string written in "long" UTF format.  "Long" UTF format is
          * identical to standard UTF, except that it uses an 8 byte header
          * (instead of the standard 2 bytes) to convey the UTF encoding length.
+         * 读取以“长”UTF 格式编写的字符串。
+         * “长”UTF 格式与标准 UTF 相同，不同之处在于它使用 8 字节的标头（而不是标准的 2 字节）来传达 UTF 编码长度
          */
         String readLongUTF() throws IOException {
             return readUTFBody(readLong());
@@ -3067,6 +3264,7 @@ public class ObjectInputStream
          * Reads in the "body" (i.e., the UTF representation minus the 2-byte
          * or 8-byte length header) of a UTF encoding, which occupies the next
          * utflen bytes.
+         * 读取 UTF 编码的“主体”（即 UTF 表示减去 2 字节或 8 字节长度的标头），它占用下一个 utflen 字节
          */
         private String readUTFBody(long utflen) throws IOException {
             StringBuilder sbuf = new StringBuilder();
@@ -3102,6 +3300,8 @@ public class ObjectInputStream
          * (starting at offset pos and ending at or before offset end),
          * consuming no more than utflen bytes.  Appends read characters to
          * sbuf.  Returns the number of bytes consumed.
+         * 从内部缓冲区中读取 UTF 编码字符的范围（从偏移 pos 开始并在偏移结束时或之前结束），
+         * 消耗不超过 utflen 字节。将读取的字符附加到 sbuf。返回消耗的字节数
          */
         private long readUTFSpan(StringBuilder sbuf, long utflen)
             throws IOException
@@ -3110,6 +3310,7 @@ public class ObjectInputStream
             int start = pos;
             int avail = Math.min(end - pos, CHAR_BUF_SIZE);
             // stop short of last char unless all of utf bytes in buffer
+            //停止最后一个字符，除非缓冲区中的所有 utf 字节
             int stop = pos + ((utflen > avail) ? avail - 2 : (int) utflen);
             boolean outOfBounds = false;
 
@@ -3163,6 +3364,8 @@ public class ObjectInputStream
                      * Fix for 4450867: if a malformed utf char causes the
                      * conversion loop to scan past the expected end of the utf
                      * string, only consume the expected number of utf bytes.
+                     * 修复 4450867：如果格式错误的 utf 字符导致转换循环扫描超过 utf 字符串的预期结尾，
+                     * 则仅消耗预期数量的 utf 字节
                      */
                     pos = start + (int) utflen;
                     throw new UTFDataFormatException();
@@ -3179,6 +3382,8 @@ public class ObjectInputStream
          * This method is used when reading in UTF strings written in block
          * data mode to handle UTF-encoded characters which (potentially)
          * straddle block-data boundaries.
+         * 一次读入一个 UTF 编码的单个字符，将该字符附加到 sbuf，并返回消耗的字节数。
+         * 在读取以块数据模式编写的 UTF 字符串时使用此方法，以处理（可能）跨越块数据边界的 UTF 编码字符
          */
         private int readUTFChar(StringBuilder sbuf, long utflen)
             throws IOException
@@ -3240,7 +3445,9 @@ public class ObjectInputStream
      * determining which objects should have ClassNotFoundExceptions associated
      * with them, taking into account cycles and discontinuities (e.g., skipped
      * fields) in the object graph.
-     *
+     * 1.跟踪对象映射的线句柄的非同步表，以及与反序列化对象关联的 ClassNotFoundExceptions。
+     * 这个类实现了一个异常传播算法，用于确定哪些对象应该与它们关联 ClassNotFoundExceptions，
+     * 同时考虑到对象图中的循环和不连续性（例如，跳过的字段）
      * <p>General use of the table is as follows: during deserialization, a
      * given object is first assigned a handle by calling the assign method.
      * This method leaves the assigned handle in an "open" state, wherein
@@ -3250,38 +3457,51 @@ public class ObjectInputStream
      * tagged with an exception, the HandleTable assumes responsibility for
      * propagating the exception to any other objects which depend
      * (transitively) on the exception-tagged object.
-     *
+     * 2.该表的一般用途如下：在反序列化过程中，首先通过调用assign方法为给定对象分配一个句柄。
+     * 该方法使分配的句柄处于“打开”状态，其中对其他句柄的异常状态的依赖可以通过调用 markDependency 方法注册，
+     * 也可以通过调用 markException 将异常直接与句柄关联。
+     * 当句柄被标记为异常时， HandleTable 负责将异常传播到任何其他依赖（传递）异常标记对象的对象
      * <p>Once all exception information/dependencies for the handle have been
      * registered, the handle should be "closed" by calling the finish method
      * on it.  The act of finishing a handle allows the exception propagation
      * algorithm to aggressively prune dependency links, lessening the
      * performance/memory impact of exception tracking.
-     *
+     * 3.一旦注册了句柄的所有异常信息依赖项，就应该通过调用其完成方法来“关闭”句柄。
+     * 完成句柄的行为允许异常传播算法积极修剪依赖链接，减少异常跟踪对性能内存的影响
      * <p>Note that the exception propagation algorithm used depends on handles
      * being assigned/finished in LIFO order; however, for simplicity as well
      * as memory conservation, it does not enforce this constraint.
+     * 4.请注意，所使用的异常传播算法取决于按 LIFO 顺序分配完成的句柄；然而，为了简单和节省内存，它不强制执行此约束
      */
     // REMIND: add full description of exception propagation algorithm?
+        //提醒：添加异常传播算法的完整描述？
     private static class HandleTable {
 
         /* status codes indicating whether object has associated exception */
+        //指示对象是否具有关联异常的状态代码
         private static final byte STATUS_OK = 1;
         private static final byte STATUS_UNKNOWN = 2;
         private static final byte STATUS_EXCEPTION = 3;
 
         /** array mapping handle -> object status */
+        //数组映射句柄 -> 对象状态
         byte[] status;
         /** array mapping handle -> object/exception (depending on status) */
+        //数组映射句柄 -> 对象异常（取决于状态）
         Object[] entries;
         /** array mapping handle -> list of dependent handles (if any) */
+        //数组映射句柄 -> 依赖句柄列表（如果有）
         HandleList[] deps;
         /** lowest unresolved dependency */
+        //最低的未解决依赖性
         int lowDep = -1;
         /** number of handles in table */
+        //表中的句柄数
         int size = 0;
 
         /**
          * Creates handle table with the given initial capacity.
+         * 创建具有给定初始容量的句柄表
          */
         HandleTable(int initialCapacity) {
             status = new byte[initialCapacity];
@@ -3294,6 +3514,8 @@ public class ObjectInputStream
          * handle.  Once object has been completely deserialized (and all
          * dependencies on other objects identified), the handle should be
          * "closed" by passing it to finish().
+         * 将下一个可用句柄分配给给定对象，并返回分配的句柄。
+         * 一旦对象被完全反序列化（并且识别出对其他对象的所有依赖），应该通过将句柄传递给finish()来“关闭”句柄
          */
         int assign(Object obj) {
             if (size >= entries.length) {
@@ -3309,6 +3531,9 @@ public class ObjectInputStream
          * another.  The dependent handle must be "open" (i.e., assigned, but
          * not finished yet).  No action is taken if either dependent or target
          * handle is NULL_HANDLE.
+         * 注册一个句柄对另一个句柄的依赖关系（处于异常状态）。
+         * 依赖句柄必须是“打开的”（即已分配，但尚未完成）。
+         * 如果从属句柄或目标句柄为 NULL_HANDLE，则不采取任何操作
          */
         void markDependency(int dependent, int target) {
             if (dependent == NULL_HANDLE || target == NULL_HANDLE) {
@@ -3320,10 +3545,12 @@ public class ObjectInputStream
                     switch (status[target]) {
                         case STATUS_OK:
                             // ignore dependencies on objs with no exception
+                            //无一例外地忽略对 objs 的依赖
                             break;
 
                         case STATUS_EXCEPTION:
                             // eagerly propagate exception
+                            //急切地传播异常
                             markException(dependent,
                                 (ClassNotFoundException) entries[target]);
                             break;
@@ -3359,6 +3586,8 @@ public class ObjectInputStream
          * with the currently active handle and propagates it to other
          * referencing objects as appropriate.  The specified handle must be
          * "open" (i.e., assigned, but not finished yet).
+         * 将 ClassNotFoundException（如果尚未关联）与当前活动的句柄相关联，并将其传播到其他适当的引用对象。
+         * 指定的句柄必须是“打开的”（即已分配，但尚未完成）
          */
         void markException(int handle, ClassNotFoundException ex) {
             switch (status[handle]) {
@@ -3389,22 +3618,27 @@ public class ObjectInputStream
          * Marks given handle as finished, meaning that no new dependencies
          * will be marked for handle.  Calls to the assign and finish methods
          * must occur in LIFO order.
+         * 将给定的句柄标记为已完成，这意味着不会为句柄标记新的依赖项。对assign 和finish 方法的调用必须按LIFO 顺序进行
          */
         void finish(int handle) {
             int end;
             if (lowDep < 0) {
                 // no pending unknowns, only resolve current handle
+                //没有未决的未知数，仅解析当前句柄
                 end = handle + 1;
             } else if (lowDep >= handle) {
                 // pending unknowns now clearable, resolve all upward handles
+                //现在可以清除待处理的未知数，解决所有向上的句柄
                 end = size;
                 lowDep = -1;
             } else {
                 // unresolved backrefs present, can't resolve anything yet
+                //存在未解决的反向引用，尚无法解决任何问题
                 return;
             }
 
             // change STATUS_UNKNOWN -> STATUS_OK in selected span of handles
+            //在选定的句柄范围内更改 STATUS_UNKNOWN -> STATUS_OK
             for (int i = handle; i < end; i++) {
                 switch (status[i]) {
                     case STATUS_UNKNOWN:
@@ -3427,6 +3661,8 @@ public class ObjectInputStream
          * associated with the handle is forgotten.  This method has no effect
          * if the given handle already has an exception associated with it.
          * This method may be called at any time after the handle is assigned.
+         * 为给定的句柄分配一个新对象。先前与句柄关联的对象被遗忘。
+         * 如果给定的句柄已经有一个与之关联的异常，则此方法无效。分配句柄后，可以随时调用此方法
          */
         void setObject(int handle, Object obj) {
             switch (status[handle]) {
@@ -3447,6 +3683,8 @@ public class ObjectInputStream
          * Looks up and returns object associated with the given handle.
          * Returns null if the given handle is NULL_HANDLE, or if it has an
          * associated ClassNotFoundException.
+         * 查找并返回与给定句柄关联的对象。如果给定的句柄是 NULL_HANDLE，
+         * 或者它有一个关联的 ClassNotFoundException，则返回 null
          */
         Object lookupObject(int handle) {
             return (handle != NULL_HANDLE &&
@@ -3458,6 +3696,8 @@ public class ObjectInputStream
          * Looks up and returns ClassNotFoundException associated with the
          * given handle.  Returns null if the given handle is NULL_HANDLE, or
          * if there is no ClassNotFoundException associated with the handle.
+         * 查找并返回与给定句柄关联的 ClassNotFoundException。
+         * 如果给定的句柄是 NULL_HANDLE，或者没有与句柄关联的 ClassNotFoundException，则返回 null
          */
         ClassNotFoundException lookupException(int handle) {
             return (handle != NULL_HANDLE &&
@@ -3467,6 +3707,7 @@ public class ObjectInputStream
 
         /**
          * Resets table to its initial state.
+         * 将表重置为其初始状态
          */
         void clear() {
             Arrays.fill(status, 0, size, (byte) 0);
@@ -3478,6 +3719,7 @@ public class ObjectInputStream
 
         /**
          * Returns number of handles registered in table.
+         * 返回表中注册的句柄数
          */
         int size() {
             return size;
@@ -3485,6 +3727,7 @@ public class ObjectInputStream
 
         /**
          * Expands capacity of internal arrays.
+         * 扩展内部阵列的容量
          */
         private void grow() {
             int newCapacity = (entries.length << 1) + 1;
@@ -3504,6 +3747,7 @@ public class ObjectInputStream
 
         /**
          * Simple growable list of (integer) handles.
+         * （整数）句柄的简单可增长列表。
          */
         private static class HandleList {
             private int[] list = new int[4];
@@ -3536,6 +3780,7 @@ public class ObjectInputStream
 
     /**
      * Method for cloning arrays in case of using unsharing reading
+     * 在使用非共享读取的情况下克隆数组的方法
      */
     private static Object cloneArray(Object array) {
         if (array instanceof Object[]) {
@@ -3569,6 +3814,7 @@ public class ObjectInputStream
     }
 
     // controlled access to ObjectStreamClassValidator
+    //对 ObjectStreamClass Validator 的受控访问
     private volatile ObjectStreamClassValidator validator;
 
     private static void setValidator(ObjectInputStream ois, ObjectStreamClassValidator validator) {

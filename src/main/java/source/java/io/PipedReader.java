@@ -28,7 +28,7 @@ package java.io;
 
 /**
  * Piped character-input streams.
- *
+ * 管道字符输入流
  * @author      Mark Reinhold
  * @since       JDK1.1
  */
@@ -47,11 +47,13 @@ public class PipedReader extends Reader {
 
    /**
     * The size of the pipe's circular input buffer.
+    * 管道循环输入缓冲区的大小。
     */
     private static final int DEFAULT_PIPE_SIZE = 1024;
 
     /**
      * The circular buffer into which incoming data is placed.
+     * 放置传入数据的循环缓冲区。
      */
     char buffer[];
 
@@ -60,12 +62,15 @@ public class PipedReader extends Reader {
      * next character of data will be stored when received from the connected
      * piped writer. <code>in&lt;0</code> implies the buffer is empty,
      * <code>in==out</code> implies the buffer is full
+     * 当从连接的管道写入器接收到数据的下一个字符时，循环缓冲区中位置的索引。
+     * in<0表示缓冲区为空， in==out表示缓冲区已满
      */
     int in = -1;
 
     /**
      * The index of the position in the circular buffer at which the next
      * character of data will be read by this piped reader.
+     * 此管道读取器将读取下一个数据字符的循环缓冲区中位置的索引。
      */
     int out = 0;
 
@@ -74,7 +79,7 @@ public class PipedReader extends Reader {
      * that it is connected to the piped writer
      * <code>src</code>. Data written to <code>src</code>
      * will then be available as input from this stream.
-     *
+     * 创建一个PipedReader以便它连接到管道编写器src 。 然后写入src数据将可用作此流的输入
      * @param      src   the stream to connect to.
      * @exception  IOException  if an I/O error occurs.
      */
@@ -87,7 +92,8 @@ public class PipedReader extends Reader {
      * to the piped writer <code>src</code> and uses the specified
      * pipe size for the pipe's buffer. Data written to <code>src</code>
      * will then be  available as input from this stream.
-
+     创建一个PipedReader以便它连接到管道编写器src并使用指定的管道大小作为管道的缓冲区。
+     然后写入src数据将可用作此流的输入。
      * @param      src       the stream to connect to.
      * @param      pipeSize  the size of the pipe's buffer.
      * @exception  IOException  if an I/O error occurs.
@@ -106,6 +112,7 @@ public class PipedReader extends Reader {
      * connected}. It must be {@linkplain java.io.PipedWriter#connect(
      * java.io.PipedReader) connected} to a <code>PipedWriter</code>
      * before being used.
+     * 创建一个PipedReader使其尚未连接。 在使用之前，它必须连接到PipedWriter
      */
     public PipedReader() {
         initPipe(DEFAULT_PIPE_SIZE);
@@ -118,7 +125,8 @@ public class PipedReader extends Reader {
      * It must be  {@linkplain java.io.PipedWriter#connect(
      * java.io.PipedReader) connected} to a <code>PipedWriter</code>
      * before being used.
-     *
+     * 创建一个PipedReader使其尚未connected并使用指定的管道大小作为管道缓冲区。
+     * 在使用之前，它必须连接到PipedWriter
      * @param   pipeSize the size of the pipe's buffer.
      * @exception  IllegalArgumentException if {@code pipeSize <= 0}.
      * @since      1.6
@@ -153,7 +161,12 @@ public class PipedReader extends Reader {
      * <pre><code>src.connect(snk)</code> </pre>
      * <p>
      * The two calls have the same effect.
-     *
+     * 使这个管道读取器连接到管道写入器src 。 如果此对象已连接到某个其他管道编写器，则会引发IOException 。
+     * 如果src是一个未连接的管道写入器，而snk是一个未连接的管道读取器，它们可以通过以下任一调用连接：
+     * snk.connect(src)
+     * 或电话：
+     * src.connect(snk)
+     * 这两个调用具有相同的效果。
      * @param      src   The piped writer to connect to.
      * @exception  IOException  if an I/O error occurs.
      */
@@ -164,6 +177,7 @@ public class PipedReader extends Reader {
     /**
      * Receives a char of data. This method will block if no input is
      * available.
+     * 接收一个字符的数据。 如果没有输入可用，此方法将阻塞。
      */
     synchronized void receive(int c) throws IOException {
         if (!connected) {
@@ -200,6 +214,7 @@ public class PipedReader extends Reader {
     /**
      * Receives data into an array of characters.  This method will
      * block until some input is available.
+     * 将数据接收到字符数组中。 此方法将阻塞，直到某些输入可用
      */
     synchronized void receive(char c[], int off, int len)  throws IOException {
         while (--len >= 0) {
@@ -210,6 +225,7 @@ public class PipedReader extends Reader {
     /**
      * Notifies all waiting threads that the last character of data has been
      * received.
+     * 通知所有等待的线程已收到数据的最后一个字符。
      */
     synchronized void receivedLast() {
         closedByWriter = true;
@@ -222,7 +238,8 @@ public class PipedReader extends Reader {
      * has been reached, the value <code>-1</code> is returned.
      * This method blocks until input data is available, the end of
      * the stream is detected, or an exception is thrown.
-     *
+     * 从此管道流中读取数据的下一个字符。 如果由于已到达流的末尾而没有可用的字符，则返回值-1 。
+     * 此方法会阻塞，直到输入数据可用、检测到流结束或抛出异常为止。
      * @return     the next character of data, or <code>-1</code> if the end of the
      *             stream is reached.
      * @exception  IOException  if the pipe is
@@ -275,7 +292,9 @@ public class PipedReader extends Reader {
      * will be read if the end of the data stream is reached or if
      * <code>len</code> exceeds the pipe's buffer size. This method
      * blocks until at least one character of input is available.
-     *
+     * 从此管道流中读取最多len字符的数据到一个字符数组中。
+     * 如果到达数据流的末尾或len超过管道的缓冲区大小，则将读取少于len字符。
+     * 此方法会阻塞，直到至少有一个输入字符可用
      * @param      cbuf     the buffer into which the data is read.
      * @param      off   the start offset of the data.
      * @param      len   the maximum number of characters read.
@@ -328,7 +347,7 @@ public class PipedReader extends Reader {
     /**
      * Tell whether this stream is ready to be read.  A piped character
      * stream is ready if the circular buffer is not empty.
-     *
+     * 告诉这个流是否准备好被读取。 如果循环缓冲区不为空，则管道字符流已准备就绪
      * @exception  IOException  if the pipe is
      *                  <a href=PipedInputStream.html#BROKEN> <code>broken</code></a>,
      *                  {@link #connect(java.io.PipedWriter) unconnected}, or closed.
@@ -352,7 +371,7 @@ public class PipedReader extends Reader {
     /**
      * Closes this piped stream and releases any system resources
      * associated with the stream.
-     *
+     * 关闭此管道流并释放与该流关联的所有系统资源。
      * @exception  IOException  if an I/O error occurs.
      */
     public void close()  throws IOException {

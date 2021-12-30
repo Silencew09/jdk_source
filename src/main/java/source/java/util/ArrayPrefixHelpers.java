@@ -39,12 +39,12 @@ import java.util.function.DoubleBinaryOperator;
 
 /**
  * ForkJoin tasks to perform Arrays.parallelPrefix operations.
- *
+ * ForkJoin 任务执行 Arrays.parallelPrefix 操作
  * @author Doug Lea
  * @since 1.8
  */
 class ArrayPrefixHelpers {
-    private ArrayPrefixHelpers() {}; // non-instantiable
+    private ArrayPrefixHelpers() {}; // non-instantiable 不可实例化
 
     /*
      * Parallel prefix (aka cumulate, scan) task classes
@@ -53,7 +53,11 @@ class ArrayPrefixHelpers {
      *  Keep dividing by two to threshold segment size, and then:
      *   Pass 1: Create tree of partial sums for each segment
      *   Pass 2: For each segment, cumulate with offset of left sibling
-     *
+     * 1.并行前缀（又名累积、扫描）任务类松散地基于 Guy Blelloch 的原始算法
+     * （http:www.cs.cmu.edu~scandalalgscan.html）：
+     * 继续除以二到阈值段大小，然后：
+     * Pass 1：创建每个段的部分总和树
+     * Pass 2：对于每个段，用左兄弟的偏移量累加
      * This version improves performance within FJ framework mainly by
      * allowing the second pass of ready left-hand sides to proceed
      * even if some right-hand side first passes are still executing.
@@ -63,7 +67,10 @@ class ArrayPrefixHelpers {
      * requiring that users supply an identity basis for accumulations
      * by tracking those segments/subtasks for which the first
      * existing element is used as base.
-     *
+     *2.此版本提高了 FJ 框架内的性能，主要是通过允许左侧准备好的第二次传递继续进行，
+     * 即使某些右侧的第一次传递仍在执行。它还结合了最左边部分的第一遍和第二遍，
+     * 并跳过最右边部分的第一遍（第二遍不需要其结果）。
+     * 它类似地通过跟踪将第一个现有元素用作基础的那些段子任务，设法避免要求用户为累积提供身份基础
      * Managing this relies on ORing some bits in the pendingCount for
      * phases/states: CUMULATE, SUMMED, and FINISHED. CUMULATE is the
      * main phase bit. When false, segments compute only their sum.
@@ -78,15 +85,24 @@ class ArrayPrefixHelpers {
      * cumulated. For internal nodes, it becomes true when one child
      * is cumulated.  When the second child finishes cumulating, it
      * then moves up tree, completing at the root.
-     *
+     * 3.管理这个依赖于对pendingCount 中的一些位进行ORing 以获取阶段状态：CUMULATE、SUMMED 和FINISHED。
+     *  CUMULATE 是主相位位。当为假时，段只计算它们的总和。当为真时，它们会累积数组元素。
+     * CUMULATE 在第二遍开始时设置在 root 处，然后向下传播。
+     * 但是对于 lo==0（树的左脊椎）的子树，它也可以更早地设置。
+     *  SUMMED 是一位连接计数。对于叶子，它在求和时设置。
+     * 对于内部节点，当一个子节点相加时，它变为真。当第二个孩子完成求和时，我们然后向上移动树以触发累积阶段。
+     * FINISHED 也是一位连接计数。对于叶子，它在累积时设置。对于内部节点，当累积一个子节点时，它变为真。
+     * 当第二个孩子完成累积时，它然后向上移动树，在根处完成。
      * To better exploit locality and reduce overhead, the compute
      * method loops starting with the current task, moving if possible
      * to one of its subtasks rather than forking.
-     *
+     * 4.为了更好地利用局部性并减少开销，计算方法从当前任务开始循环，如果可能，移动到其子任务之一而不是分叉
      * As usual for this sort of utility, there are 4 versions, that
      * are simple copy/paste/adapt variants of each other.  (The
      * double and int versions differ from long version soley by
      * replacing "long" (with case-matching)).
+     * 5.对于此类实用程序，通常有 4 个版本，它们是彼此的简单 copy/paste/adapt 变体。
+     * （double 和 int 版本通过替换“long”（大小写匹配）与长版本 soley 不同）
      */
 
     // see above
@@ -95,6 +111,7 @@ class ArrayPrefixHelpers {
     static final int FINISHED = 4;
 
     /** The smallest subtask array partition size to use as threshold */
+    //用作阈值的最小子任务数组分区大小
     static final int MIN_PARTITION = 16;
 
     static final class CumulateTask<T> extends CountedCompleter<Void> {
@@ -105,6 +122,7 @@ class ArrayPrefixHelpers {
         final int lo, hi, origin, fence, threshold;
 
         /** Root task constructor */
+        //根任务构造函数
         public CumulateTask(CumulateTask<T> parent,
                             BinaryOperator<T> function,
                             T[] array, int lo, int hi) {
@@ -118,6 +136,7 @@ class ArrayPrefixHelpers {
         }
 
         /** Subtask constructor */
+        //子任务构造函数
         CumulateTask(CumulateTask<T> parent, BinaryOperator<T> function,
                      T[] array, int origin, int fence, int threshold,
                      int lo, int hi) {

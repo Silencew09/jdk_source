@@ -69,11 +69,13 @@ import sun.util.spi.CalendarProvider;
  * week. An instant in time can be represented by a millisecond value that is
  * an offset from the <a name="Epoch"><em>Epoch</em></a>, January 1, 1970
  * 00:00:00.000 GMT (Gregorian).
- *
+ * 1.Calendar类是一个抽象类，它提供了在特定时刻和一组 fields日历字段（例如YEAR、MONTH）之间进行转换的方法、
+ * DAY_OF_MONTH、HOUR等，以及用于操作日历字段，例如获取下一周的日期。时间瞬间可以用毫秒值表示，
+ * 该值是 <a name="Epoch">Epoch<a>, 1970 年 1 月 1 日 00:00:00.000 GMT（格里高利）的偏移量
  * <p>The class also provides additional fields and methods for
  * implementing a concrete calendar system outside the package. Those
  * fields and methods are defined as <code>protected</code>.
- *
+ * 2.该类还提供了额外的字段和方法，用于在包外实现具体的日历系统。这些字段和方法被定义为protected。
  * <p>
  * Like other locale-sensitive classes, <code>Calendar</code> provides a
  * class method, <code>getInstance</code>, for getting a generally useful
@@ -85,7 +87,9 @@ import sun.util.spi.CalendarProvider;
  *     Calendar rightNow = Calendar.getInstance();
  * </pre>
  * </blockquote>
- *
+ * 3.与其他语言环境敏感类一样，Calendar提供了一个类方法getInstance，用于获取这种类型的通用对象。
+ * Calendar的getInstance方法返回一个Calendar对象，其日历字段已用当前日期和时间初始化：
+ * Calendar rightNow = Calendar .getInstance();
  * <p>A <code>Calendar</code> object can produce all the calendar field values
  * needed to implement the date-time formatting for a particular language and
  * calendar style (for example, Japanese-Gregorian, Japanese-Traditional).
@@ -95,16 +99,20 @@ import sun.util.spi.CalendarProvider;
  * JANUARY</code> for all calendars.  Other values are defined by the
  * concrete subclass, such as <code>ERA</code>.  See individual field
  * documentation and subclass documentation for details.
- *
+ * 4.Calendar对象可以生成实现特定语言和日历样式（例如，Japanese-Gregorian、Japanese-Traditional）的日期时间格式
+ * 所需的所有日历字段值。Calendar定义了某些日历字段返回的值的范围及其含义,
+ * 例如，日历系统的第一个月对于所有日历都有值MONTH == JANUARY。
+ * 其他值由具体子类定义，例如ERA。有关详细信息，请参阅各个字段文档和子类文档
  * <h3>Getting and Setting Calendar Field Values</h3>
- *
+ * 获取和设置日历字段值
  * <p>The calendar field values can be set by calling the <code>set</code>
  * methods. Any field values set in a <code>Calendar</code> will not be
  * interpreted until it needs to calculate its time value (milliseconds from
  * the Epoch) or values of the calendar fields. Calling the
  * <code>get</code>, <code>getTimeInMillis</code>, <code>getTime</code>,
  * <code>add</code> and <code>roll</code> involves such calculation.
- *
+ * 5.日历字段值可以通过调用set方法来设置。在Calendar中设置的任何字段值都不会被解释，
+ * 直到需要计算其时间值（距纪元的毫秒数）或日历字段的值。调用get、getTimeInMillis、getTime、add和roll涉及这样的计算
  * <h4>Leniency</h4>
  *
  * <p><code>Calendar</code> has two modes for interpreting the calendar
@@ -115,7 +123,10 @@ import sun.util.spi.CalendarProvider;
  * the calendar fields are normalized. For example, a lenient
  * <code>GregorianCalendar</code> interprets <code>MONTH == JANUARY</code>,
  * <code>DAY_OF_MONTH == 32</code> as February 1.
-
+ 6.Calendar有两种解释日历字段的模式，lenient和non-lenient。当Calendar处于宽松模式时，
+ 它接受比它产生的更广泛的日历字段值。当Calendar重新计算get()返回的日历字段值时，
+ 所有日历字段都被标准化。例如，宽松的GregorianCalendar将MONTH == JANUARY,
+ DAY_OF_MONTH == 32解释为二月 1
  * <p>When a <code>Calendar</code> is in non-lenient mode, it throws an
  * exception if there is any inconsistency in its calendar fields. For
  * example, a <code>GregorianCalendar</code> always produces
@@ -123,7 +134,9 @@ import sun.util.spi.CalendarProvider;
  * non-lenient <code>GregorianCalendar</code> throws an exception upon
  * calculating its time or calendar field values if any out-of-range field
  * value has been set.
- *
+ * 7.当Calendar处于非宽松模式时，如果其日历字段中存在任何不一致，则会引发异常。
+ * 例如，GregorianCalendar总是产生介于 1 和月份长度之间的DAY_OF_MONTH值。
+ * 如果设置了任何超出范围的字段值，则非宽松GregorianCalendar在计算其时间或日历字段值时会引发异常
  * <h4><a name="first_week">First Week</a></h4>
  *
  * <code>Calendar</code> defines a locale-specific seven day week using two
@@ -131,7 +144,9 @@ import sun.util.spi.CalendarProvider;
  * (from 1 to 7).  These numbers are taken from the locale resource data when a
  * <code>Calendar</code> is constructed.  They may also be specified explicitly
  * through the methods for setting their values.
- *
+ * 8.Calendar使用两个参数定义了特定于语言环境的每周 7 天：
+ * 一周的第一天和第一周的最少天数（从 1 到 7）。这些数字是在构造Calendar时从语言环境资源数据中获取的。
+ * 它们也可以通过设置它们的值的方法显式指定
  * <p>When setting or getting the <code>WEEK_OF_MONTH</code> or
  * <code>WEEK_OF_YEAR</code> fields, <code>Calendar</code> must determine the
  * first week of the month or year as a reference point.  The first week of a
@@ -143,9 +158,12 @@ import sun.util.spi.CalendarProvider;
  * different.  For example, a specific <code>Calendar</code> subclass may
  * designate the week before week 1 of a year as week <code><i>n</i></code> of
  * the previous year.
- *
+ * 9.在设置或获取WEEK_OF_MONTH或WEEK_OF_YEAR字段时，Calendar必须确定月份或年份的第一周作为参考点。
+ * 一个月或一年的第一周定义为从getFirstDayOfWeek()开始并至少包含该月或年的getMinimalDaysInFirstWeek()天的最早 7 天。
+ * 周数 ..., -1, 0 在第一周之前；周数为 2、3、... 跟着它。请注意，get()返回的规范化编号可能不同。
+ * 例如，特定的Calendar子类可以将一年的第 1 周之前的一周指定为上一年的第n 周
  * <h4>Calendar Fields Resolution</h4>
- *
+ * 日历字段解析
  * When computing a date and time from the calendar fields, there
  * may be insufficient information for the computation (such as only
  * year and month with no day of month), or there may be inconsistent
@@ -153,16 +171,19 @@ import sun.util.spi.CalendarProvider;
  * 1996 is actually a Monday). <code>Calendar</code> will resolve
  * calendar field values to determine the date and time in the
  * following way.
- *
+ * 10.从日历字段计算日期和时间时，计算信息可能不足（例如只有年和月而没有月份的日期），
+ * 或者可能存在不一致的信息（例如 1996 年 7 月 15 日，星期二（格里高利） ) -- 1996 年 7 月 15 日实际上是星期一)。
+ * Calendar将通过以下方式解析日历字段值以确定日期和时间。
  * <p><a name="resolution">If there is any conflict in calendar field values,
  * <code>Calendar</code> gives priorities to calendar fields that have been set
  * more recently.</a> The following are the default combinations of the
  * calendar fields. The most recent combination, as determined by the
  * most recently set single field, will be used.
- *
+ * 11.如果日历字段值存在任何冲突，Calendar将优先考虑最近设置的日历字段。
+ * 以下是日历字段的默认组合。将使用由最近设置的单个字段确定的最近组合。
  * <p><a name="date_resolution">For the date fields</a>:
  * <blockquote>
- * <pre>
+ * <pre> //对于日期字段
  * YEAR + MONTH + DAY_OF_MONTH
  * YEAR + MONTH + WEEK_OF_MONTH + DAY_OF_WEEK
  * YEAR + MONTH + DAY_OF_WEEK_IN_MONTH + DAY_OF_WEEK
@@ -183,19 +204,25 @@ import sun.util.spi.CalendarProvider;
  * <code>GregorianCalendar</code>, the default of a field is the same as that
  * of the start of the Epoch: i.e., <code>YEAR = 1970</code>, <code>MONTH =
  * JANUARY</code>, <code>DAY_OF_MONTH = 1</code>, etc.
- *
+ * 12.如果有任何日历字段的值尚未在所选字段组合中设置，Calendar将使用其默认值,
+ * 每个字段的默认值可能因具体日历系统而异,例如，在GregorianCalendar中，
+ * 一个字段的默认值与Epoch开始时相同：即YEAR = 1970,MONTH = JANUARY,DAY_OF_MONTH = 1等
  * <p>
  * <strong>Note:</strong> There are certain possible ambiguities in
  * interpretation of certain singular times, which are resolved in the
  * following ways:
+ * 13.注：某些奇异时间的解释可能存在一定的歧义，可通过以下方式解决：
  * <ol>
  *     <li> 23:59 is the last minute of the day and 00:00 is the first
  *          minute of the next day. Thus, 23:59 on Dec 31, 1999 &lt; 00:00 on
  *          Jan 1, 2000 &lt; 00:01 on Jan 1, 2000.
- *
+ *23:59 是当天的最后一分钟，00:00 是第二天的第一分钟。
+ * 因此，1999 年 12 月 31 日的 23:59 < 2000 年 1 月 1 日的 00:00 < 2000 年 1 月 1 日的 00:01
  *     <li> Although historically not precise, midnight also belongs to "am",
  *          and noon belongs to "pm", so on the same day,
  *          12:00 am (midnight) &lt; 12:01 am, and 12:00 pm (noon) &lt; 12:01 pm
+ *          虽然历史上并不精确，但午夜也属于“am”，中午属于“pm”，
+ *          所以在同一天，12:00 am（午夜）< 12:01 am，12:00 pm（中午）< 12 :01 下午
  * </ol>
  *
  * <p>
@@ -203,12 +230,12 @@ import sun.util.spi.CalendarProvider;
  * calendar, as those must be modifiable or overridable by the user at
  * runtime. Use {@link DateFormat}
  * to format dates.
- *
+ * 14.日期或时间格式字符串不是日历定义的一部分，因为它们必须在运行时可由用户修改或覆盖。使用DateFormat格式化日期。
  * <h4>Field Manipulation</h4>
  *
  * The calendar fields can be changed using three methods:
  * <code>set()</code>, <code>add()</code>, and <code>roll()</code>.
- *
+ * 15.可以使用三种方法更改日历字段：set()、add()和roll()
  * <p><strong><code>set(f, value)</code></strong> changes calendar field
  * <code>f</code> to <code>value</code>.  In addition, it sets an
  * internal member variable to indicate that calendar field <code>f</code> has
@@ -224,7 +251,12 @@ import sun.util.spi.CalendarProvider;
  * the call to the <code>set</code> method
  * after the calendar fields have been recomputed. The specifics are determined by
  * the concrete calendar class.</p>
- *
+ * 16.set(f, value)将日历字段f更改为value。此外，它还设置了一个内部成员变量来指示日历字段f已更改。
+ * 尽管日历字段f会立即更改，但不会重新计算以毫秒为单位的日历时间值，
+ * 直到下一次调用get(),getTime(), getTimeInMillis()、add()或roll()已生成。
+ * 因此，多次调用set()不会触发多次不必要的计算。作为使用set()更改日历字段的结果，
+ * 其他日历字段也可能会更改，具体取决于日历字段、日历字段值和日历系统。
+ * 此外，在重新计算日历字段后，get(f)不一定返回通过调用set方法设置的value。具体由具体的日历类决定
  * <p><em>Example</em>: Consider a <code>GregorianCalendar</code>
  * originally set to August 31, 1999. Calling <code>set(Calendar.MONTH,
  * Calendar.SEPTEMBER)</code> sets the date to September 31,
@@ -233,11 +265,15 @@ import sun.util.spi.CalendarProvider;
  * call to <code>set(Calendar.DAY_OF_MONTH, 30)</code> before the call to
  * <code>getTime()</code> sets the date to September 30, 1999, since
  * no recomputation occurs after <code>set()</code> itself.</p>
- *
+ * 17.示例：考虑一个GregorianCalendar最初设置为 1999 年 8 月 31 日。
+ * 调用set(Calendar.MONTH, Calendar.SEPTEMBER)将日期设置为 1999 年 9 月 31 日。
+ * 这是如果getTime()被调用，则解析为 1999 年 10 月 1 日的临时内部表示。
+ * 但是，在调用getTime()之前调用 set(Calendar.DAY_OF_MONTH, 30)
+ * 会将日期设置为 1999 年 9 月 30 日，因为在set 之后不会发生重新计算()本身
  * <p><strong><code>add(f, delta)</code></strong> adds <code>delta</code>
  * to field <code>f</code>.  This is equivalent to calling <code>set(f,
  * get(f) + delta)</code> with two adjustments:</p>
- *
+ * 18.add(f, delta)将delta添加到字段f。这等效于调用set(f, get(f) + delta)进行两个调整：
  * <blockquote>
  *   <p><strong>Add rule 1</strong>. The value of field <code>f</code>
  *   after the call minus the value of field <code>f</code> before the
@@ -245,7 +281,8 @@ import sun.util.spi.CalendarProvider;
  *   field <code>f</code>. Overflow occurs when a field value exceeds its
  *   range and, as a result, the next larger field is incremented or
  *   decremented and the field value is adjusted back into its range.</p>
- *
+ *  1)添加规则 1。调用后字段 f的值减去调用前字段f的值是delta，以字段f中发生的任何溢出为模。
+ *  当字段值超出其范围时会发生溢出，因此，下一个较大的字段会增加或减少，并且字段值会调整回其范围
  *   <p><strong>Add rule 2</strong>. If a smaller field is expected to be
  *   invariant, but it is impossible for it to be equal to its
  *   prior value because of changes in its minimum or maximum after field
@@ -257,11 +294,14 @@ import sun.util.spi.CalendarProvider;
  *   that are not expected to be invariant. The calendar system
  *   determines what fields are expected to be invariant.</p>
  * </blockquote>
- *
+ *  2)添加规则 2。如果期望较小的字段是不变的，但由于字段f更改后其最小值或最大值的变化或其他限制（例如时区）
+ *  而无法使其等于其先前值offset 发生变化，然后将其值调整为尽可能接近其期望值
+ *  较小的字段代表较小的时间单位。HOUR是比DAY_OF_MONTH更小的字段。
+ *  不会对预计不会保持不变的较小字段进行调整。日历系统确定哪些字段应该是不变的
  * <p>In addition, unlike <code>set()</code>, <code>add()</code> forces
  * an immediate recomputation of the calendar's milliseconds and all
  * fields.</p>
- *
+ * 19.此外，与set()不同，add()强制立即重新计算日历的毫秒数和所有字段
  * <p><em>Example</em>: Consider a <code>GregorianCalendar</code>
  * originally set to August 31, 1999. Calling <code>add(Calendar.MONTH,
  * 13)</code> sets the calendar to September 30, 2000. <strong>Add rule
@@ -273,17 +313,23 @@ import sun.util.spi.CalendarProvider;
  * it is a smaller field, <code>DAY_OF_WEEK</code> is not adjusted by
  * rule 2, since it is expected to change when the month changes in a
  * <code>GregorianCalendar</code>.</p>
- *
+ * 20.示例：考虑最初设置为 1999 年 8 月 31 日的GregorianCalendar。
+ * 调用 add(Calendar.MONTH, 13)将日历设置为 2000 年 9 月 30 日。
+ * 添加规则 1将 MONTH字段设置为 9 月，因为将 13 个月添加到 8 月会得到下一年的 9 月。
+ * 由于DAY_OF_MONTH 在 GregorianCalendar中的 9 月不能为 31，
+ * 添加规则 2将DAY_OF_MONTH设置为 30，即最接近的可能值。虽然它是一个较小的字段，但是 DAY_OF_WEEK
+ * 没有被规则 2 调整，因为它预计会随着GregorianCalendar 中的月份变化而变化
  * <p><strong><code>roll(f, delta)</code></strong> adds
  * <code>delta</code> to field <code>f</code> without changing larger
  * fields. This is equivalent to calling <code>add(f, delta)</code> with
  * the following adjustment:</p>
- *
+ * 21.roll(f, delta)将delta添加到字段f而不更改更大的字段。这等效于调用add(f, delta)并进行以下调整
  * <blockquote>
  *   <p><strong>Roll rule</strong>. Larger fields are unchanged after the
  *   call. A larger field represents a larger unit of
  *   time. <code>DAY_OF_MONTH</code> is a larger field than
  *   <code>HOUR</code>.</p>
+ *   滚动规则。调用后较大的字段不变。较大的字段表示较大的时间单位。DAY_OF_MONTH是比HOUR更大的字段
  * </blockquote>
  *
  * <p><em>Example</em>: See {@link java.util.GregorianCalendar#roll(int, int)}.
@@ -301,7 +347,12 @@ import sun.util.spi.CalendarProvider;
  * <code>add()</code> or <code>roll()</code>, depending on whether larger
  * fields should be affected, the user interface can behave as most users
  * will intuitively expect.</p>
- *
+ * 22.使用模型。为了激发add()和roll()的行为，考虑一个带有月、日和年递增和递减按钮的用户界面组件，
+ * 以及一个底层公历。如果界面显示为 1999 年 1 月 31 日，用户按下月份递增按钮，
+ * 它应该显示什么？如果底层实现使用set()，它可能会读到 1999 年 3 月 3 日。
+ * 更好的结果是 1999 年 2 月 28 日。此外，如果用户再次按下月份递增按钮，
+ * 它应该会读到 3 月 31 日, 1999，而不是 1999 年 3 月 28 日。
+ * 通过保存原始日期并使用add()或roll()，根据是否应影响较大的字段，用户界面可以表现得像大多数用户直觉上期望的那样
  * @see          java.lang.System#currentTimeMillis()
  * @see          Date
  * @see          GregorianCalendar
@@ -313,6 +364,7 @@ import sun.util.spi.CalendarProvider;
 public abstract class Calendar implements Serializable, Cloneable, Comparable<Calendar> {
 
     // Data flow in Calendar
+    //日历中的数据流
     // ---------------------
 
     // The current time is represented in two ways by Calendar: as UTC
@@ -324,12 +376,18 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     // user sets the ZONE_OFFSET and/or DST_OFFSET fields directly. The class
     // keeps track of what information was most recently set by the caller, and
     // uses that to compute any other information as needed.
-
+   // 1.当前时间由 Calendar 以两种方式表示：作为从纪元（1970 年 1 月 1 日 0:00 UTC）开始的 UTC 毫秒，
+    // 以及作为本地字段，例如 MONTH、HOUR、AM_PM 等。可以从字段，反之亦然。
+    // 进行此转换所需的数据由 Calendar 拥有的 TimeZone 对象封装。
+    // 如果用户直接设置 ZONE_OFFSET 和/或 DST_OFFSET 字段，则 TimeZone 对象提供的数据也可能被覆盖。
+    // 该类会跟踪调用者最近设置的信息，并根据需要使用它来计算任何其他信息
     // If the user sets the fields using set(), the data flow is as follows.
     // This is implemented by the Calendar subclass's computeTime() method.
     // During this process, certain fields may be ignored.  The disambiguation
     // algorithm for resolving which fields to pay attention to is described
     // in the class documentation.
+    //2.如果用户使用 set() 设置字段，则数据流如下。这是由 Calendar 子类的 computeTime() 方法实现的。
+    // 在此过程中，某些字段可能会被忽略。类文档中描述了解决哪些字段需要注意的消歧算法
 
     //   local fields (YEAR, MONTH, DATE, HOUR, MINUTE, etc.)
     //           |
@@ -344,7 +402,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     // If the user sets the UTC millis using setTime() or setTimeInMillis(),
     // the data flow is as follows.  This is implemented by the Calendar
     // subclass's computeFields() method.
-
+    //3.如果用户使用 setTime() 或 setTimeInMillis() 设置 UTC 毫秒，则数据流如下。
+    // 这是由 Calendar 子类的 computeFields() 方法实现的
     //   UTC millis (in time data member)
     //           |
     //           | Using TimeZone getOffset()
@@ -361,12 +420,14 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     // value allows all remaining fields to be generated from that value.  If
     // the Calendar is lenient, the fields are also renormalized to standard
     // ranges when they are regenerated.
-
+    //4.通常，在必要时进行从字段到本地和 UTC 毫秒的往返行程，然后返回到字段。这是由 complete() 方法实现的。
+    // 将部分字段集解析为 UTC 毫秒值允许从该值生成所有剩余字段。
+    // 如果 Calendar 宽松，则字段在重新生成时也会重新规范化为标准范围
     /**
      * Field number for <code>get</code> and <code>set</code> indicating the
      * era, e.g., AD or BC in the Julian calendar. This is a calendar-specific
      * value; see subclass documentation.
-     *
+     *get和set的字段编号表示时代，例如儒略历中的公元或公元前。这是一个特定于日历的值；请参阅子类文档
      * @see GregorianCalendar#AD
      * @see GregorianCalendar#BC
      */
@@ -375,6 +436,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Field number for <code>get</code> and <code>set</code> indicating the
      * year. This is a calendar-specific value; see subclass documentation.
+     *get和set的字段编号表示年份。这是一个特定于日历的值；请参阅子类文档。
      */
     public final static int YEAR = 1;
 
@@ -384,7 +446,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * the year in the Gregorian and Julian calendars is
      * <code>JANUARY</code> which is 0; the last depends on the number
      * of months in a year.
-     *
+     * get和set的字段编号，表示月份。这是特定于日历的值。
+     * 公历和儒略历中一年的第一个月是 JANUARY，即 0；最后一个取决于一年中的月数
      * @see #JANUARY
      * @see #FEBRUARY
      * @see #MARCH
@@ -408,7 +471,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * <code>getMinimalDaysInFirstWeek()</code>, has value 1.  Subclasses define
      * the value of <code>WEEK_OF_YEAR</code> for days before the first week of
      * the year.
-     *
+     * get和set的字段编号表示当前年份中的周数。
+     * 一年中的第一周，由getFirstDayOfWeek()和getMinimalDaysInFirstWeek()定义，值为 1。
+     * 子类定义WEEK_OF_YEAR的值一年的第一周
      * @see #getFirstDayOfWeek
      * @see #getMinimalDaysInFirstWeek
      */
@@ -421,7 +486,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * <code>getMinimalDaysInFirstWeek()</code>, has value 1.  Subclasses define
      * the value of <code>WEEK_OF_MONTH</code> for days before the first week of
      * the month.
-     *
+     * get和set的字段编号表示当月的周数。每月的第一周，
+     * 由getFirstDayOfWeek()和getMinimalDaysInFirstWeek()定义，值为 1。
+     * 子类定义WEEK_OF_MONTH在本月的第一周
      * @see #getFirstDayOfWeek
      * @see #getMinimalDaysInFirstWeek
      */
@@ -431,7 +498,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Field number for <code>get</code> and <code>set</code> indicating the
      * day of the month. This is a synonym for <code>DAY_OF_MONTH</code>.
      * The first day of the month has value 1.
-     *
+     * get和set的字段编号，指示月份中的哪一天。这是DAY_OF_MONTH的同义词。该月的第一天的值为 1。
      * @see #DAY_OF_MONTH
      */
     public final static int DATE = 5;
@@ -440,7 +507,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Field number for <code>get</code> and <code>set</code> indicating the
      * day of the month. This is a synonym for <code>DATE</code>.
      * The first day of the month has value 1.
-     *
+     * get和set的字段编号，指示月份中的哪一天。这是DATE的同义词。该月的第一天的值为 1
      * @see #DATE
      */
     public final static int DAY_OF_MONTH = 5;
@@ -448,6 +515,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Field number for <code>get</code> and <code>set</code> indicating the day
      * number within the current year.  The first day of the year has value 1.
+     * get和set的字段编号表示当前年份中的天数。一年中的第一天的值为 1
      */
     public final static int DAY_OF_YEAR = 6;
 
@@ -456,7 +524,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * of the week.  This field takes values <code>SUNDAY</code>,
      * <code>MONDAY</code>, <code>TUESDAY</code>, <code>WEDNESDAY</code>,
      * <code>THURSDAY</code>, <code>FRIDAY</code>, and <code>SATURDAY</code>.
-     *
+     * get和set的字段编号表示星期几。此字段采用值SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,
+     * FRIDAY, 和SATURDAY
      * @see #SUNDAY
      * @see #MONDAY
      * @see #TUESDAY
@@ -486,7 +555,15 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * within the month than positive values.  For example, if a month has 31
      * days, <code>DAY_OF_WEEK_IN_MONTH -1</code> will overlap
      * <code>DAY_OF_WEEK_IN_MONTH 5</code> and the end of <code>4</code>.
-     *
+     * get和set的字段编号，指示当前月份中星期几的序号。与DAY_OF_WEEK字段一起，
+     * 它唯一指定了一个月内的一天。与WEEK_OF_MONTH和WEEK_OF_YEAR不同，
+     * 该字段的值不取决于getFirstDayOfWeek()或getMinimalDaysInFirstWeek()。
+     * DAY_OF_MONTH 1到7总是对应于DAY_OF_WEEK_IN_MONTH 1； 8到 14对应DAY_OF_WEEK_IN_MONTH 2，
+     * 依此类推。DAY_OF_WEEK_IN_MONTH 0表示DAY_OF_WEEK_IN_MONTH 1前一周。
+     * 负值从月末开始倒计时，因此一个月的最后一个星期日指定为DAY_OF_WEEK = SUNDAY,
+     * DAY_OF_WEEK_IN_MONTH = -1。由于负值向后计数，因此它们在一个月内的对齐方式通常与正值不同。
+     * 例如，如果一个月有 31 天，DAY_OF_WEEK_IN_MONTH -1将与DAY_OF_WEEK_IN_MONTH 5
+     * 和4的结尾重叠
      * @see #DAY_OF_WEEK
      * @see #WEEK_OF_MONTH
      */
@@ -496,7 +573,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Field number for <code>get</code> and <code>set</code> indicating
      * whether the <code>HOUR</code> is before or after noon.
      * E.g., at 10:04:15.250 PM the <code>AM_PM</code> is <code>PM</code>.
-     *
+     * get和set的字段编号，指示HOUR是在中午之前还是之后。
+     * 例如，在 10:04:15.250 PM，AM_PM是PM
      * @see #AM
      * @see #PM
      * @see #HOUR
@@ -508,7 +586,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * hour of the morning or afternoon. <code>HOUR</code> is used for the
      * 12-hour clock (0 - 11). Noon and midnight are represented by 0, not by 12.
      * E.g., at 10:04:15.250 PM the <code>HOUR</code> is 10.
-     *
+     * get和set的字段编号指示上午或下午的时间。HOUR用于 12 小时制 (0 - 11)。
+     * 中午和午夜由 0 表示，而不是 12。例如，在 10:04:15.250 PM，HOUR是 10
      * @see #AM_PM
      * @see #HOUR_OF_DAY
      */
@@ -518,7 +597,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Field number for <code>get</code> and <code>set</code> indicating the
      * hour of the day. <code>HOUR_OF_DAY</code> is used for the 24-hour clock.
      * E.g., at 10:04:15.250 PM the <code>HOUR_OF_DAY</code> is 22.
-     *
+     * get和set的字段编号指示一天中的小时。HOUR_OF_DAY用于 24 小时制。
+     * 例如，在晚上 10:04:15.250，HOUR_OF_DAY是 22
      * @see #HOUR
      */
     public final static int HOUR_OF_DAY = 11;
@@ -527,6 +607,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Field number for <code>get</code> and <code>set</code> indicating the
      * minute within the hour.
      * E.g., at 10:04:15.250 PM the <code>MINUTE</code> is 4.
+     *get和set的字段编号表示一小时内的分钟。例如，在晚上 10:04:15.250，MINUTE是 4
      */
     public final static int MINUTE = 12;
 
@@ -534,6 +615,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Field number for <code>get</code> and <code>set</code> indicating the
      * second within the minute.
      * E.g., at 10:04:15.250 PM the <code>SECOND</code> is 15.
+     *get和set的字段编号表示一分钟内的秒。例如，在晚上 10:04:15.250，SECOND是 15。
      */
     public final static int SECOND = 13;
 
@@ -541,6 +623,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Field number for <code>get</code> and <code>set</code> indicating the
      * millisecond within the second.
      * E.g., at 10:04:15.250 PM the <code>MILLISECOND</code> is 250.
+     * get和set的字段编号指示秒内的毫秒数。例如，在晚上 10:04:15.250，MILLISECOND是 250
      */
     public final static int MILLISECOND = 14;
 
@@ -552,137 +635,161 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * zone of this <code>Calendar</code> if the
      * <code>TimeZone</code> implementation subclass supports
      * historical GMT offset changes.
+     * get和set的字段编号，指示与 GMT 的原始偏移量（以毫秒为单位）。
+     * 如果TimeZone实现子类支持历史 GMT 偏移更改，则此字段反映此Calendar时区的正确 GMT 偏移值
      */
     public final static int ZONE_OFFSET = 15;
 
     /**
      * Field number for <code>get</code> and <code>set</code> indicating the
      * daylight saving offset in milliseconds.
+     * 1.get和set的字段编号指示以毫秒为单位的夏令时偏移量。
      * <p>
      * This field reflects the correct daylight saving offset value of
      * the time zone of this <code>Calendar</code> if the
      * <code>TimeZone</code> implementation subclass supports
      * historical Daylight Saving Time schedule changes.
+     * 2.如果TimeZone实现子类支持历史夏令时时间表更改，则此字段反映此Calendar时区的正确夏令时偏移值
      */
     public final static int DST_OFFSET = 16;
 
     /**
      * The number of distinct fields recognized by <code>get</code> and <code>set</code>.
      * Field numbers range from <code>0..FIELD_COUNT-1</code>.
+     * get和set识别的不同字段的数量。字段编号范围从0..FIELD_COUNT-1
      */
     public final static int FIELD_COUNT = 17;
 
     /**
      * Value of the {@link #DAY_OF_WEEK} field indicating
      * Sunday.
+     * DAY_OF_WEEK字段的值表示星期日
      */
     public final static int SUNDAY = 1;
 
     /**
      * Value of the {@link #DAY_OF_WEEK} field indicating
      * Monday.
+     *DAY_OF_WEEK字段的值表示星期一。
      */
     public final static int MONDAY = 2;
 
     /**
      * Value of the {@link #DAY_OF_WEEK} field indicating
      * Tuesday.
+     * DAY_OF_WEEK字段的值表示星期二
      */
     public final static int TUESDAY = 3;
 
     /**
      * Value of the {@link #DAY_OF_WEEK} field indicating
      * Wednesday.
+     *DAY_OF_WEEK字段的值表示星期三
      */
     public final static int WEDNESDAY = 4;
 
     /**
      * Value of the {@link #DAY_OF_WEEK} field indicating
      * Thursday.
+     * DAY_OF_WEEK字段的值表示星期四。
      */
     public final static int THURSDAY = 5;
 
     /**
      * Value of the {@link #DAY_OF_WEEK} field indicating
      * Friday.
+     * DAY_OF_WEEK字段的值表示星期五
      */
     public final static int FRIDAY = 6;
 
     /**
      * Value of the {@link #DAY_OF_WEEK} field indicating
      * Saturday.
+     * DAY_OF_WEEK字段的值表示星期六
      */
     public final static int SATURDAY = 7;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * first month of the year in the Gregorian and Julian calendars.
+     * MONTH字段的值指示公历和儒略历中一年中的第一个月
      */
     public final static int JANUARY = 0;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * second month of the year in the Gregorian and Julian calendars.
+     *  MONTH字段的值指示公历和儒略历中一年中的第二个月
      */
     public final static int FEBRUARY = 1;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * third month of the year in the Gregorian and Julian calendars.
+     * MONTH字段的值指示公历和儒略历中一年中的第三个月
      */
     public final static int MARCH = 2;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * fourth month of the year in the Gregorian and Julian calendars.
+     * MONTH字段的值指示公历和儒略历中一年中的第四个月
      */
     public final static int APRIL = 3;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * fifth month of the year in the Gregorian and Julian calendars.
+     * MONTH字段的值指示公历和儒略历中一年中的第五个月
      */
     public final static int MAY = 4;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * sixth month of the year in the Gregorian and Julian calendars.
+     * MONTH字段的值指示公历和儒略历中一年中的第六个月
      */
     public final static int JUNE = 5;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * seventh month of the year in the Gregorian and Julian calendars.
+     * MONTH字段的值指示公历和儒略历中一年中的第七个月
      */
     public final static int JULY = 6;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * eighth month of the year in the Gregorian and Julian calendars.
+     * MONTH字段的值指示公历和儒略历中一年中的第八个月
      */
     public final static int AUGUST = 7;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * ninth month of the year in the Gregorian and Julian calendars.
+     * MONTH字段的值指示公历和儒略历中一年中的第九个月
      */
     public final static int SEPTEMBER = 8;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * tenth month of the year in the Gregorian and Julian calendars.
+     * MONTH字段的值指示公历和儒略历中一年中的第十个月
      */
     public final static int OCTOBER = 9;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * eleventh month of the year in the Gregorian and Julian calendars.
+     * MONTH字段的值指示公历和儒略历中一年中的第十一个月
      */
     public final static int NOVEMBER = 10;
 
     /**
      * Value of the {@link #MONTH} field indicating the
      * twelfth month of the year in the Gregorian and Julian calendars.
+     * MONTH字段的值指示公历和儒略历中一年中的第十二个月
      */
     public final static int DECEMBER = 11;
 
@@ -690,18 +797,21 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Value of the {@link #MONTH} field indicating the
      * thirteenth month of the year. Although <code>GregorianCalendar</code>
      * does not use this value, lunar calendars do.
+     * MONTH字段的值表示一年中的第十三个月。尽管GregorianCalendar不使用此值，但农历会使用
      */
     public final static int UNDECIMBER = 12;
 
     /**
      * Value of the {@link #AM_PM} field indicating the
      * period of the day from midnight to just before noon.
+     * AM_PM字段的值指示一天中从午夜到中午之前的时间段
      */
     public final static int AM = 0;
 
     /**
      * Value of the {@link #AM_PM} field indicating the
      * period of the day from noon to just before midnight.
+     * AM_PM字段的值指示一天中从中午到午夜之前的时间段
      */
     public final static int PM = 1;
 
@@ -709,7 +819,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * A style specifier for {@link #getDisplayNames(int, int, Locale)
      * getDisplayNames} indicating names in all styles, such as
      * "January" and "Jan".
-     *
+     * getDisplayNames(int, int, Locale)的样式说明符指示所有样式中的名称，例如“January”和“Jan”
      * @see #SHORT_FORMAT
      * @see #LONG_FORMAT
      * @see #SHORT_STANDALONE
@@ -726,7 +836,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * A style specifier for {@link #getDisplayName(int, int, Locale)
      * getDisplayName} and {@link #getDisplayNames(int, int, Locale)
      * getDisplayNames} equivalent to {@link #SHORT_FORMAT}.
-     *
+     * getDisplayName(int, int, Locale)和 getDisplayNames(int, int, Locale)
+     * 等价于  SHORT_FORMAT 的样式说明符
      * @see #SHORT_STANDALONE
      * @see #LONG
      * @since 1.6
@@ -737,7 +848,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * A style specifier for {@link #getDisplayName(int, int, Locale)
      * getDisplayName} and {@link #getDisplayNames(int, int, Locale)
      * getDisplayNames} equivalent to {@link #LONG_FORMAT}.
-     *
+     * getDisplayName(int, int, Locale)和 getDisplayNames(int, int, Locale) 等
+     * 价于LONG_FORMAT的样式说明符
      * @see #LONG_STANDALONE
      * @see #SHORT
      * @since 1.6
@@ -749,7 +861,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * getDisplayName} and {@link #getDisplayNames(int, int, Locale)
      * getDisplayNames} indicating a narrow name used for format. Narrow names
      * are typically single character strings, such as "M" for Monday.
-     *
+     * getDisplayName(int, int, Locale)和 getDisplayNames(int, int, Locale)
+     * 的样式说明符指示用于格式的窄名称。窄名称通常是单个字符串，例如“M”代表星期一
      * @see #NARROW_STANDALONE
      * @see #SHORT_FORMAT
      * @see #LONG_FORMAT
@@ -762,7 +875,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * getDisplayName} and {@link #getDisplayNames(int, int, Locale)
      * getDisplayNames} indicating a narrow name independently. Narrow names
      * are typically single character strings, such as "M" for Monday.
-     *
+     * getDisplayName(int, int, Locale)和 getDisplayNames(int, int, Locale)
+     * 的样式说明符独立指示窄名称。窄名称通常是单个字符串，例如“M”代表星期一。
      * @see #NARROW_FORMAT
      * @see #SHORT_STANDALONE
      * @see #LONG_STANDALONE
@@ -774,7 +888,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * A style specifier for {@link #getDisplayName(int, int, Locale)
      * getDisplayName} and {@link #getDisplayNames(int, int, Locale)
      * getDisplayNames} indicating a short name used for format.
-     *
+     * getDisplayName(int, int, Locale)和 getDisplayNames(int, int, Locale)
+     * 的样式说明符指示用于格式的短名称
      * @see #SHORT_STANDALONE
      * @see #LONG_FORMAT
      * @see #LONG_STANDALONE
@@ -786,7 +901,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * A style specifier for {@link #getDisplayName(int, int, Locale)
      * getDisplayName} and {@link #getDisplayNames(int, int, Locale)
      * getDisplayNames} indicating a long name used for format.
-     *
+     * getDisplayName(int, int, Locale)和getDisplayNames(int, int, Locale) 的样式说明符指示用于格式的长名称
      * @see #LONG_STANDALONE
      * @see #SHORT_FORMAT
      * @see #SHORT_STANDALONE
@@ -799,7 +914,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * getDisplayName} and {@link #getDisplayNames(int, int, Locale)
      * getDisplayNames} indicating a short name used independently,
      * such as a month abbreviation as calendar headers.
-     *
+     *getDisplayName(int, int, Locale)和 getDisplayNames(int, int, Locale)
+     * 的样式说明符，指示独立使用的短名称，例如作为日历标题的月份缩写
      * @see #SHORT_FORMAT
      * @see #LONG_FORMAT
      * @see #LONG_STANDALONE
@@ -812,7 +928,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * getDisplayName} and {@link #getDisplayNames(int, int, Locale)
      * getDisplayNames} indicating a long name used independently,
      * such as a month name as calendar headers.
-     *
+     * getDisplayName(int, int, Locale)和 getDisplayNames(int, int, Locale)
+     * 的样式说明符指示独立使用的长名称，例如作为日历标题的月份名称
      * @see #LONG_FORMAT
      * @see #SHORT_FORMAT
      * @see #SHORT_STANDALONE
@@ -830,11 +947,18 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     // 3. If a single field is set, the time is invalid.
     // Recomputation of the time and fields happens when the object needs
     // to return a result to the user, or use a result for a computation.
+    //内部说明： Calendar 包含两种时间表示：以毫秒为单位的当前“时间”，以及表示当前时间的一组日历“字段”。
+    // 这两种表示通常是同步的，但也可能不同步，
+    // 如下所示。 1. 最初没有设置字段，时间无效。
+    // 2. 如果设置了时间，则所有字段都被计算并同步。
+    // 3.如果设置了单个字段，则时间无效。当对象需要将结果返回给用户或使用结果进行计算时，会重新计算时间和字段
 
     /**
      * The calendar field values for the currently set time for this calendar.
      * This is an array of <code>FIELD_COUNT</code> integers, with index values
      * <code>ERA</code> through <code>DST_OFFSET</code>.
+     * 此日历的当前设置时间的日历字段值。这是一个FIELD_COUNT整数数组，
+     * 索引值是ERA到 DST_OFFSET
      * @serial
      */
     @SuppressWarnings("ProtectedField")
@@ -846,6 +970,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * which generates the fields, they all remain set after that.
      * This is an array of <code>FIELD_COUNT</code> booleans, with index values
      * <code>ERA</code> through <code>DST_OFFSET</code>.
+     * 指示是否设置了日历的指定日历字段的标志。新对象没有设置字段。在第一次调用生成字段的方法之后，
+     * 它们都保持设置。这是一个FIELD_COUNT布尔值数组，索引值ERA到DST_OFFSET
      * @serial
      */
     @SuppressWarnings("ProtectedField")
@@ -855,12 +981,15 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Pseudo-time-stamps which specify when each field was set. There
      * are two special values, UNSET and COMPUTED. Values from
      * MINIMUM_USER_SET to Integer.MAX_VALUE are legal user set values.
+     * 伪时间戳，指定何时设置每个字段。有两个特殊值，UNSET 和 COMPUTED。
+     * 从 MINIMUM_USER_SET 到 Integer.MAX_VALUE 的值是合法的用户设置值。
      */
     transient private int   stamp[];
 
     /**
      * The currently set time for this calendar, expressed in milliseconds after
      * January 1, 1970, 0:00:00 GMT.
+     * 此日历的当前设置时间，以 1970 年 1 月 1 日格林威治标准时间 0:00:00 之后的毫秒数表示
      * @see #isTimeSet
      * @serial
      */
@@ -870,6 +999,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * True if then the value of <code>time</code> is valid.
      * The time is made invalid by a change to an item of <code>field[]</code>.
+     * 如果time的值有效，则为 True。通过更改field[]的项目使时间无效
      * @see #time
      * @serial
      */
@@ -881,6 +1011,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * If false, then the next attempt to get the value of a field will
      * force a recomputation of all fields from the current value of
      * <code>time</code>.
+     * 如果fields[]与当前设置的时间同步，则为真。如果为 false，
+     * 则下一次获取字段值的尝试将强制从time的当前值重新计算所有字段
      * @serial
      */
     @SuppressWarnings("ProtectedField")
@@ -888,6 +1020,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * True if all fields have been set.
+     * 如果已设置所有字段，则为真
      * @serial
      */
     transient boolean       areAllFieldsSet;
@@ -895,6 +1028,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * <code>True</code> if this calendar allows out-of-range field values during computation
      * of <code>time</code> from <code>fields[]</code>.
+     * True如果此日历在从fields[]计算time期间允许超出范围的字段值
      * @see #setLenient
      * @see #isLenient
      * @serial
@@ -904,18 +1038,21 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * The <code>TimeZone</code> used by this calendar. <code>Calendar</code>
      * uses the time zone data to translate between locale and GMT time.
+     * 此日历使用的TimeZone。Calendar使用时区数据在区域设置和 GMT 时间之间进行转换
      * @serial
      */
     private TimeZone        zone;
 
     /**
      * <code>True</code> if zone references to a shared TimeZone object.
+     *True如果区域引用共享的 TimeZone 对象
      */
     transient private boolean sharedZone = false;
 
     /**
      * The first day of the week, with possible values <code>SUNDAY</code>,
      * <code>MONDAY</code>, etc.  This is a locale-dependent value.
+     * 一周的第一天，可能的值为 SUNDAY、MONDAY等。这是一个与语言环境相关的值
      * @serial
      */
     private int             firstDayOfWeek;
@@ -923,6 +1060,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * The number of days required for the first week in a month or year,
      * with possible values from 1 to 7.  This is a locale-dependent value.
+     * 一个月或一年中第一周所需的天数，可能的值从 1 到 7。这是一个与区域设置相关的值
      * @serial
      */
     private int             minimalDaysInFirstWeek;
@@ -930,6 +1068,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Cache to hold the firstDayOfWeek and minimalDaysInFirstWeek
      * of a Locale.
+     * 缓存以保存语言环境的 firstDayOfWeek 和 minimumDaysInFirstWeek
      */
     private static final ConcurrentMap<Locale, int[]> cachedLocaleData
         = new ConcurrentHashMap<>(3);

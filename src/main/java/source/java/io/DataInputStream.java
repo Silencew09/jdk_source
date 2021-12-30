@@ -30,11 +30,13 @@ package java.io;
  * types from an underlying input stream in a machine-independent
  * way. An application uses a data output stream to write data that
  * can later be read by a data input stream.
+ * 1.数据输入流允许应用程序以独立于机器的方式从底层输入流中读取原始 Java 数据类型。
+ * 应用程序使用数据输出流写入稍后可由数据输入流读取的数据。
  * <p>
  * DataInputStream is not necessarily safe for multithreaded access.
  * Thread safety is optional and is the responsibility of users of
  * methods in this class.
- *
+ * 2.DataInputStream 对于多线程访问不一定安全。线程安全是可选的，是此类中方法的用户的责任
  * @author  Arthur van Hoff
  * @see     java.io.DataOutputStream
  * @since   JDK1.0
@@ -45,7 +47,7 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * Creates a DataInputStream that uses the specified
      * underlying InputStream.
-     *
+     * 创建一个使用指定的底层 InputStream 的 DataInputStream。
      * @param  in   the specified input stream
      */
     public DataInputStream(InputStream in) {
@@ -54,6 +56,7 @@ class DataInputStream extends FilterInputStream implements DataInput {
 
     /**
      * working arrays initialized on demand by readUTF
+     * 由 readUTF 按需初始化的工作数组
      */
     private byte bytearr[] = new byte[80];
     private char chararr[] = new char[80];
@@ -64,14 +67,17 @@ class DataInputStream extends FilterInputStream implements DataInput {
      * bytes actually read is returned as an integer. This method blocks
      * until input data is available, end of file is detected, or an
      * exception is thrown.
-     *
+     * 1.从包含的输入流中读取一定数量的字节并将它们存储到缓冲区数组b中。
+     * 实际读取的字节数作为整数返回。此方法会阻塞，直到输入数据可用、检测到文件结尾或抛出异常
      * <p>If <code>b</code> is null, a <code>NullPointerException</code> is
      * thrown. If the length of <code>b</code> is zero, then no bytes are
      * read and <code>0</code> is returned; otherwise, there is an attempt
      * to read at least one byte. If no byte is available because the
      * stream is at end of file, the value <code>-1</code> is returned;
      * otherwise, at least one byte is read and stored into <code>b</code>.
-     *
+     * 2.如果b为 null，则抛出NullPointerException。如果b的长度为零，则不读取任何字节并返回0；
+     * 否则，将尝试读取至少一个字节。如果由于流位于文件末尾而没有可用字节，则返回值-1；
+     * 否则，至少读取一个字节并存入b。
      * <p>The first byte read is stored into element <code>b[0]</code>, the
      * next one into <code>b[1]</code>, and so on. The number of bytes read
      * is, at most, equal to the length of <code>b</code>. Let <code>k</code>
@@ -79,10 +85,13 @@ class DataInputStream extends FilterInputStream implements DataInput {
      * elements <code>b[0]</code> through <code>b[k-1]</code>, leaving
      * elements <code>b[k]</code> through <code>b[b.length-1]</code>
      * unaffected.
-     *
+     *3.读取的第一个字节存储到元素b[0]中，下一个存储到 b[1]中，依此类推。
+     * 读取的字节数最多等于b的长度。让k为实际读取的字节数；这些字节将存储在元素b[0]
+     * 到b[k-1]中，留下元素b[k]到b[b .length-1]不受影响
      * <p>The <code>read(b)</code> method has the same effect as:
      * <blockquote><pre>
      * read(b, 0, b.length)
+     * 4.read(b)方法与以下效果相同：read(b, 0, b.length)
      * </pre></blockquote>
      *
      * @param      b   the buffer into which the data is read.
@@ -106,16 +115,18 @@ class DataInputStream extends FilterInputStream implements DataInput {
      * as many as <code>len</code> bytes, but a smaller number may be read,
      * possibly zero. The number of bytes actually read is returned as an
      * integer.
-     *
+     * 1.从包含的输入流中读取最多len个字节的数据到一个字节数组中。
+     * 尝试读取尽可能多的len字节，但可能会读取较小的数字，可能为零。实际读取的字节数作为整数返回
      * <p> This method blocks until input data is available, end of file is
      * detected, or an exception is thrown.
-     *
+     * 2.此方法会阻塞，直到输入数据可用、检测到文件结尾或抛出异常。
      * <p> If <code>len</code> is zero, then no bytes are read and
      * <code>0</code> is returned; otherwise, there is an attempt to read at
      * least one byte. If no byte is available because the stream is at end of
      * file, the value <code>-1</code> is returned; otherwise, at least one
      * byte is read and stored into <code>b</code>.
-     *
+     * 3.如果len为零，则不读取任何字节并返回0；否则，将尝试读取至少一个字节。
+     * 如果由于流位于文件末尾而没有可用字节，则返回值-1；否则，至少读取一个字节并存入b
      * <p> The first byte read is stored into element <code>b[off]</code>, the
      * next one into <code>b[off+1]</code>, and so on. The number of bytes read
      * is, at most, equal to <code>len</code>. Let <i>k</i> be the number of
@@ -123,11 +134,13 @@ class DataInputStream extends FilterInputStream implements DataInput {
      * <code>b[off]</code> through <code>b[off+</code><i>k</i><code>-1]</code>,
      * leaving elements <code>b[off+</code><i>k</i><code>]</code> through
      * <code>b[off+len-1]</code> unaffected.
-     *
+     * 4.读取的第一个字节存储到元素b[off]中，下一个存储到b[off+1]中，依此类推。
+     * 读取的字节数最多等于len。让k是实际读取的字节数；这些字节将存储在元素b[off]到
+     * b[off+k-1]中，留下元素b [off+k]到b[off+len-1]不受影响
      * <p> In every case, elements <code>b[0]</code> through
      * <code>b[off]</code> and elements <code>b[off+len]</code> through
      * <code>b[b.length-1]</code> are unaffected.
-     *
+     * 5.在每种情况下，元素b[0]到b[off]和元素b[off+len]到b[b.length- 1]不受影响
      * @param      b     the buffer into which the data is read.
      * @param off the start offset in the destination array <code>b</code>
      * @param      len   the maximum number of bytes read.
@@ -152,11 +165,12 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readFully</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readFully方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的
      * @param      b   the buffer into which the data is read.
      * @exception  EOFException  if this input stream reaches the end before
      *             reading all the bytes.
@@ -172,11 +186,12 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readFully</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readFully方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的
      * @param      b     the buffer into which the data is read.
      * @param      off   the start offset of the data.
      * @param      len   the number of bytes to read.
@@ -202,10 +217,11 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>skipBytes</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的skipBytes方法的通用约定
      * <p>
      * Bytes for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的
      * @param      n   the number of bytes to be skipped.
      * @return     the actual number of bytes skipped.
      * @exception  IOException  if the contained input stream does not support
@@ -227,10 +243,11 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readBoolean</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readBoolean方法的通用约定
      * <p>
      * Bytes for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的
      * @return     the <code>boolean</code> value read.
      * @exception  EOFException  if this input stream has reached the end.
      * @exception  IOException   the stream has been closed and the contained
@@ -248,11 +265,12 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readByte</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readByte方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的
      * @return     the next byte of this input stream as a signed 8-bit
      *             <code>byte</code>.
      * @exception  EOFException  if this input stream has reached the end.
@@ -271,11 +289,12 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readUnsignedByte</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readUnsignedByte方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的。
      * @return     the next byte of this input stream, interpreted as an
      *             unsigned 8-bit number.
      * @exception  EOFException  if this input stream has reached the end.
@@ -294,11 +313,12 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readShort</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readShort方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的
      * @return     the next two bytes of this input stream, interpreted as a
      *             signed 16-bit number.
      * @exception  EOFException  if this input stream reaches the end before
@@ -319,11 +339,12 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readUnsignedShort</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readUnsignedShort方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的
      * @return     the next two bytes of this input stream, interpreted as an
      *             unsigned 16-bit integer.
      * @exception  EOFException  if this input stream reaches the end before
@@ -344,10 +365,12 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readChar</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readChar方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
+     * 2.此操作的字节是从包含的输入流中读取的
      *
      * @return     the next two bytes of this input stream, interpreted as a
      *             <code>char</code>.
@@ -369,11 +392,12 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readInt</code>
      * method of <code>DataInput</code>.
+     * 1.参见Data Input的readIng方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的。
      * @return     the next four bytes of this input stream, interpreted as an
      *             <code>int</code>.
      * @exception  EOFException  if this input stream reaches the end before
@@ -398,11 +422,12 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readLong</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readLong方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的
      * @return     the next eight bytes of this input stream, interpreted as a
      *             <code>long</code>.
      * @exception  EOFException  if this input stream reaches the end before
@@ -427,11 +452,12 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readFloat</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readFloat方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的
      * @return     the next four bytes of this input stream, interpreted as a
      *             <code>float</code>.
      * @exception  EOFException  if this input stream reaches the end before
@@ -449,11 +475,12 @@ class DataInputStream extends FilterInputStream implements DataInput {
     /**
      * See the general contract of the <code>readDouble</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readDouble方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的
      * @return     the next eight bytes of this input stream, interpreted as a
      *             <code>double</code>.
      * @exception  EOFException  if this input stream reaches the end before
@@ -545,11 +572,12 @@ loop:   while (true) {
     /**
      * See the general contract of the <code>readUTF</code>
      * method of <code>DataInput</code>.
+     * 1.参见DataInput的readUTF方法的通用约定
      * <p>
      * Bytes
      * for this operation are read from the contained
      * input stream.
-     *
+     * 2.此操作的字节是从包含的输入流中读取的
      * @return     a Unicode string.
      * @exception  EOFException  if this input stream reaches the end before
      *               reading all the bytes.
@@ -573,7 +601,9 @@ loop:   while (true) {
      * The details of the modified UTF-8 representation
      * are  exactly the same as for the <code>readUTF</code>
      * method of <code>DataInput</code>.
-     *
+     * 从流in中读取以 <a href="DataInput.htmlmodified-utf-8">修改的 UTF-8
+     * 格式编码的 Unicode 字符串的表示；这个字符串然后作为String返回。修改后的 UTF-8 表示的细节与
+     * DataInput的readUTF方法完全相同
      * @param      in   a data input stream.
      * @return     a Unicode string.
      * @exception  EOFException            if the input stream reaches the end

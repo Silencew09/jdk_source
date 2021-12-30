@@ -11,12 +11,13 @@ import java.util.Map;
  */
 public class text {
     public static void main(String[] args) {
-        Map<String,String>map =  new HashMap<>();
-        map.put("1","1");
+//        Map<String,String>map =  new HashMap<>();
+//        map.put("1","1");
+//
+//        Class<t1> t1Class = t1.class;
+//        Class<? extends t> aClass = t1Class.asSubclass(t.class);
+//        System.out.println(aClass);
 
-        Class<t1> t1Class = t1.class;
-        Class<? extends t> aClass = t1Class.asSubclass(t.class);
-        System.out.println(aClass);
     }
 
    static class t{

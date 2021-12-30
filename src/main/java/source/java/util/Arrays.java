@@ -3166,7 +3166,10 @@ public class Arrays {
      * Such indices will exist if and only if the specified length
      * is greater than that of the original array.
      * The resulting array is of exactly the same class as the original array.
-     *
+     * 复制指定的数组，用空值截断或填充（如有必要），使副本具有指定的长度。
+     * 对于在原始数组和副本中都有效的所有索引，这两个数组将包含相同的值。
+     * 对于副本中有效但不是原始索引的任何索引，副本将包含null。
+     * 当且仅当指定的长度大于原始数组的长度时，此类索引才会存在。生成的数组与原始数组的类完全相同
      * @param <T> the class of the objects in the array
      * @param original the array to be copied
      * @param newLength the length of the copy to be returned

@@ -65,7 +65,21 @@ import sun.nio.cs.StreamEncoder;
  * character sequences with the charset's default <i>substitution sequence</i>.
  * The {@linkplain java.nio.charset.CharsetEncoder} class should be used when more
  * control over the encoding process is required.
+ * 1.OutputStreamWriter 是从字符流到字节流的桥梁：写入其中的charset使用指定的charset编码为字节。
+ * 它使用的字符集可以通过名称指定或明确给出，或者可以接受平台的默认字符集。
+ * 2.每次调用 write() 方法都会导致对给定字符调用编码转换器。 结果字节在写入底层输出流之前累积在缓冲区中。
+ * 可以指定该缓冲区的大小，但默认情况下它对于大多数用途来说已经足够大了。
+ * 3.请注意，传递给 write() 方法的字符没有被缓冲。
+ * 4.为了获得最高效率，请考虑将 OutputStreamWriter 包装在 BufferedWriter 中，以避免频繁的转换器调用。
+ * 例如：
+ *    Writer out
+ *      = new BufferedWriter(new OutputStreamWriter(System.out));
  *
+ * 5.代理对是由两个字符值的序列表示的字符：“\uD800”到“\uDBFF”范围内的高代理，
+ * 然后是“\uDC00”到“\uDFFF”范围内的低代理。
+ * 格式错误的代理元素是指后面没有低代理的高代理或前面没有高代理的低代理。
+ * 6.这个类总是用字符集的默认替换序列替换格式错误的代理元素和不可映射的字符序列。
+ * 当需要对编码过程进行更多控制时，应使用CharsetEncoder类
  * @see BufferedWriter
  * @see OutputStream
  * @see java.nio.charset.Charset
@@ -80,7 +94,7 @@ public class OutputStreamWriter extends Writer {
 
     /**
      * Creates an OutputStreamWriter that uses the named charset.
-     *
+     * 创建一个使用命名字符集的 OutputStreamWriter。
      * @param  out
      *         An OutputStream
      *
@@ -102,7 +116,7 @@ public class OutputStreamWriter extends Writer {
 
     /**
      * Creates an OutputStreamWriter that uses the default character encoding.
-     *
+     * 创建一个使用默认字符编码的 OutputStreamWriter
      * @param  out  An OutputStream
      */
     public OutputStreamWriter(OutputStream out) {
@@ -116,7 +130,7 @@ public class OutputStreamWriter extends Writer {
 
     /**
      * Creates an OutputStreamWriter that uses the given charset.
-     *
+     * 创建一个使用给定字符集的 OutputStreamWriter
      * @param  out
      *         An OutputStream
      *
@@ -135,7 +149,7 @@ public class OutputStreamWriter extends Writer {
 
     /**
      * Creates an OutputStreamWriter that uses the given charset encoder.
-     *
+     * 创建一个使用给定字符集编码器的 OutputStreamWriter。
      * @param  out
      *         An OutputStream
      *
@@ -163,7 +177,11 @@ public class OutputStreamWriter extends Writer {
      * name, being unique for the encoding, may differ from the name passed to
      * the constructor.  This method may return <tt>null</tt> if the stream has
      * been closed. </p>
-     *
+     * 1.返回此流使用的字符编码的名称。
+     * 2.如果编码具有历史名称，则返回该名称； 否则返回编码的规范名称。
+     * 3.如果此实例是使用OutputStreamWriter(OutputStream, String)
+     * 构造函数创建的OutputStreamWriter(OutputStream, String)则返回的名称对于编码是唯一的，
+     * 可能与传递给构造函数的名称不同。 如果流已关闭，则此方法可能返回null
      * @return The historical name of this encoding, or possibly
      *         <code>null</code> if the stream has been closed
      *
@@ -180,6 +198,7 @@ public class OutputStreamWriter extends Writer {
      * Flushes the output buffer to the underlying byte stream, without flushing
      * the byte stream itself.  This method is non-private only so that it may
      * be invoked by PrintStream.
+     * 将输出缓冲区刷新到底层字节流，而不刷新字节流本身。 此方法是非私有的，因此它可以被 PrintStream 调用
      */
     void flushBuffer() throws IOException {
         se.flushBuffer();
@@ -187,7 +206,7 @@ public class OutputStreamWriter extends Writer {
 
     /**
      * Writes a single character.
-     *
+     * 写入单个字符。
      * @exception  IOException  If an I/O error occurs
      */
     public void write(int c) throws IOException {
@@ -196,7 +215,7 @@ public class OutputStreamWriter extends Writer {
 
     /**
      * Writes a portion of an array of characters.
-     *
+     * 写入字符数组的一部分。
      * @param  cbuf  Buffer of characters
      * @param  off   Offset from which to start writing characters
      * @param  len   Number of characters to write
@@ -209,7 +228,7 @@ public class OutputStreamWriter extends Writer {
 
     /**
      * Writes a portion of a string.
-     *
+     * 写入字符串的一部分。
      * @param  str  A String
      * @param  off  Offset from which to start writing characters
      * @param  len  Number of characters to write
@@ -222,7 +241,7 @@ public class OutputStreamWriter extends Writer {
 
     /**
      * Flushes the stream.
-     *
+     * 冲洗流。
      * @exception  IOException  If an I/O error occurs
      */
     public void flush() throws IOException {

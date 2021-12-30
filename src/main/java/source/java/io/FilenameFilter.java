@@ -31,7 +31,7 @@ package java.io;
  * listings in the <code>list</code> method of class
  * <code>File</code>, and by the Abstract Window Toolkit's file
  * dialog component.
- *
+ * 实现此接口的类的实例用于过滤文件名。这些实例用于在File类的list方法中以及抽象窗口工具包的文件对话框组件中过滤目录列表
  * @author  Arthur van Hoff
  * @author  Jonathan Payne
  * @see     java.awt.FileDialog#setFilenameFilter(java.io.FilenameFilter)
@@ -43,7 +43,7 @@ package java.io;
 public interface FilenameFilter {
     /**
      * Tests if a specified file should be included in a file list.
-     *
+     * 测试指定的文件是否应包含在文件列表中
      * @param   dir    the directory in which the file was found.
      * @param   name   the name of the file.
      * @return  <code>true</code> if and only if the name should be

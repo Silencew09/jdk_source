@@ -35,12 +35,16 @@ package java.io;
  * <a href="DataInput.html#modified-utf-8">modified UTF-8</a>
  * format and writing the resulting series
  * of bytes.
+ * 1.DataOutput接口提供了将数据从任何 Java 基本类型转换为一系列字节
+ * 并将这些字节写入二进制流的功能。还有一种工具可以将String转换为
+ * <a href="DataInput.htmlmodified-utf-8">修改后的 UTF-8格式并写入生成的一系列字节
  * <p>
  * For all the methods in this interface that
  * write bytes, it is generally true that if
  * a byte cannot be written for any reason,
  * an <code>IOException</code> is thrown.
- *
+ * 2.对于这个接口中所有写字节的方法，一般情况下，
+ * 如果一个字节由于某种原因不能写，则抛出一个IOException
  * @author  Frank Yellin
  * @see     java.io.DataInput
  * @see     java.io.DataOutputStream
@@ -53,7 +57,7 @@ interface DataOutput {
      * low-order bits of the argument <code>b</code>.
      * The 24 high-order  bits of <code>b</code>
      * are ignored.
-     *
+     * 将参数b的 8 个低位写入输出流。 b的 24 个高位被忽略
      * @param      b   the byte to be written.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -68,7 +72,9 @@ interface DataOutput {
      * <code>b[0]</code> is written first, then
      * <code>b[1]</code>, and so on; the last byte
      * written is <code>b[b.length-1]</code>.
-     *
+     * 将数组b中的所有字节写入输出流。如果b是null，则抛出NullPointerException。
+     * 如果b.length为零，则不写入字节。否则，先写入字节b[0]，然后写入b[1]，
+     * 依此类推；最后写入的字节是b[b.length-1]
      * @param      b   the data.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -88,7 +94,10 @@ interface DataOutput {
      * byte <code>b[off]</code> is written first,
      * then <code>b[off+1]</code>, and so on; the
      * last byte written is <code>b[off+len-1]</code>.
-     *
+     * 按顺序将len字节从数组b写入输出流。如果b是null，则抛出NullPointerException。
+     * 如果off为负数，或len为负数，或off+len大于数组b的长度，则IndexOutOfBoundsException被抛出。
+     * 如果len为零，则不写入字节。否则，先写入字节b[off]，然后写入b[off+1]，
+     * 依此类推；最后写入的字节是b[off+len-1]
      * @param      b     the data.
      * @param      off   the start offset in the data.
      * @param      len   the number of bytes to write.
@@ -107,7 +116,9 @@ interface DataOutput {
      * method of interface <code>DataInput</code>,
      * which will then return a <code>boolean</code>
      * equal to <code>v</code>.
-     *
+     * 将boolean值写入此输出流。如果参数v为true，则写入值(byte)1；如果v是false，
+     * 则写入值(byte)0。该方法写入的字节可以被接口DataInput的readBoolean方法读取，
+     * 然后返回一个boolean等于v
      * @param      v   the boolean to be written.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -124,7 +135,10 @@ interface DataOutput {
      * method of interface <code>DataInput</code>,
      * which will then return a <code>byte</code>
      * equal to <code>(byte)v</code>.
-     *
+     * 将参数v的 8 个低位写入输出流。v 的 24 个高位被忽略。
+     * （这意味着writeByte与write对于整数参数的作用完全相同。）
+     * 此方法写入的字节可以通过readByte的方法读取interface DataInput，
+     * 然后返回一个byte等于(byte)v
      * @param      v   the byte value to be written.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -144,7 +158,10 @@ interface DataOutput {
      * of interface <code>DataInput</code> , which
      * will then return a <code>short</code> equal
      * to <code>(short)v</code>.
-     *
+     * 将两个字节写入输出流以表示参数的值。按所示顺序写入的字节值是：
+     * (byte)(0xff & (v >> 8)) (byte)(0xff & v)
+     * 字节由该方法写入的内容可以被接口DataInput的readShort方法读取，
+     * 然后返回一个short等于(short)v
      * @param      v   the <code>short</code> value to be written.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -165,7 +182,9 @@ interface DataOutput {
      * of interface <code>DataInput</code> , which
      * will then return a <code>char</code> equal
      * to <code>(char)v</code>.
-     *
+     * 将包含两个字节的char值写入输出流。按所示顺序写入的字节值是：
+     * (byte)(0xff & (v >> 8)) (byte)(0xff & v)字节由该方法写入的内容可以被接口
+     * DataInput的readChar方法读取，然后返回一个char等于(char)v
      * @param      v   the <code>char</code> value to be written.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -186,7 +205,9 @@ interface DataOutput {
      * by the <code>readInt</code> method of interface
      * <code>DataInput</code> , which will then
      * return an <code>int</code> equal to <code>v</code>.
-     *
+     * 将int值（由四个字节组成）写入输出流。按所示顺序写入的字节值是：
+     * (byte)(0xff & (v >> 24)) (byte)(0xff & (v >> 16)) (byte)( 0xff & (v >> 8)) (byte)(0xff & v)
+     * 该方法写入的字节可以通过接口DataInput的readInt方法读取，然后将返回一个int等于v
      * @param      v   the <code>int</code> value to be written.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -212,7 +233,13 @@ interface DataOutput {
      * of interface <code>DataInput</code> , which
      * will then return a <code>long</code> equal
      * to <code>v</code>.
-     *
+     * 将一个long值（由八个字节组成）写入输出流。按所示顺序写入的字节值是：
+     * (byte)(0xff & (v >> 56)) (byte)(0xff & (v >> 48))
+     * (byte)( 0xff & (v >> 40)) (byte)(0xff & (v >> 32))
+     * (byte)(0xff & (v >> 24)) (byte)(0xff & (v >> 16))
+     * (byte )(0xff & (v >> 8)) (byte)(0xff & v) }
+     * 该方法写入的字节可以通过接口的readLong方法读取DataInput ，
+     * 然后将返回一个long等于v
      * @param      v   the <code>long</code> value to be written.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -231,7 +258,9 @@ interface DataOutput {
      * method of interface <code>DataInput</code>,
      * which will then return a <code>float</code>
      * equal to <code>v</code>.
-     *
+     * 将float值（由四个字节组成）写入输出流。它这样做就好像它首先以Float.floatToIntBits
+     * 方法的方式首先将此float值转换为int，然后写入int值与writeInt方法的方式完全相同。
+     * 该方法写入的字节可以被接口DataInput的readFloat方法读取，然后返回一个float等于v
      * @param      v   the <code>float</code> value to be written.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -250,7 +279,9 @@ interface DataOutput {
      * method of interface <code>DataInput</code>,
      * which will then return a <code>double</code>
      * equal to <code>v</code>.
-     *
+     * 将一个double值（由八个字节组成）写入输出流。它这样做就好像它首先以Double.doubleToLongBits
+     * 方法的方式首先将此double值转换为long然后写入long值与writeLong方法的方式完全相同。
+     * 该方法写入的字节可以被接口DataInput的readDouble方法读取，然后返回一个double等于v
      * @param      v   the <code>double</code> value to be written.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -272,7 +303,11 @@ interface DataOutput {
      * of the <code>writeByte</code> method . The
      * high-order eight bits of each character
      * in the string are ignored.
-     *
+     * 将字符串写入输出流。对于字符串s中的每个字符，按顺序，一个字节被写入输出流。
+     * 如果s是null，则抛出NullPointerException。如果s.length为零，
+     * 则不写入任何字节。否则，先写字符s[0]，然后是s[1]，依此类推；最后写入的字符是
+     * s[s.length-1]。对于每个字符，以与 writeByte方法完全相同的方式写入一个字节，
+     * 即低位字节。字符串中每个字符的高八位被忽略
      * @param      s   the string of bytes to be written.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -292,7 +327,10 @@ interface DataOutput {
      * two bytes are actually written, high-order
      * byte first, in exactly the manner of the
      * <code>writeChar</code> method.
-     *
+     * 将字符串s中的每个字符按顺序写入输出流，每个字符两个字节。如果s是null，
+     * 则抛出NullPointerException。如果s.length为零，则不写入任何字符。
+     * 否则，先写字符s[0]，然后是s[1]，依此类推；最后写入的字符是s[s.length-1]。
+     * 对于每个字符，实际写入两个字节，高位字节在前，与writeChar方法的方式完全相同
      * @param      s   the string value to be written.
      * @throws     IOException  if an I/O error occurs.
      */
@@ -346,7 +384,17 @@ interface DataOutput {
      * by the <code>readUTF</code> method of interface
      * <code>DataInput</code> , which will then
      * return a <code>String</code> equal to <code>s</code>.
-     *
+     * 将两个字节的长度信息写入输出流，然后是字符串s中每个字符的
+     * <a href="DataInput.htmlmodified-utf-8">修改后的 UTF-8表示。
+     * 如果s是null，则抛出NullPointerException。字符串s中的每个字符都被转换为一组一个、
+     * 两个或三个字节，具体取决于字符的值。如果字符c在范围&92;u0001到&92;u007f，
+     * 用一个字节表示：(byte)c 如果一个字符c是&92;u0000或者在&92;u0080到&92;u07ff范围内，
+     * 那么用两个字节表示，要按顺序写显示：(byte)(0xc0 | (0x1f & (c >> 6))) (byte)(0x80 | (0x3f & c))
+     * 如果一个字符c在&92;u0800到uffff的范围内，则用三个字节表示，按顺序写成：
+     * (byte )(0xe0 | (0x0f & (c >> 12))) (byte)(0x80 | (0x3f & (c >> 6))) (byte)(0x80 | (0x3f & c))
+     * 首先计算表示s的所有字符所需的总字节数。如果此数字大于 65535，则抛出UTFDataFormatException。
+     * 否则，这个长度将完全按照writeShort方法的方式写入输出流；在此之后，写入字符串s中每个字符的一、二或三字节表示。
+     * 此方法写入的字节可由readUTF读取接口DataInput的方法，然后将返回一个String等于s。
      * @param      s   the string value to be written.
      * @throws     IOException  if an I/O error occurs.
      */

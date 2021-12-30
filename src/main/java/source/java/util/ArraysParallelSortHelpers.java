@@ -29,10 +29,19 @@ import java.util.concurrent.CountedCompleter;
 
 /**
  * Helper utilities for the parallel sort methods in Arrays.parallelSort.
- *
+ * 1.Arrays.parallelSort 中并行排序方法的辅助实用程序
  * For each primitive type, plus Object, we define a static class to
  * contain the Sorter and Merger implementations for that type:
- *
+ * 2.对于每个原始类型，加上 Object，我们定义了一个静态类来包含该类型的 Sorter 和 Merger 实现:
+ *  排序器类主要基于 CilkSort:
+ *   基本算法：
+ *   如果数组大小很小，只需使用顺序快速排序（通过 Arrays.sort）
+ *   否则： 1. 将数组分成两半。
+ *   2. 对于每一半，
+ *   a。将一半分成两半（即四分之一），
+ *   b.对宿舍进行排序
+ *   c.将它们合并在一起
+ *   3. 将两半合并在一起。
  * Sorter classes based mainly on CilkSort
  * <A href="http://supertech.lcs.mit.edu/cilk/"> Cilk</A>:
  * Basic algorithm:
@@ -49,7 +58,8 @@ import java.util.concurrent.CountedCompleter;
  * the final sort is in the main array, not the workspace array.
  * (workspace and main swap roles on each subsort step.)  Leaf-level
  * sorts use the associated sequential sort.
- *
+ * 3. 分成四等份的一个原因是，这保证了最终排序在主数组中，而不是在工作区数组中。
+ * （每个子排序步骤的工作区和主交换角色。）叶级排序使用关联的顺序排序
  * Merger classes perform merging for Sorter.  They are structured
  * such that if the underlying sort is stable (as is true for
  * TimSort), then so is the full sort.  If big enough, they split the
@@ -62,15 +72,22 @@ import java.util.concurrent.CountedCompleter;
  * completion tasks.  These classes (EmptyCompleter and Relay) don't
  * need to keep track of the arrays, and are never themselves forked,
  * so don't hold any task state.
- *
+ * 4.合并类为 Sorter 执行合并。它们的结构使得如果底层排序是稳定的（对于 TimSort 是这样），那么完整排序也是如此。
+ * 如果足够大，他们将两个分区中最大的一分为二，通过二分查找在小于较大的后半部分开始的较小分区中找到最大点；
+ * 然后并行合并两个分区。部分为了确保以保持稳定性的顺序触发任务，
+ * 当前的 CountedCompleter 设计需要一些小任务作为触发完成任务的占位符。
+ * 这些类（EmptyCompleter 和 Relay）不需要跟踪数组，并且它们自己永远不会被分叉，所以不要持有任何任务状态
  * The primitive class versions (FJByte... FJDouble) are
  * identical to each other except for type declarations.
- *
+ * 5.除了类型声明之外，原始类版本 (FJByte... FJDouble) 彼此相同
  * The base sequential sorts rely on non-public versions of TimSort,
  * ComparableTimSort, and DualPivotQuicksort sort methods that accept
  * temp workspace array slices that we will have already allocated, so
  * avoids redundant allocation. (Except for DualPivotQuicksort byte[]
  * sort, that does not ever use a workspace array.)
+ * 6.基本顺序排序依赖于非公开版本的 TimSort、ComparableTimSort 和 DualPivotQuicksort 排序方法，
+ * 这些方法接受我们已经分配的临时工作区数组切片，因此避免了冗余分配。
+ * （除了 DualPivotQuicksort byte[] 排序，它从不使用工作区数组。）
  */
 /*package*/ class ArraysParallelSortHelpers {
 
@@ -80,11 +97,14 @@ import java.util.concurrent.CountedCompleter;
      * compute() methods, We pack these into as few lines as possible,
      * and hoist consistency checks among them before main loops, to
      * reduce distraction.
+     * 样式说明：任务类有很多参数，它们作为任务字段存储并复制到局部变量并在计算（）方法中使用，
+     * 我们将它们打包成尽可能少的行，并在主循环之前提升它们之间的一致性检查，以减少分心
      */
 
     /**
      * A placeholder task for Sorters, used for the lowest
      * quartile task, that does not need to maintain array state.
+     * Sorters 的占位符任务，用于最低四分位数任务，不需要维护数组状态
      */
     static final class EmptyCompleter extends CountedCompleter<Void> {
         static final long serialVersionUID = 2446542900576103244L;
@@ -94,6 +114,7 @@ import java.util.concurrent.CountedCompleter;
 
     /**
      * A trigger for secondary merge of two merges
+     * 两个合并的二次合并的触发器
      */
     static final class Relay extends CountedCompleter<Void> {
         static final long serialVersionUID = 2446542900576103244L;
@@ -109,6 +130,7 @@ import java.util.concurrent.CountedCompleter;
     }
 
     /** Object + Comparator support class */
+    //对象 + 比较器支持类
     static final class FJObject {
         static final class Sorter<T> extends CountedCompleter<Void> {
             static final long serialVersionUID = 2446542900576103244L;

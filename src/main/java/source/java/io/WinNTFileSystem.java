@@ -31,7 +31,7 @@ import sun.security.action.GetPropertyAction;
 
 /**
  * Unicode-aware FileSystem for Windows NT/2000.
- *
+ * 用于 Windows NT/2000 的 Unicode 感知文件系统。
  * @author Konstantin Kladko
  * @since 1.4
  */
@@ -63,6 +63,7 @@ class WinNTFileSystem extends FileSystem {
     }
 
     /* -- Normalization and construction -- */
+    //规范化建设
 
     @Override
     public char getSeparator() {
@@ -77,6 +78,8 @@ class WinNTFileSystem extends FileSystem {
     /* Check that the given pathname is normal.  If not, invoke the real
        normalizer on the part of the pathname that requires normalization.
        This way we iterate through the whole pathname string only once. */
+    //检查给定的路径名是否正常。如果没有，请在需要规范化的路径名部分调用真正的规范化程序。
+    // 这样我们只遍历整个路径名字符串一次
     @Override
     public String normalize(String path) {
         int n = path.length();
@@ -99,6 +102,7 @@ class WinNTFileSystem extends FileSystem {
 
     /* Normalize the given pathname, whose length is len, starting at the given
        offset; everything before this offset is already normal. */
+    //规范化给定的路径名，其长度为 len，从给定的偏移量开始；这个偏移之前的一切都已经正常
     private String normalize(String path, int len, int off) {
         if (len == 0) return path;
         if (off < 3) off = 0;   /* Avoid fencepost cases with UNC pathnames */
@@ -108,15 +112,18 @@ class WinNTFileSystem extends FileSystem {
 
         if (off == 0) {
             /* Complete normalization, including prefix */
+            //完全规范化，包括前缀
             src = normalizePrefix(path, len, sb);
         } else {
             /* Partial normalization */
+            //部分归一化
             src = off;
             sb.append(path.substring(0, off));
         }
 
         /* Remove redundant slashes from the remainder of the path, forcing all
            slashes into the preferred slash */
+        //从路径的其余部分删除多余的斜线，强制所有斜线进入首选斜线
         while (src < len) {
             char c = path.charAt(src++);
             if (isSlash(c)) {
@@ -171,6 +178,11 @@ class WinNTFileSystem extends FileSystem {
            2  absolute UNC (if first char is '\\'),
                 else directory-relative (has form "z:foo")
            3  absolute local pathname (begins with "z:\\")
+           正常的 Win32 路径名不包含重复的斜线，除非可能包含 UNC 前缀，并且不以斜线结尾。
+           它可能是空字符串。规范化的 Win32 路径名有一个方便的特性，
+           即前缀的长度几乎唯一地标识了路径的类型，以及它是绝对的还是相对的：
+            0 相对于驱动器和目录 1 相对于驱动器（以“\\”开头） 2 绝对UNC（如果第一个字符是 '\\'），
+            否则目录相关（具有“z:foo”形式） 3 绝对本地路径名（以“z:\\”开头）
      */
     private int normalizePrefix(String path, int len, StringBuffer sb) {
         int src = 0;
@@ -377,12 +389,16 @@ class WinNTFileSystem extends FileSystem {
     // same directory, and must not create results differing from the true
     // canonicalization algorithm in canonicalize_md.c. For this reason the
     // prefix cache is conservative and is not used for complex path names.
+    //缓存规范化结果以提高启动性能。第一个缓存处理相同路径名的重复规范化。
+    // 前缀缓存处理同一目录中的重复规范化，并且不得创建与 canonicalize_md.c 中的真正规范化算法不同的结果。
+    // 出于这个原因，前缀缓存是保守的，不用于复杂的路径名
     private ExpiringCache cache       = new ExpiringCache();
     private ExpiringCache prefixCache = new ExpiringCache();
 
     @Override
     public String canonicalize(String path) throws IOException {
         // If path is a drive letter only then skip canonicalization
+        //如果路径只是驱动器号，则跳过规范化
         int len = path.length();
         if ((len == 2) &&
             (isLetter(path.charAt(0))) &&
@@ -455,6 +471,7 @@ class WinNTFileSystem extends FileSystem {
     // Run the canonicalization operation assuming that the prefix
     // (everything up to the last filename) is canonical; just gets
     // the canonical name of the last element of the path
+    //假设前缀（直到最后一个文件名的所有内容）是规范的，运行规范化操作；只获取路径最后一个元素的规范名称
     private native String canonicalizeWithPrefix0(String canonicalPrefix,
             String pathWithCanonicalPrefix)
             throws IOException;
@@ -466,6 +483,9 @@ class WinNTFileSystem extends FileSystem {
     // of "." and "..". It may conservatively return null in other
     // situations as well. Returning null will cause the underlying
     // (expensive) canonicalization routine to be called.
+    //尽最大努力获得这条路径的父级；用于优化文件名规范化。
+    // 对于 canonicalize_md.c 中的代码将抛出异常或以其他方式处理非简单路径名（如处理“.”）的任何情况，
+    // 这必须返回 null。和 ”..”。在其他情况下，它也可能保守地返回 null。返回 null 将导致调用底层（昂贵的）规范化例程
     private static String parentOrNull(String path) {
         if (path == null) return null;
         char sep = File.separatorChar;
@@ -558,6 +578,8 @@ class WinNTFileSystem extends FileSystem {
         // (i.e., only remove/update affected entries) but probably
         // not worth it since these entries expire after 30 seconds
         // anyway.
+        //在文件删除和重命名操作后保持规范化缓存同步。
+        // 可能比这更聪明（即，只有 removeupdate 受影响的条目）但可能不值得，因为这些条目无论如何都会在 30 秒后过期
         cache.clear();
         prefixCache.clear();
         return delete0(f);
@@ -572,6 +594,8 @@ class WinNTFileSystem extends FileSystem {
         // (i.e., only remove/update affected entries) but probably
         // not worth it since these entries expire after 30 seconds
         // anyway.
+        //在文件删除和重命名操作后保持规范化缓存同步。
+        // 可能比这更聪明（即，只有 removeupdate 受影响的条目）但可能不值得，因为这些条目无论如何都会在 30 秒后过期
         cache.clear();
         prefixCache.clear();
         return rename0(f1, f2);

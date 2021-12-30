@@ -74,7 +74,9 @@ import java.util.StringTokenizer;
  * </tr>
  *
  * </table>
- *
+ *此类用于可序列化权限。 SerializablePermission 包含名称（也称为“目标名称”）但不包含操作列表； 您要么拥有指定权限，要么没有。
+ * 目标名称是可序列化权限的名称（见下文）。
+ * 下表列出了所有可能的 SerializablePermission 目标名称，并为每个目标名称提供了权限所允许的内容的描述以及对授予代码权限的风险的讨论。
  * @see java.security.BasicPermission
  * @see java.security.Permission
  * @see java.security.Permissions
@@ -101,7 +103,7 @@ public final class SerializablePermission extends BasicPermission {
      * Creates a new SerializablePermission with the specified name.
      * The name is the symbolic name of the SerializablePermission, such as
      * "enableSubstitution", etc.
-     *
+     * 创建具有指定名称的新 SerializablePermission。 name是SerializablePermission的符号名，如“enableSubstitution”等
      * @param name the name of the SerializablePermission.
      *
      * @throws NullPointerException if <code>name</code> is <code>null</code>.
@@ -116,7 +118,8 @@ public final class SerializablePermission extends BasicPermission {
      * Creates a new SerializablePermission object with the specified name.
      * The name is the symbolic name of the SerializablePermission, and the
      * actions String is currently unused and should be null.
-     *
+     * 创建具有指定名称的新 SerializablePermission 对象。
+     * name 是 SerializablePermission 的符号名称，actions String 当前未使用，应为 null。
      * @param name the name of the SerializablePermission.
      * @param actions currently unused and must be set to null
      *
