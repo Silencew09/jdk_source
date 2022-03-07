@@ -28,6 +28,8 @@ package java.util;
  * Written by Doug Lea with assistance from members of JCP JSR-166
  * Expert Group and released to the public domain, as explained at
  * http://creativecommons.org/publicdomain/zero/1.0/
+ * 由 Doug Lea 在 JCP JSR-166 专家组成员的协助下撰写并发布到公共领域，
+ * 如 http:creativecommons.orgpublicdomainzero1.0 所述
  */
 
 import java.util.concurrent.ForkJoinPool;

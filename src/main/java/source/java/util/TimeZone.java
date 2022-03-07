@@ -628,6 +628,7 @@ abstract public class TimeZone implements Serializable, Cloneable {
     /**
      * Returns the reference to the default TimeZone object. This
      * method doesn't create a clone.
+     * 返回对默认 TimeZone 对象的引用。此方法不会创建克隆。
      */
     static TimeZone getDefaultRef() {
         TimeZone defaultZone = defaultTimeZone;

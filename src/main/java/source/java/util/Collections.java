@@ -43,10 +43,11 @@ import java.util.stream.StreamSupport;
  * collections.  It contains polymorphic algorithms that operate on
  * collections, "wrappers", which return a new collection backed by a
  * specified collection, and a few other odds and ends.
- *
+ * 1.此类仅由对集合进行操作或返回集合的静态方法组成。
+ * 它包含对集合进行操作的多态算法，“包装器”，它返回由指定集合支持的新集合，以及其他一些零碎的东西
  * <p>The methods of this class all throw a <tt>NullPointerException</tt>
  * if the collections or class objects provided to them are null.
- *
+ * 2.如果提供给它们的集合或类对象为空，则此类的方法都会抛出NullPointerException
  * <p>The documentation for the polymorphic algorithms contained in this class
  * generally includes a brief description of the <i>implementation</i>.  Such
  * descriptions should be regarded as <i>implementation notes</i>, rather than
@@ -54,7 +55,8 @@ import java.util.stream.StreamSupport;
  * substitute other algorithms, so long as the specification itself is adhered
  * to.  (For example, the algorithm used by <tt>sort</tt> does not have to be
  * a mergesort, but it does have to be <i>stable</i>.)
- *
+ * 3.此类中包含的多态算法的文档通常包括对实现的简要描述。此类描述应被视为实施说明，而不是规范的一部分。
+ * 只要遵守规范本身，实现者应该可以随意替换其他算法。 （例如，sort使用的算法不必是合并排序，但它必须是stable。）
  * <p>The "destructive" algorithms contained in this class, that is, the
  * algorithms that modify the collection on which they operate, are specified
  * to throw <tt>UnsupportedOperationException</tt> if the collection does not
@@ -63,7 +65,9 @@ import java.util.stream.StreamSupport;
  * exception if an invocation would have no effect on the collection.  For
  * example, invoking the <tt>sort</tt> method on an unmodifiable list that is
  * already sorted may or may not throw <tt>UnsupportedOperationException</tt>.
- *
+ * 4.此类中包含的“破坏性”算法，即修改它们操作的集合的算法，如果集合不支持适当的突变原语，
+ * 则指定抛出UnsupportedOperationException，例如作为set方法。如果调用对集合没有影响，
+ * 这些算法可能会（但不是必须）抛出此异常。例如，在已排序的不可修改列表上调用sort方法可能会也可能不会抛出UnsupportedOperationException
  * <p>This class is a member of the
  * <a href="{@docRoot}/../technotes/guides/collections/index.html">
  * Java Collections Framework</a>.
@@ -97,6 +101,12 @@ public class Collections {
      * do well to validate the values of these parameters from time to time.
      * (The first word of each tuning parameter name is the algorithm to which
      * it applies.)
+     * 调整算法参数 - 许多列表算法有两种实现，其中一种适用于 RandomAccess 列表，
+     * 另一种适用于“顺序”。
+     * 通常，随机访问变体在小型顺序访问列表上产生更好的性能。
+     * 下面的调整参数确定了构成每个算法的“小”顺序访问列表的截止点。
+     * 以下值根据经验确定适用于 LinkedList。希望它们对于其他顺序访问列表实现应该是合理的。
+     * 那些在此代码上进行性能工作的人会不时地验证这些参数的值。 （每个调整参数名称的第一个单词是它应用的算法。）
      */
     private static final int BINARYSEARCH_THRESHOLD   = 5000;
     private static final int REVERSE_THRESHOLD        =   18;
@@ -115,16 +125,18 @@ public class Collections {
      * <i>mutually comparable</i> (that is, {@code e1.compareTo(e2)}
      * must not throw a {@code ClassCastException} for any elements
      * {@code e1} and {@code e2} in the list).
-     *
+     * 1.根据其元素的Comparable natural ordering将指定列表按升序排序。
+     * 列表中的所有元素都必须实现Comparable接口。此外，列表中的所有元素必须相互比较（即，e1.compareTo(e2)
+     * 不得为任何元素e1和 e2 在列表中）
      * <p>This sort is guaranteed to be <i>stable</i>:  equal elements will
      * not be reordered as a result of the sort.
-     *
+     * 2.这种排序保证稳定：相等的元素不会因排序而重新排序
      * <p>The specified list must be modifiable, but need not be resizable.
-     *
+     * 3.指定的列表必须是可修改的，但不需要调整大小
      * @implNote
      * This implementation defers to the {@link List#sort(Comparator)}
      * method using the specified list and a {@code null} comparator.
-     *
+     * 4.此实现遵循使用指定列表和null比较器的Listsort(Comparator)方法
      * @param  <T> the class of the objects in the list
      * @param  list the list to be sorted.
      * @throws ClassCastException if the list contains elements that are not
@@ -147,16 +159,17 @@ public class Collections {
      * comparable</i> using the specified comparator (that is,
      * {@code c.compare(e1, e2)} must not throw a {@code ClassCastException}
      * for any elements {@code e1} and {@code e2} in the list).
-     *
+     * 1.根据指定比较器产生的顺序对指定列表进行排序。
+     * 列表中的所有元素必须使用指定的比较器相互比较（即，c.compare(e1, e2)不得为任何元素 抛出ClassCastExceptione1和 e2在列表中）
      * <p>This sort is guaranteed to be <i>stable</i>:  equal elements will
      * not be reordered as a result of the sort.
-     *
+     * 2.这种排序保证稳定：相等的元素不会因排序而重新排序
      * <p>The specified list must be modifiable, but need not be resizable.
-     *
+     * 3.指定的列表必须是可修改的，但不必调整大小
      * @implNote
      * This implementation defers to the {@link List#sort(Comparator)}
      * method using the specified list and comparator.
-     *
+     * 4.此实现遵循使用指定列表和比较器的Listsort(Comparator)方法
      * @param  <T> the class of the objects in the list
      * @param  list the list to be sorted.
      * @param  c the comparator to determine the order of the list.  A
@@ -184,13 +197,17 @@ public class Collections {
      * call.  If it is not sorted, the results are undefined.  If the list
      * contains multiple elements equal to the specified object, there is no
      * guarantee which one will be found.
-     *
+     * 1.使用二分搜索算法在指定列表中搜索指定对象。在进行此调用之前，
+     * 列表必须根据其元素的Comparable自然排序（如通过sort(List)} 方法）按升序排序。
+     * 如果未排序，则结果未定义。如果列表包含多个等于指定对象的元素，则无法保证会找到哪一个
      * <p>This method runs in log(n) time for a "random access" list (which
      * provides near-constant-time positional access).  If the specified list
      * does not implement the {@link RandomAccess} interface and is large,
      * this method will do an iterator-based binary search that performs
      * O(n) link traversals and O(log n) element comparisons.
-     *
+     * 2.此方法在 log(n) 时间内针对“随机访问”列表（提供接近恒定时间的位置访问）运行。
+     * 如果指定的列表没有实现RandomAccess接口并且很大，则此方法将执行基于迭代器的二进制搜索，
+     * 执行 O(n) 链接遍历和 O(log n) 元素比较
      * @param  <T> the class of the objects in the list
      * @param  list the list to be searched.
      * @param  key the key to be searched for.
@@ -260,6 +277,7 @@ public class Collections {
     /**
      * Gets the ith element from the given list by repositioning the specified
      * list listIterator.
+     * 通过重新定位指定列表 listIterator 从给定列表中获取第 i 个元素
      */
     private static <T> T get(ListIterator<? extends T> i, int index) {
         T obj = null;
@@ -285,13 +303,16 @@ public class Collections {
      * not sorted, the results are undefined.  If the list contains multiple
      * elements equal to the specified object, there is no guarantee which one
      * will be found.
-     *
+     * 1.使用二分搜索算法在指定列表中搜索指定对象。
+     * 在进行此调用之前，必须根据指定的比较器（如sort(List, Comparator)方法）对列表进行升序排序。
+     * 如果未排序，则结果未定义。如果列表包含多个等于指定对象的元素，则无法保证会找到哪一个
      * <p>This method runs in log(n) time for a "random access" list (which
      * provides near-constant-time positional access).  If the specified list
      * does not implement the {@link RandomAccess} interface and is large,
      * this method will do an iterator-based binary search that performs
      * O(n) link traversals and O(log n) element comparisons.
-     *
+     * 2.此方法在 log(n) 时间内针对“随机访问”列表（提供接近恒定时间的位置访问）运行。
+     * 如果指定的列表没有实现RandomAccess接口并且很大，则此方法将执行基于迭代器的二进制搜索，执行 O(n) 链接遍历和 O(log n) 元素比较
      * @param  <T> the class of the objects in the list
      * @param  list the list to be searched.
      * @param  key the key to be searched for.
@@ -363,9 +384,9 @@ public class Collections {
 
     /**
      * Reverses the order of the elements in the specified list.<p>
-     *
+     * 1.反转指定列表中元素的顺序。
      * This method runs in linear time.
-     *
+     * 2.此方法以线性时间运行
      * @param  list the list whose elements are to be reversed.
      * @throws UnsupportedOperationException if the specified list or
      *         its list-iterator does not support the <tt>set</tt> operation.
@@ -380,6 +401,7 @@ public class Collections {
             // instead of using a raw type here, it's possible to capture
             // the wildcard but it will require a call to a supplementary
             // private method
+            //此处不使用原始类型，而是可以捕获通配符，但需要调用补充私有方法
             ListIterator fwd = list.listIterator();
             ListIterator rev = list.listIterator(size);
             for (int i=0, mid=list.size()>>1; i<mid; i++) {
@@ -394,26 +416,29 @@ public class Collections {
      * Randomly permutes the specified list using a default source of
      * randomness.  All permutations occur with approximately equal
      * likelihood.
-     *
+     * 1.使用默认随机源随机排列指定列表。所有排列都以大致相等的可能性发生
      * <p>The hedge "approximately" is used in the foregoing description because
      * default source of randomness is only approximately an unbiased source
      * of independently chosen bits. If it were a perfect source of randomly
      * chosen bits, then the algorithm would choose permutations with perfect
      * uniformity.
-     *
+     * 2.在前面的描述中使用了“大约”对冲，因为默认随机源只是大约独立选择位的无偏源。
+     * 如果它是随机选择的比特的完美来源，那么该算法将选择具有完美一致性的排列。
      * <p>This implementation traverses the list backwards, from the last
      * element up to the second, repeatedly swapping a randomly selected element
      * into the "current position".  Elements are randomly selected from the
      * portion of the list that runs from the first element to the current
      * position, inclusive.
-     *
+     * 3.此实现从最后一个元素到第二个元素向后遍历列表，反复将随机选择的元素交换到“当前位置”。元素是从列表中从第一个元素到当前位置（含）的部分中随机选择的
      * <p>This method runs in linear time.  If the specified list does not
      * implement the {@link RandomAccess} interface and is large, this
      * implementation dumps the specified list into an array before shuffling
      * it, and dumps the shuffled array back into the list.  This avoids the
      * quadratic behavior that would result from shuffling a "sequential
      * access" list in place.
-     *
+     * 4.此方法以线性时间运行。如果指定列表没有实现RandomAccess接口并且很大，
+     * 则此实现将指定列表转储到一个数组中，然后再对其进行混洗，并将混洗后的数组转储回列表中。
+     * 这避免了因将“顺序访问”列表改组而导致的二次行为。
      * @param  list the list to be shuffled.
      * @throws UnsupportedOperationException if the specified list or
      *         its list-iterator does not support the <tt>set</tt> operation.
@@ -431,20 +456,22 @@ public class Collections {
      * Randomly permute the specified list using the specified source of
      * randomness.  All permutations occur with equal likelihood
      * assuming that the source of randomness is fair.<p>
-     *
+     * 1.使用指定的随机源随机排列指定的列表。假设随机性的来源是公平的，所有排列的发生可能性均等
      * This implementation traverses the list backwards, from the last element
      * up to the second, repeatedly swapping a randomly selected element into
      * the "current position".  Elements are randomly selected from the
      * portion of the list that runs from the first element to the current
      * position, inclusive.<p>
-     *
+     * 2.此实现从最后一个元素到第二个元素向后遍历列表，反复将随机选择的元素交换到“当前位置”。
+     * 元素是从列表中从第一个元素到当前位置的部分随机选择的，包括
      * This method runs in linear time.  If the specified list does not
      * implement the {@link RandomAccess} interface and is large, this
      * implementation dumps the specified list into an array before shuffling
      * it, and dumps the shuffled array back into the list.  This avoids the
      * quadratic behavior that would result from shuffling a "sequential
      * access" list in place.
-     *
+     * 3.此方法以线性时间运行。如果指定列表没有实现RandomAccess接口并且很大，
+     * 则此实现将指定列表转储到一个数组中，然后再对其进行混洗，并将混洗后的数组转储回列表中。这避免了因将“顺序访问”列表改组而导致的二次行为。
      * @param  list the list to be shuffled.
      * @param  rnd the source of randomness to use to shuffle the list.
      * @throws UnsupportedOperationException if the specified list or its
@@ -467,6 +494,7 @@ public class Collections {
             // instead of using a raw type here, it's possible to capture
             // the wildcard but it will require a call to a supplementary
             // private method
+            //将数组转储回列表而不是在此处使用原始类型，可以捕获通配符，但需要调用补充私有方法
             ListIterator it = list.listIterator();
             for (int i=0; i<arr.length; i++) {
                 it.next();
@@ -479,7 +507,7 @@ public class Collections {
      * Swaps the elements at the specified positions in the specified list.
      * (If the specified positions are equal, invoking this method leaves
      * the list unchanged.)
-     *
+     * 交换指定列表中指定位置的元素。 （如果指定的位置相等，则调用此方法会使列表保持不变。）
      * @param list The list in which to swap elements.
      * @param i the index of one element to be swapped.
      * @param j the index of the other element to be swapped.
@@ -499,6 +527,7 @@ public class Collections {
 
     /**
      * Swaps the two specified elements in the specified array.
+     * 交换指定数组中的两个指定元素。
      */
     private static void swap(Object[] arr, int i, int j) {
         Object tmp = arr[i];
@@ -509,9 +538,9 @@ public class Collections {
     /**
      * Replaces all of the elements of the specified list with the specified
      * element. <p>
-     *
+     * 1.用指定元素替换指定列表的所有元素。
      * This method runs in linear time.
-     *
+     * 2.此方法以线性时间运行
      * @param  <T> the class of the objects in the list
      * @param  list the list to be filled with the specified element.
      * @param  obj The element with which to fill the specified list.
@@ -539,9 +568,11 @@ public class Collections {
      * will be identical to its index in the source list.  The destination
      * list must be at least as long as the source list.  If it is longer, the
      * remaining elements in the destination list are unaffected. <p>
-     *
+     * 1.将一个列表中的所有元素复制到另一个列表中。
+     * 操作后，目标列表中每个复制元素的索引将与其在源列表中的索引相同。
+     * 目标列表必须至少与源列表一样长。如果它更长，则目标列表中的其余元素不受影响
      * This method runs in linear time.
-     *
+     * 2.此方法以线性时间运行。
      * @param  <T> the class of the objects in the lists
      * @param  dest The destination list.
      * @param  src The source list.
@@ -577,10 +608,11 @@ public class Collections {
      * comparable</i> (that is, <tt>e1.compareTo(e2)</tt> must not throw a
      * <tt>ClassCastException</tt> for any elements <tt>e1</tt> and
      * <tt>e2</tt> in the collection).<p>
-     *
+     * 1.根据元素的自然排序，返回给定集合的最小元素。集合中的所有元素都必须实现Comparable接口。
+     * 此外，集合中的所有元素必须相互可比较（即，e1.compareTo(e2)不得为任何元素抛出ClassCastException集合中的 e1和e2）
      * This method iterates over the entire collection, hence it requires
      * time proportional to the size of the collection.
-     *
+     * 2.此方法迭代整个集合，因此它需要与集合大小成正比的时间
      * @param  <T> the class of the objects in the collection
      * @param  coll the collection whose minimum element is to be determined.
      * @return the minimum element of the given collection, according
@@ -610,10 +642,11 @@ public class Collections {
      * comparator (that is, <tt>comp.compare(e1, e2)</tt> must not throw a
      * <tt>ClassCastException</tt> for any elements <tt>e1</tt> and
      * <tt>e2</tt> in the collection).<p>
-     *
+     * 1.根据指定比较器诱导的顺序返回给定集合的最小元素。集合中的所有元素必须通过指定的比较器相互比较
+     * （即，comp.compare(e1, e2)不得抛出ClassCastException集合中的元素e1和e2）
      * This method iterates over the entire collection, hence it requires
      * time proportional to the size of the collection.
-     *
+     * 2.此方法迭代整个集合，因此它需要与集合大小成正比的时间
      * @param  <T> the class of the objects in the collection
      * @param  coll the collection whose minimum element is to be determined.
      * @param  comp the comparator with which to determine the minimum element.
@@ -650,10 +683,11 @@ public class Collections {
      * comparable</i> (that is, <tt>e1.compareTo(e2)</tt> must not throw a
      * <tt>ClassCastException</tt> for any elements <tt>e1</tt> and
      * <tt>e2</tt> in the collection).<p>
-     *
+     * 1.根据元素的自然排序，返回给定集合的最大元素。集合中的所有元素都必须实现Comparable接口。
+     * 此外，集合中的所有元素必须相互可比较（即，e1.compareTo(e2)不得为任何元素抛出ClassCastException集合中的 e1和e2）
      * This method iterates over the entire collection, hence it requires
      * time proportional to the size of the collection.
-     *
+     * 2.此方法迭代整个集合，因此它需要与集合大小成正比的时间
      * @param  <T> the class of the objects in the collection
      * @param  coll the collection whose maximum element is to be determined.
      * @return the maximum element of the given collection, according
@@ -683,10 +717,12 @@ public class Collections {
      * comparator (that is, <tt>comp.compare(e1, e2)</tt> must not throw a
      * <tt>ClassCastException</tt> for any elements <tt>e1</tt> and
      * <tt>e2</tt> in the collection).<p>
-     *
+     * 1.根据指定比较器诱导的顺序返回给定集合的最大元素。
+     * 集合中的所有元素必须通过指定的比较器相互比较即，comp.compare(e1, e2)不得抛出
+     * ClassCastException集合中的元素e1和 e2）
      * This method iterates over the entire collection, hence it requires
      * time proportional to the size of the collection.
-     *
+     * 2.此方法迭代整个集合，因此它需要与集合大小成正比的时间
      * @param  <T> the class of the objects in the collection
      * @param  coll the collection whose maximum element is to be determined.
      * @param  comp the comparator with which to determine the maximum element.
@@ -722,12 +758,14 @@ public class Collections {
      * <tt>list.size()</tt>, for all values of <tt>i</tt> between <tt>0</tt>
      * and <tt>list.size()-1</tt>, inclusive.  (This method has no effect on
      * the size of the list.)
-     *
+     * 1.将指定列表中的元素旋转指定距离。调用此方法后，索引i处的元素将是之前索引(i - distance)modlist.size()处的元素，
+     * 对于所有值i在0和list.size()-1之间，包括在内。 （此方法对列表的大小没有影响。）
      * <p>For example, suppose <tt>list</tt> comprises<tt> [t, a, n, k, s]</tt>.
      * After invoking <tt>Collections.rotate(list, 1)</tt> (or
      * <tt>Collections.rotate(list, -4)</tt>), <tt>list</tt> will comprise
      * <tt>[s, t, a, n, k]</tt>.
-     *
+     * 2.例如，假设 list包含 <tt> [t, a, n, k, s]<tt>。调用Collections.rotate(list, 1)
+     * （或Collections.rotate(list, -4)）后，<tt>list<tt> 将包含 <tt>[s, t, a, n, k]
      * <p>Note that this method can usefully be applied to sublists to
      * move one or more elements within a list while preserving the
      * order of the remaining elements.  For example, the following idiom
@@ -736,6 +774,8 @@ public class Collections {
      * <pre>
      *     Collections.rotate(list.subList(j, k+1), -1);
      * </pre>
+     * 3.请注意，此方法可以有效地应用于子列表，以在列表中移动一个或多个元素，同时保留剩余元素的顺序。
+     * 例如，以下习惯用法将索引 j处的元素向前移动到位置k必须大于或等于j）  Collections.rotate(list.subList(j, k+1), -1);
      * To make this concrete, suppose <tt>list</tt> comprises
      * <tt>[a, b, c, d, e]</tt>.  To move the element at index <tt>1</tt>
      * (<tt>b</tt>) forward two positions, perform the following invocation:
@@ -743,11 +783,12 @@ public class Collections {
      *     Collections.rotate(l.subList(1, 4), -1);
      * </pre>
      * The resulting list is <tt>[a, c, d, b, e]</tt>.
-     *
+     * 4.为了具体说明，假设list包含[a, b, c, d, e]。要将索引1(b) 处的元素向前移动两个位置，
+     * 请执行以下调用： Collections.rotate(l.subList(1, 4), -1) ; 结果列表是 <tt>[a, c, d, b, e]<tt>
      * <p>To move more than one element forward, increase the absolute value
      * of the rotation distance.  To move elements backward, use a positive
      * shift distance.
-     *
+     * 5.要向前移动多个元素，请增加旋转距离的绝对值。要向后移动元素，请使用正偏移距离。
      * <p>If the specified list is small or implements the {@link
      * RandomAccess} interface, this implementation exchanges the first
      * element into the location it should go, and then repeatedly exchanges
@@ -761,7 +802,12 @@ public class Collections {
      * and finally it is invoked on the entire list.  For a more complete
      * description of both algorithms, see Section 2.3 of Jon Bentley's
      * <i>Programming Pearls</i> (Addison-Wesley, 1986).
-     *
+     * 6.如果指定的列表很小或实现了RandomAccess接口，则此实现将第一个元素交换到它应该去的位置，
+     * 然后重复地将被替换的元素交换到它应该去的位置，直到一个被替换的元素被交换到第一个元素。
+     * 如有必要，对第二个和后续元素重复该过程，直到旋转完成。
+     * 如果指定的列表很大并且没有实现RandomAccess接口，则此实现将列表分成两个围绕索引 -distance mod size的子列表视图。
+     * 然后在每个子列表视图上调用reverse(List)方法，最后在整个列表上调用它。
+     * 有关这两种算法的更完整描述，请参阅 Jon Bentley 的Programming Pearls（Addison-Wesley，1986 年）的第 2.3 节
      * @param list the list to be rotated.
      * @param distance the distance to rotate the list.  There are no
      *        constraints on this value; it may be zero, negative, or
@@ -821,7 +867,9 @@ public class Collections {
      * in <tt>list</tt> such that
      * <tt>(oldVal==null ? e==null : oldVal.equals(e))</tt>.
      * (This method has no effect on the size of the list.)
-     *
+     * 1.将列表中一个指定值的所有出现替换为另一个。
+     * 更正式地说，用newVal替换list中的每个元素e使得 (oldVal==null ? e==null : oldVal.equals(e ))。
+     * （此方法对列表的大小没有影响。）
      * @param  <T> the class of the objects in the list
      * @param list the list in which replacement is to occur.
      * @param oldVal the old value to be replaced.
@@ -881,7 +929,9 @@ public class Collections {
      * such that {@code source.subList(i, i+target.size()).equals(target)},
      * or -1 if there is no such index.  (Returns -1 if
      * {@code target.size() > source.size()})
-     *
+     * 1.返回指定源列表中指定目标列表第一次出现的起始位置，如果没有出现，则返回 -1。更正式地说，
+     * 返回最低索引i使得source.subList(i, i+target.size()).equals(target)}，如果没有这样的索引，则返回 -1。
+     * （如果target.size() > source.size()则返回 -1）
      * <p>This implementation uses the "brute force" technique of scanning
      * over the source list, looking for a match with the target at each
      * location in turn.
@@ -4272,7 +4322,7 @@ public class Collections {
 
     /**
      * The empty set (immutable).  This set is serializable.
-     *
+     * 空集（不可变）。这个集合是可序列化的
      * @see #emptySet()
      */
     @SuppressWarnings("rawtypes")
@@ -4390,7 +4440,7 @@ public class Collections {
 
     /**
      * The empty list (immutable).  This list is serializable.
-     *
+     * 空列表（不可变）。这个列表是可序列化的
      * @see #emptyList()
      */
     @SuppressWarnings("rawtypes")
@@ -4490,7 +4540,7 @@ public class Collections {
 
     /**
      * The empty map (immutable).  This map is serializable.
-     *
+     * 空地图（不可变）。该地图是可序列化的
      * @see #emptyMap()
      * @since 1.3
      */

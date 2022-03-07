@@ -2712,7 +2712,7 @@ public final class Files {
 
     /**
      * Walks a file tree.
-     *
+     * 遍历文件树
      * <p> This method works as if invoking it were equivalent to evaluating the
      * expression:
      * <blockquote><pre>

@@ -47,10 +47,10 @@ import java.util.stream.StreamSupport;
  * This class contains various methods for manipulating arrays (such as
  * sorting and searching). This class also contains a static factory
  * that allows arrays to be viewed as lists.
- *
+ * 1.此类包含用于操作数组的各种方法（例如排序和搜索）。这个类还包含一个静态工厂，允许将数组视为列表。
  * <p>The methods in this class all throw a {@code NullPointerException},
  * if the specified array reference is null, except where noted.
- *
+ * 2.如果指定的数组引用为空，则该类中的方法都抛出NullPointerException，除非另有说明
  * <p>The documentation for the methods contained in this class includes
  * briefs description of the <i>implementations</i>. Such descriptions should
  * be regarded as <i>implementation notes</i>, rather than parts of the
@@ -58,7 +58,9 @@ import java.util.stream.StreamSupport;
  * algorithms, so long as the specification itself is adhered to. (For
  * example, the algorithm used by {@code sort(Object[])} does not have to be
  * a MergeSort, but it does have to be <i>stable</i>.)
- *
+ * 3.此类中包含的方法的文档包括对实现的简要说明。此类描述应被视为实现说明，而不是规范的一部分。
+ * 只要遵守规范本身，实现者应该可以随意替换其他算法。
+ * （例如，sort(Object[]) 使用的算法不必是 MergeSort，但它必须是stable。）
  * <p>This class is a member of the
  * <a href="{@docRoot}/../technotes/guides/collections/index.html">
  * Java Collections Framework</a>.
@@ -75,10 +77,13 @@ public class Arrays {
      * algorithm will not further partition the sorting task. Using
      * smaller sizes typically results in memory contention across
      * tasks that makes parallel speedups unlikely.
+     * 最小数组长度，低于该长度并行排序算法将不会进一步划分排序任务。使用较小的大小通常会导致跨任务的内存争用，
+     * 从而不太可能实现并行加速
      */
     private static final int MIN_ARRAY_SORT_GRAN = 1 << 13;
 
     // Suppresses default constructor, ensuring non-instantiability.
+    //禁止默认构造函数，确保不可实例化
     private Arrays() {}
 
     /**
@@ -87,7 +92,8 @@ public class Arrays {
      * comparator is null. To simplify code-sharing within underlying
      * implementations, the compare method only declares type Object
      * for its second argument.
-     *
+     * 1.实现一组相互比较元素的自然排序的比较器。当提供的比较器为空时可以使用。
+     * 为了简化底层实现中的代码共享，compare 方法只为其第二个参数声明 Object 类型
      * Arrays class implementor's note: It is an empirical matter
      * whether ComparableTimSort offers any performance benefit over
      * TimSort used with this comparator.  If not, you are better off
@@ -95,6 +101,9 @@ public class Arrays {
      * empirical case for separating them for parallel sorting, so all
      * public Object parallelSort methods use the same comparator
      * based implementation.
+     * 2.数组类实现者的注释：ComparableTimSort 是否比与此比较器一起使用的 TimSort 提供任何性能优势是一个经验问题。
+     * 如果没有，最好删除或绕过 ComparableTimSort。目前没有将它们分开以进行并行排序的经验案例，
+     * 因此所有公共 Object parallelSort 方法都使用相同的基于比较器的实现
      */
     static final class NaturalOrder implements Comparator<Object> {
         @SuppressWarnings("unchecked")
@@ -107,6 +116,7 @@ public class Arrays {
     /**
      * Checks that {@code fromIndex} and {@code toIndex} are in
      * the range and throws an exception if they aren't.
+     * 检查 fromIndex和toIndex是否在范围内，如果不在范围内则抛出异常
      */
     private static void rangeCheck(int arrayLength, int fromIndex, int toIndex) {
         if (fromIndex > toIndex) {
@@ -127,17 +137,20 @@ public class Arrays {
      * expanding arguments into those required for the internal
      * implementation methods residing in other package-private
      * classes (except for legacyMergeSort, included in this class).
+     * 排序方法。请注意，所有公共“排序”方法都采用相同的形式：
+     * 必要时执行参数检查，然后将参数扩展为驻留在其他包私有类中的内部实现方法所需的参数（此类中包含的 legacyMergeSort 除外）
      */
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序。
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 2.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快
      * @param a the array to be sorted
      */
     public static void sort(int[] a) {
@@ -149,13 +162,15 @@ public class Arrays {
      * to be sorted extends from the index {@code fromIndex}, inclusive, to
      * the index {@code toIndex}, exclusive. If {@code fromIndex == toIndex},
      * the range to be sorted is empty.
-     *
+     * 1.按升序对数组的指定范围进行排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果fromIndex == toIndex，则要排序的范围为空
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 2.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -171,13 +186,14 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 2.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快。
      * @param a the array to be sorted
      */
     public static void sort(long[] a) {
@@ -189,13 +205,15 @@ public class Arrays {
      * to be sorted extends from the index {@code fromIndex}, inclusive, to
      * the index {@code toIndex}, exclusive. If {@code fromIndex == toIndex},
      * the range to be sorted is empty.
-     *
+     * 1.按升序对数组的指定范围进行排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果 fromIndex == toIndex，则要排序的范围为空
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 2.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -211,13 +229,14 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 2.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快
      * @param a the array to be sorted
      */
     public static void sort(short[] a) {
@@ -229,13 +248,15 @@ public class Arrays {
      * to be sorted extends from the index {@code fromIndex}, inclusive, to
      * the index {@code toIndex}, exclusive. If {@code fromIndex == toIndex},
      * the range to be sorted is empty.
-     *
+     * 1.按升序对数组的指定范围进行排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果fromIndex == toIndex，则要排序的范围为空
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 2.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -251,13 +272,14 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序。
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 2.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快
      * @param a the array to be sorted
      */
     public static void sort(char[] a) {
@@ -269,13 +291,15 @@ public class Arrays {
      * to be sorted extends from the index {@code fromIndex}, inclusive, to
      * the index {@code toIndex}, exclusive. If {@code fromIndex == toIndex},
      * the range to be sorted is empty.
-     *
+     * 1.按升序对数组的指定范围进行排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果fromIndex == toIndex，则要排序的范围为空。
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 2.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -291,13 +315,14 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 2.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快
      * @param a the array to be sorted
      */
     public static void sort(byte[] a) {
@@ -309,13 +334,15 @@ public class Arrays {
      * to be sorted extends from the index {@code fromIndex}, inclusive, to
      * the index {@code toIndex}, exclusive. If {@code fromIndex == toIndex},
      * the range to be sorted is empty.
-     *
+     * 1.按升序对数组的指定范围进行排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果fromIndex == toIndex，则要排序的范围为空。
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 2.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -331,7 +358,7 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序
      * <p>The {@code <} relation does not provide a total order on all float
      * values: {@code -0.0f == 0.0f} is {@code true} and a {@code Float.NaN}
      * value compares neither less than, greater than, nor equal to any value,
@@ -339,13 +366,16 @@ public class Arrays {
      * {@link Float#compareTo}: {@code -0.0f} is treated as less than value
      * {@code 0.0f} and {@code Float.NaN} is considered greater than any
      * other value and all {@code Float.NaN} values are considered equal.
-     *
+     * 2.<关系不提供所有浮点值的总顺序：-0.0f == 0.0f 是  true并且  Float.NaN值比较不小于，大于，也不等于任何值，
+     * 甚至是它本身。此方法使用Float。compareTo方法施加的总顺序： -0.0f被视为小于值 0.0f并且 Float.NaN
+     * 被视为大于任何其他值并且所有Float.NaN值都被认为是相等的
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 3.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快
      * @param a the array to be sorted
      */
     public static void sort(float[] a) {
@@ -356,8 +386,9 @@ public class Arrays {
      * Sorts the specified range of the array into ascending order. The range
      * to be sorted extends from the index {@code fromIndex}, inclusive, to
      * the index {@code toIndex}, exclusive. If {@code fromIndex == toIndex},
-     * the range to be sorted is empty.
-     *
+     * the range to be sorted is empty
+     * 1.按升序对数组的指定范围进行排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果 fromIndex == toIndex，则要排序的范围为空。
      * <p>The {@code <} relation does not provide a total order on all float
      * values: {@code -0.0f == 0.0f} is {@code true} and a {@code Float.NaN}
      * value compares neither less than, greater than, nor equal to any value,
@@ -365,13 +396,16 @@ public class Arrays {
      * {@link Float#compareTo}: {@code -0.0f} is treated as less than value
      * {@code 0.0f} and {@code Float.NaN} is considered greater than any
      * other value and all {@code Float.NaN} values are considered equal.
-     *
+     * 2.<关系不提供所有浮点值的总顺序：-0.0f == 0.0f是 true并且Float.NaN值比较不小于，大于，也不等于任何值，
+     * 甚至是它本身。此方法使用FloatcompareTo方法施加的总顺序：-0.0f被视为小于值0.0f并且Float.NaN
+     * 被视为大于任何其他值并且所有Float.NaN值都被认为是相等的
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 3.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -387,7 +421,7 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序
      * <p>The {@code <} relation does not provide a total order on all double
      * values: {@code -0.0d == 0.0d} is {@code true} and a {@code Double.NaN}
      * value compares neither less than, greater than, nor equal to any value,
@@ -395,13 +429,16 @@ public class Arrays {
      * {@link Double#compareTo}: {@code -0.0d} is treated as less than value
      * {@code 0.0d} and {@code Double.NaN} is considered greater than any
      * other value and all {@code Double.NaN} values are considered equal.
-     *
+     * 2.<关系不提供所有 double 值的总顺序：-0.0d == 0.0d是true并且Double.NaN值比较不小于，大于，也不等于任何值，
+     * 甚至是它本身。此方法使用DoublecompareTo方法施加的总顺序：-0.0d被视为小于值0.0d，而Double.NaN
+     * 被视为大于任何其他值并且所有Double.NaN值都被认为是相等的。
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 3.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快
      * @param a the array to be sorted
      */
     public static void sort(double[] a) {
@@ -413,7 +450,8 @@ public class Arrays {
      * to be sorted extends from the index {@code fromIndex}, inclusive, to
      * the index {@code toIndex}, exclusive. If {@code fromIndex == toIndex},
      * the range to be sorted is empty.
-     *
+     * 1.按升序对数组的指定范围进行排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果fromIndex == toIndex，则要排序的范围为空。
      * <p>The {@code <} relation does not provide a total order on all double
      * values: {@code -0.0d == 0.0d} is {@code true} and a {@code Double.NaN}
      * value compares neither less than, greater than, nor equal to any value,
@@ -421,13 +459,16 @@ public class Arrays {
      * {@link Double#compareTo}: {@code -0.0d} is treated as less than value
      * {@code 0.0d} and {@code Double.NaN} is considered greater than any
      * other value and all {@code Double.NaN} values are considered equal.
-     *
+     * 2.<关系不提供所有 double 值的总顺序：-0.0d == 0.0d 是 true并且 Double.NaN值比较不小于，大于，
+     * 也不等于任何值，甚至是它本身。此方法使用DoublecompareTo方法施加的总顺序：-0.0d被视为小于值0.0d，
+     * 而 Double.NaN被视为大于任何其他值并且所有Double.NaN值都被认为是相等的
      * <p>Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
      * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
      * offers O(n log(n)) performance on many data sets that cause other
      * quicksorts to degrade to quadratic performance, and is typically
      * faster than traditional (one-pivot) Quicksort implementations.
-     *
+     * 3.实施说明：排序算法是 Vladimir Yaroslavskiy、Jon Bentley 和 Joshua Bloch 的双枢轴快速排序。
+     * 该算法在许多数据集上提供 O(n log(n)) 性能，导致其他快速排序降级为二次性能，并且通常比传统（单轴）快速排序实现更快
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -443,7 +484,7 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -454,7 +495,10 @@ public class Arrays {
      * working space no greater than the size of the original array. The
      * {@link ForkJoinPool#commonPool() ForkJoin common pool} is used to
      * execute any parallel tasks.
-     *
+     * 2.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrays。sort(byte[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrays。sort(byte[])方法对其进行排序。
+     * 该算法需要一个不大于原始数组大小的工作空间。ForkJoinPool。commonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      *
      * @since 1.8
@@ -476,7 +520,8 @@ public class Arrays {
      * The range to be sorted extends from the index {@code fromIndex},
      * inclusive, to the index {@code toIndex}, exclusive. If
      * {@code fromIndex == toIndex}, the range to be sorted is empty.
-     *
+     * 1.将数组的指定范围按数字升序排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果 fromIndex == toIndex，则要排序的范围为空。
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -487,7 +532,10 @@ public class Arrays {
      * space no greater than the size of the specified range of the original
      * array. The {@link ForkJoinPool#commonPool() ForkJoin common pool} is
      * used to execute any parallel tasks.
-     *
+     * 2.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrays.sort(byte[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrayssort(byte[])方法对其进行排序。
+     * 该算法需要一个不大于原始数组指定范围大小的工作空间。 ForkJoinPoolcommonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -513,7 +561,7 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -524,7 +572,10 @@ public class Arrays {
      * working space no greater than the size of the original array. The
      * {@link ForkJoinPool#commonPool() ForkJoin common pool} is used to
      * execute any parallel tasks.
-     *
+     * 2.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrays.sort(char[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrays.sort(char[])方法对其进行排序。
+     * 该算法需要一个不大于原始数组大小的工作空间。ForkJoinPool.commonPool() ForkJoin 公共池用于执行任何并行任务
      * @param a the array to be sorted
      *
      * @since 1.8
@@ -546,7 +597,8 @@ public class Arrays {
      * The range to be sorted extends from the index {@code fromIndex},
      * inclusive, to the index {@code toIndex}, exclusive. If
      * {@code fromIndex == toIndex}, the range to be sorted is empty.
-     *
+     * 1.将数组的指定范围按数字升序排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果fromIndex == toIndex，则要排序的范围为空。
       @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -557,7 +609,10 @@ public class Arrays {
      * space no greater than the size of the specified range of the original
      * array. The {@link ForkJoinPool#commonPool() ForkJoin common pool} is
      * used to execute any parallel tasks.
-     *
+     * 2.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+       * 当子数组长度达到最小粒度时，使用适当的Arrayssort(char[])方法对子数组进行排序。
+       * 如果指定数组的长度小于最小粒度，则使用适当的Arrayssort(char[])方法对其进行排序。
+       * 该算法需要一个不大于原始数组指定范围大小的工作空间。ForkJoinPoolcommonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -583,7 +638,7 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序。
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -594,7 +649,10 @@ public class Arrays {
      * working space no greater than the size of the original array. The
      * {@link ForkJoinPool#commonPool() ForkJoin common pool} is used to
      * execute any parallel tasks.
-     *
+     * 2.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrays.sort(short[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrays.sort(short[]) 方法对其进行排序。
+     * 该算法需要一个不大于原始数组大小的工作空间。ForkJoinPool.commonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      *
      * @since 1.8
@@ -616,7 +674,8 @@ public class Arrays {
      * The range to be sorted extends from the index {@code fromIndex},
      * inclusive, to the index {@code toIndex}, exclusive. If
      * {@code fromIndex == toIndex}, the range to be sorted is empty.
-     *
+     * 1.将数组的指定范围按数字升序排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果fromIndex == toIndex，则要排序的范围为空
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -627,7 +686,10 @@ public class Arrays {
      * space no greater than the size of the specified range of the original
      * array. The {@link ForkJoinPool#commonPool() ForkJoin common pool} is
      * used to execute any parallel tasks.
-     *
+     * 2.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrayssort(short[]) 方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrayssort(short[])方法对其进行排序。
+     * 该算法需要一个不大于原始数组指定范围大小的工作空间。 ForkJoinPoolcommonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -653,7 +715,7 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序。
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -664,7 +726,10 @@ public class Arrays {
      * working space no greater than the size of the original array. The
      * {@link ForkJoinPool#commonPool() ForkJoin common pool} is used to
      * execute any parallel tasks.
-     *
+     * 2.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrays.sort(int[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrays.sort(int[])方法对其进行排序
+     * 该算法需要一个不大于原始数组大小的工作空间。ForkJoinPool.commonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      *
      * @since 1.8
@@ -686,7 +751,8 @@ public class Arrays {
      * The range to be sorted extends from the index {@code fromIndex},
      * inclusive, to the index {@code toIndex}, exclusive. If
      * {@code fromIndex == toIndex}, the range to be sorted is empty.
-     *
+     * 1.将数组的指定范围按数字升序排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果 fromIndex == toIndex，则要排序的范围为空。
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -697,7 +763,10 @@ public class Arrays {
      * space no greater than the size of the specified range of the original
      * array. The {@link ForkJoinPool#commonPool() ForkJoin common pool} is
      * used to execute any parallel tasks.
-     *
+     * 2.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrays.sort(int[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrays.sort(int[])方法对其进行排序。
+     * 该算法需要一个不大于原始数组指定范围大小的工作空间。ForkJoinPool.commonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -723,7 +792,7 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -734,7 +803,10 @@ public class Arrays {
      * working space no greater than the size of the original array. The
      * {@link ForkJoinPool#commonPool() ForkJoin common pool} is used to
      * execute any parallel tasks.
-     *
+     * 2.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrays.sort(long[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrays.sort(long[])方法对其进行排序。
+     * 该算法需要一个不大于原始数组大小的工作空间。ForkJoinPool.commonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      *
      * @since 1.8
@@ -756,7 +828,8 @@ public class Arrays {
      * The range to be sorted extends from the index {@code fromIndex},
      * inclusive, to the index {@code toIndex}, exclusive. If
      * {@code fromIndex == toIndex}, the range to be sorted is empty.
-     *
+     * 1.将数组的指定范围按数字升序排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果fromIndex == toIndex，则要排序的范围为空。
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -767,7 +840,10 @@ public class Arrays {
      * space no greater than the size of the specified range of the original
      * array. The {@link ForkJoinPool#commonPool() ForkJoin common pool} is
      * used to execute any parallel tasks.
-     *
+     * 2.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrayssort(long[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrayssort(long[])方法对其进行排序。
+     * 该算法需要一个不大于原始数组指定范围大小的工作空间。ForkJoinPoolcommonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -793,7 +869,7 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序。
      * <p>The {@code <} relation does not provide a total order on all float
      * values: {@code -0.0f == 0.0f} is {@code true} and a {@code Float.NaN}
      * value compares neither less than, greater than, nor equal to any value,
@@ -801,7 +877,9 @@ public class Arrays {
      * {@link Float#compareTo}: {@code -0.0f} is treated as less than value
      * {@code 0.0f} and {@code Float.NaN} is considered greater than any
      * other value and all {@code Float.NaN} values are considered equal.
-     *
+     * 2.<关系不提供所有浮点值的总顺序：-0.0f == 0.0f是true并且Float.NaN值比较不小于，大于，也不等于任何值，
+     * 甚至是它本身。此方法使用FloatcompareTo方法施加的总顺序：-0.0f被视为小于值0.0f并且 Float.NaN
+     * 被视为大于任何其他值并且所有 Float.NaN值都被认为是相等的
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -812,7 +890,10 @@ public class Arrays {
      * working space no greater than the size of the original array. The
      * {@link ForkJoinPool#commonPool() ForkJoin common pool} is used to
      * execute any parallel tasks.
-     *
+     * 3.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的 Arrays.sort(float[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrays.sort(float[])方法对其进行排序。
+     * 该算法需要一个不大于原始数组大小的工作空间。ForkJoinPool.commonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      *
      * @since 1.8
@@ -834,7 +915,8 @@ public class Arrays {
      * The range to be sorted extends from the index {@code fromIndex},
      * inclusive, to the index {@code toIndex}, exclusive. If
      * {@code fromIndex == toIndex}, the range to be sorted is empty.
-     *
+     * 1.将数组的指定范围按数字升序排序。要排序的范围从索引fromIndex（包含）扩展到索引toIndex（不包含）。
+     * 如果  fromIndex == toIndex，则要排序的范围为空。
      * <p>The {@code <} relation does not provide a total order on all float
      * values: {@code -0.0f == 0.0f} is {@code true} and a {@code Float.NaN}
      * value compares neither less than, greater than, nor equal to any value,
@@ -842,7 +924,9 @@ public class Arrays {
      * {@link Float#compareTo}: {@code -0.0f} is treated as less than value
      * {@code 0.0f} and {@code Float.NaN} is considered greater than any
      * other value and all {@code Float.NaN} values are considered equal.
-     *
+     * 2.<关系不提供所有浮点值的总顺序：-0.0f == 0.0f是true并且Float.NaN值比较不小于，大于，
+     * 也不等于任何值，甚至是它本身。此方法使用FloatcompareTo方法施加的总顺序：-0.0f被视为小于值0.0f并且Float.NaN
+     * 被视为大于任何其他值并且所有Float.NaN值都被认为是相等的
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -853,7 +937,9 @@ public class Arrays {
      * space no greater than the size of the specified range of the original
      * array. The {@link ForkJoinPool#commonPool() ForkJoin common pool} is
      * used to execute any parallel tasks.
-     *
+     * 3.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。当子数组长度达到最小粒度时，
+     * 使用适当的Arrayssort(float[])方法对子数组进行排序。如果指定数组的长度小于最小粒度，则使用适当的Arrayssort(float[])
+     * 方法对其进行排序。该算法需要一个不大于原始数组指定范围大小的工作空间。ForkJoinPoolcommonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -879,7 +965,7 @@ public class Arrays {
 
     /**
      * Sorts the specified array into ascending numerical order.
-     *
+     * 1.将指定的数组按数字升序排序。
      * <p>The {@code <} relation does not provide a total order on all double
      * values: {@code -0.0d == 0.0d} is {@code true} and a {@code Double.NaN}
      * value compares neither less than, greater than, nor equal to any value,
@@ -887,7 +973,9 @@ public class Arrays {
      * {@link Double#compareTo}: {@code -0.0d} is treated as less than value
      * {@code 0.0d} and {@code Double.NaN} is considered greater than any
      * other value and all {@code Double.NaN} values are considered equal.
-     *
+     * 2.<关系不提供所有 double 值的总顺序：-0.0d == 0.0d是 true并且 Double.NaN值比较不小于，大于，
+     * 也不等于任何值，甚至是它本身。此方法使用DoublecompareTo方法施加的总顺序：-0.0d被视为小于值0.0d，而Double.NaN
+     * 被视为大于任何其他值并且所有Double.NaN值都被认为是相等的。
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -898,7 +986,10 @@ public class Arrays {
      * working space no greater than the size of the original array. The
      * {@link ForkJoinPool#commonPool() ForkJoin common pool} is used to
      * execute any parallel tasks.
-     *
+     * 3.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrayssort(double[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrayssort(double[])方法对其进行排序。
+     * 该算法需要一个不大于原始数组大小的工作空间。ForkJoinPoolcommonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      *
      * @since 1.8
@@ -920,7 +1011,8 @@ public class Arrays {
      * The range to be sorted extends from the index {@code fromIndex},
      * inclusive, to the index {@code toIndex}, exclusive. If
      * {@code fromIndex == toIndex}, the range to be sorted is empty.
-     *
+     * 1.将数组的指定范围按数字升序排序。要排序的范围从索引fromIndex包含扩展到索引toIndex（不包含）。
+     * 如果fromIndex == toIndex，则要排序的范围为空。
      * <p>The {@code <} relation does not provide a total order on all double
      * values: {@code -0.0d == 0.0d} is {@code true} and a {@code Double.NaN}
      * value compares neither less than, greater than, nor equal to any value,
@@ -928,7 +1020,9 @@ public class Arrays {
      * {@link Double#compareTo}: {@code -0.0d} is treated as less than value
      * {@code 0.0d} and {@code Double.NaN} is considered greater than any
      * other value and all {@code Double.NaN} values are considered equal.
-     *
+     * 2.<关系不提供所有 double 值的总顺序：-0.0d == 0.0d是 true并且Double.NaN值比较不小于，
+     * 大于，也不等于任何值，甚至是它本身。此方法使用DoublecompareTo方法施加的总顺序：-0.0d
+     * 被视为小于值0.0d，而 Double.NaN被视为大于任何其他值并且所有Double.NaN值都被认为是相等的。
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -939,7 +1033,9 @@ public class Arrays {
      * space no greater than the size of the specified range of the original
      * array. The {@link ForkJoinPool#commonPool() ForkJoin common pool} is
      * used to execute any parallel tasks.
-     *
+     * 3.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。当子数组长度达到最小粒度时，
+     * 使用适当的Arrayssort(double[])方法对子数组进行排序。如果指定数组的长度小于最小粒度，则使用适当的Arrayssort(double[])
+     * 方法对其进行排序。该算法需要一个不大于原始数组指定范围大小的工作空间。 ForkJoinPoolcommonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element, inclusive, to be sorted
      * @param toIndex the index of the last element, exclusive, to be sorted
@@ -971,10 +1067,12 @@ public class Arrays {
      * <i>mutually comparable</i> (that is, {@code e1.compareTo(e2)} must
      * not throw a {@code ClassCastException} for any elements {@code e1}
      * and {@code e2} in the array).
-     *
+     * 1.根据其元素的Comparable natural ordering，将指定的对象数组按升序排序。
+     * 数组中的所有元素都必须实现 Comparable接口。此外，数组中的所有元素必须相互比较
+     * （也就是说，e1.compareTo(e2)不得为任何元素 e1和  e2在数组中）。
      * <p>This sort is guaranteed to be <i>stable</i>:  equal elements will
      * not be reordered as a result of the sort.
-     *
+     * 2.这种排序保证稳定：相等的元素不会因排序而重新排序
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -985,7 +1083,10 @@ public class Arrays {
      * working space no greater than the size of the original array. The
      * {@link ForkJoinPool#commonPool() ForkJoin common pool} is used to
      * execute any parallel tasks.
-     *
+     * 3.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrayssort(Object[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrayssort(Object[])方法对其进行排序。
+     * 该算法需要一个不大于原始数组大小的工作空间。ForkJoinPoolcommonPool() ForkJoin 公共池用于执行任何并行任务
      * @param <T> the class of the objects to be sorted
      * @param a the array to be sorted
      *
@@ -1023,10 +1124,13 @@ public class Arrays {
      * comparable</i> (that is, {@code e1.compareTo(e2)} must not throw a
      * {@code ClassCastException} for any elements {@code e1} and
      * {@code e2} in the array).
-     *
+     * 1.根据其元素的Comparable 自然排序，将指定对象数组的指定范围按升序排序。
+     * 要排序的范围从索引fromIndex（含）扩展到索引toIndex（不包括）。
+     * （如果fromIndex==toIndex，则要排序的范围为空。）此范围内的所有元素都必须实现 Comparable接口。
+     * 此外，此范围内的所有元素必须相互比较（即，e1.compareTo(e2) 不得为任何元素e1和  e2在数组中）。
      * <p>This sort is guaranteed to be <i>stable</i>:  equal elements will
      * not be reordered as a result of the sort.
-     *
+     * 2.这种排序保证稳定：相等的元素不会因排序而重新排序
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -1037,7 +1141,10 @@ public class Arrays {
      * space no greater than the size of the specified range of the original
      * array. The {@link ForkJoinPool#commonPool() ForkJoin common pool} is
      * used to execute any parallel tasks.
-     *
+     * 3.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。
+     * 当子数组长度达到最小粒度时，使用适当的Arrayssort(Object[])方法对子数组进行排序。
+     * 如果指定数组的长度小于最小粒度，则使用适当的Arrayssort(Object[])方法对其进行排序。
+     * 该算法需要一个不大于原始数组指定范围大小的工作空间。ForkJoinPoolcommonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param <T> the class of the objects to be sorted
      * @param a the array to be sorted
      * @param fromIndex the index of the first element (inclusive) to be
@@ -1128,10 +1235,12 @@ public class Arrays {
      * <i>mutually comparable</i> by the specified comparator (that is,
      * {@code c.compare(e1, e2)} must not throw a {@code ClassCastException}
      * for any elements {@code e1} and {@code e2} in the range).
-     *
+     * 1.根据由指定比较器得出的顺序对指定对象数组的指定范围进行排序。要排序的范围从索引fromIndex（含）扩展到索引toIndex（不包括）。
+     * （如果fromIndex==toIndex，则要排序的范围为空。）范围内的所有元素必须通过指定的比较器相互比较（即 c.compare( e1, e2)
+     * 不得为范围内的任何元素e1和 e2抛出 ClassCastException）。
      * <p>This sort is guaranteed to be <i>stable</i>:  equal elements will
      * not be reordered as a result of the sort.
-     *
+     * 2.这种排序保证稳定：相等的元素不会因排序而重新排序。
      * @implNote The sorting algorithm is a parallel sort-merge that breaks the
      * array into sub-arrays that are themselves sorted and then merged. When
      * the sub-array length reaches a minimum granularity, the sub-array is
@@ -1142,7 +1251,9 @@ public class Arrays {
      * space no greater than the size of the specified range of the original
      * array. The {@link ForkJoinPool#commonPool() ForkJoin common pool} is
      * used to execute any parallel tasks.
-     *
+     * 3.排序算法是一种并行排序合并，它将数组分解为子数组，这些子数组本身已排序然后合并。当子数组长度达到最小粒度时，
+     * 使用适当的Arrayssort(Object[])方法对子数组进行排序。如果指定数组的长度小于最小粒度，则使用适当的Arrayssort(Object[])
+     * 方法对其进行排序。该算法需要一个不大于原始数组指定范围大小的工作空间。ForkJoinPoolcommonPool() ForkJoin 公共池用于执行任何并行任务。
      * @param <T> the class of the objects to be sorted
      * @param a the array to be sorted
      * @param fromIndex the index of the first element (inclusive) to be
@@ -1182,6 +1293,7 @@ public class Arrays {
 
     /*
      * Sorting of complex type arrays.
+     * 复杂类型数组的排序
      */
 
     /**
@@ -1189,6 +1301,8 @@ public class Arrays {
      * compatibility with broken comparators) using a system property.
      * Cannot be a static boolean in the enclosing class due to
      * circular dependencies. To be removed in a future release.
+     * 可以使用系统属性选择旧的合并排序实现（为了与损坏的比较器兼容）。
+     * 由于循环依赖，不能是封闭类中的静态布尔值。将在未来版本中删除。
      */
     static final class LegacyMergeSort {
         private static final boolean userRequested =
@@ -1205,10 +1319,12 @@ public class Arrays {
      * <i>mutually comparable</i> (that is, {@code e1.compareTo(e2)} must
      * not throw a {@code ClassCastException} for any elements {@code e1}
      * and {@code e2} in the array).
-     *
+     * 1.根据其元素的Comparable natural ordering，将指定的对象数组按升序排序。
+     * 数组中的所有元素都必须实现Comparable接口。此外，数组中的所有元素必须相互比较
+     * （也就是说， e1.compareTo(e2)} 不得为任何元素e1和 e2在数组中）。
      * <p>This sort is guaranteed to be <i>stable</i>:  equal elements will
      * not be reordered as a result of the sort.
-     *
+     * 2.这种排序保证稳定：相等的元素不会因排序而重新排序。
      * <p>Implementation note: This implementation is a stable, adaptive,
      * iterative mergesort that requires far fewer than n lg(n) comparisons
      * when the input array is partially sorted, while offering the
@@ -1218,20 +1334,24 @@ public class Arrays {
      * storage requirements vary from a small constant for nearly sorted
      * input arrays to n/2 object references for randomly ordered input
      * arrays.
-     *
+     * 3.实现说明：此实现是一种稳定的、自适应的、迭代的归并排序，当输入数组部分排序时，
+     * 它需要的比较次数远少于 n lg(n) 次，同时在输入数组随机排序时提供传统归并排序的性能。
+     * 如果输入数组几乎已排序，则实现需要大约 n 次比较。临时存储要求从几乎排序的输入数组的小常量到随机排序的输入数组的 n2 个对象引用不等。
      * <p>The implementation takes equal advantage of ascending and
      * descending order in its input array, and can take advantage of
      * ascending and descending order in different parts of the the same
      * input array.  It is well-suited to merging two or more sorted arrays:
      * simply concatenate the arrays and sort the resulting array.
-     *
+     * 4.该实现在其输入数组中平等地利用升序和降序，并且可以在同一输入数组的不同部分利用升序和降序。
+     * 它非常适合合并两个或多个已排序的数组：只需连接数组并对结果数组进行排序
      * <p>The implementation was adapted from Tim Peters's list sort for Python
      * (<a href="http://svn.python.org/projects/python/trunk/Objects/listsort.txt">
      * TimSort</a>).  It uses techniques from Peter McIlroy's "Optimistic
      * Sorting and Information Theoretic Complexity", in Proceedings of the
      * Fourth Annual ACM-SIAM Symposium on Discrete Algorithms, pp 467-474,
      * January 1993.
-     *
+     * 5.该实现改编自 Tim Peters 的 Python 列表排序 (<a href="http:svn.python.orgprojectspythontrunkObjectslistsort.txt"> TimSort<a>)。
+     * 它使用来自 Peter McIlroy 的“乐观排序和信息理论复杂性”中的技术，在第四届年度 ACM-SIAM 离散算法研讨会论文集，第 467-474 页，1993 年 1 月。
      * @param a the array to be sorted
      * @throws ClassCastException if the array contains elements that are not
      *         <i>mutually comparable</i> (for example, strings and integers)
@@ -1247,6 +1367,7 @@ public class Arrays {
     }
 
     /** To be removed in a future release. */
+    //将在未来版本中删除
     private static void legacyMergeSort(Object[] a) {
         Object[] aux = a.clone();
         mergeSort(aux, a, 0, a.length, 0);
@@ -1264,10 +1385,13 @@ public class Arrays {
      * comparable</i> (that is, {@code e1.compareTo(e2)} must not throw a
      * {@code ClassCastException} for any elements {@code e1} and
      * {@code e2} in the array).
-     *
+     * 1.根据其元素的Comparable 自然排序，将指定对象数组的指定范围按升序排序。
+     * 要排序的范围从索引fromIndex（含）扩展到索引toIndex（不包括）。
+     * （如果 fromIndex==toIndex}，则要排序的范围为空。）此范围内的所有元素都必须实现Comparable接口。
+     * 此外，此范围内的所有元素必须<i>相互比较<i>（即，e1.compareTo(e2)不得为任何元素e1和e2在数组中）。
      * <p>This sort is guaranteed to be <i>stable</i>:  equal elements will
      * not be reordered as a result of the sort.
-     *
+     * 2.这种排序保证稳定：相等的元素不会因排序而重新排序
      * <p>Implementation note: This implementation is a stable, adaptive,
      * iterative mergesort that requires far fewer than n lg(n) comparisons
      * when the input array is partially sorted, while offering the
@@ -1277,20 +1401,25 @@ public class Arrays {
      * storage requirements vary from a small constant for nearly sorted
      * input arrays to n/2 object references for randomly ordered input
      * arrays.
-     *
+     * 3.实现说明：此实现是一种稳定的、自适应的、迭代的归并排序，当输入数组部分排序时，
+     * 它需要的比较次数远少于 n lg(n) 次，同时在输入数组随机排序时提供传统归并排序的性能。
+     * 如果输入数组几乎已排序，则实现需要大约 n 次比较。
+     * 临时存储要求从几乎排序的输入数组的小常量到随机排序的输入数组的 n2 个对象引用不等
      * <p>The implementation takes equal advantage of ascending and
      * descending order in its input array, and can take advantage of
      * ascending and descending order in different parts of the the same
      * input array.  It is well-suited to merging two or more sorted arrays:
      * simply concatenate the arrays and sort the resulting array.
-     *
+     * 4.该实现在其输入数组中平等地利用升序和降序，并且可以在同一输入数组的不同部分利用升序和降序。
+     * 它非常适合合并两个或多个已排序的数组：只需连接数组并对结果数组进行排序
      * <p>The implementation was adapted from Tim Peters's list sort for Python
      * (<a href="http://svn.python.org/projects/python/trunk/Objects/listsort.txt">
      * TimSort</a>).  It uses techniques from Peter McIlroy's "Optimistic
      * Sorting and Information Theoretic Complexity", in Proceedings of the
      * Fourth Annual ACM-SIAM Symposium on Discrete Algorithms, pp 467-474,
      * January 1993.
-     *
+     * 5.该实现改编自 Tim Peters 的 Python 列表排序 (<a href="http:svn.python.orgprojectspythontrunkObjectslistsort.txt"> TimSort<a>)。
+     * 它使用来自 Peter McIlroy 的“乐观排序和信息理论复杂性”中的技术，在第四届年度 ACM-SIAM 离散算法研讨会论文集，第 467-474 页，1993 年 1 月。
      * @param a the array to be sorted
      * @param fromIndex the index of the first element (inclusive) to be
      *        sorted
@@ -1313,6 +1442,7 @@ public class Arrays {
     }
 
     /** To be removed in a future release. */
+    //将在未来版本中删除
     private static void legacyMergeSort(Object[] a,
                                         int fromIndex, int toIndex) {
         Object[] aux = copyOfRange(a, fromIndex, toIndex);
@@ -1323,6 +1453,7 @@ public class Arrays {
      * Tuning parameter: list size at or below which insertion sort will be
      * used in preference to mergesort.
      * To be removed in a future release.
+     * 调整参数：列表大小等于或小于插入排序将优先于合并排序使用。将在未来版本中删除
      */
     private static final int INSERTIONSORT_THRESHOLD = 7;
 

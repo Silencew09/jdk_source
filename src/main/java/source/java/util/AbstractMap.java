@@ -233,12 +233,14 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
      * iteration terminates without finding such an entry, <tt>null</tt> is
      * returned.  Note that this implementation requires linear time in the
      * size of the map; many implementations will override this method.
-     *
+     * 1.此实现迭代entrySet()搜索具有指定键的条目。如果找到这样的条目，则使用其getValue操作获取其值，
+     * 使用迭代器的remove操作从集合（和支持映射）中删除该条目，并保存值被返回。如果迭代终止而没有找到这样的条目，
+     * 则返回null。请注意，此实现需要地图大小的线性时间；许多实现将覆盖此方法
      * <p>Note that this implementation throws an
      * <tt>UnsupportedOperationException</tt> if the <tt>entrySet</tt>
      * iterator does not support the <tt>remove</tt> method and this map
      * contains a mapping for the specified key.
-     *
+     * 2.请注意，如果entrySet迭代器不支持remove方法并且此映射包含指定键的映射，则此实现将抛出UnsupportedOperationException
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws ClassCastException            {@inheritDoc}
      * @throws NullPointerException          {@inheritDoc}

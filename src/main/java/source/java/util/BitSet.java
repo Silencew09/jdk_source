@@ -40,7 +40,9 @@ import java.util.stream.StreamSupport;
  * {@code BitSet} may be used to modify the contents of another
  * {@code BitSet} through logical AND, logical inclusive OR, and
  * logical exclusive OR operations.
- *
+ * 1.这个类实现了一个根据需要增长的位向量。位集的每个组件都有一个 boolean值。
+ * BitSet的位由非负整数索引。可以检查、设置或清除单个索引位。一个BitSet可用于通过逻辑AND、
+ * 逻辑包含OR和逻辑异或操作来修改另一个BitSet的内容
  * <p>By default, all bits in the set initially have the value
  * {@code false}.
  *

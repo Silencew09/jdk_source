@@ -336,6 +336,7 @@ public abstract class Buffer {
      * Flips this buffer.  The limit is set to the current position and then
      * the position is set to zero.  If the mark is defined then it is
      * discarded.
+     * 翻转此缓冲区。限制设置为当前位置，然后位置设置为零。如果标记已定义，则将其丢弃
      *
      * <p> After a sequence of channel-read or <i>put</i> operations, invoke
      * this method to prepare for a sequence of channel-write or relative

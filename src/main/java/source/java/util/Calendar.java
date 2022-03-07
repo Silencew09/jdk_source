@@ -1076,11 +1076,13 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     // Special values of stamp[]
     /**
      * The corresponding fields[] has no value.
+     * 相应的 fields[] 没有值
      */
     private static final int        UNSET = 0;
 
     /**
      * The value of the corresponding fields[] has been calculated internally.
+     * 对应的 fields[] 的值已经在内部计算出来了。
      */
     private static final int        COMPUTED = 1;
 
@@ -1088,11 +1090,13 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * The value of the corresponding fields[] has been set externally. Stamp
      * values which are greater than 1 represents the (pseudo) time when the
      * corresponding fields[] value was set.
+     * 相应字段[] 的值已在外部设置。大于 1 的标记值表示设置相应字段 [] 值时的（伪）时间
      */
     private static final int        MINIMUM_USER_STAMP = 2;
 
     /**
      * The mask value that represents all of the fields.
+     * 代表所有字段的掩码值。
      */
     static final int ALL_FIELDS = (1 << FIELD_COUNT) - 1;
 
@@ -1101,6 +1105,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * This actually should not be written out to the stream, and will probably
      * be removed from the stream in the near future.  In the meantime,
      * a value of <code>MINIMUM_USER_STAMP</code> should be used.
+     * stamp[]的下一个可用值，一个内部数组。这实际上不应该写出到流中，
+     * 并且可能会在不久的将来从流中删除。
+     * 同时，应该使用MINIMUM_USER_STAMP的值。
      * @serial
      */
     private int             nextStamp = MINIMUM_USER_STAMP;
@@ -1113,6 +1120,11 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     // - 2 (not implemented yet) a future version, in which fields[],
     //     areFieldsSet, and isTimeSet become transient, and isSet[] is
     //     removed. In JDK 1.1.6 we write a format compatible with version 2.
+    //内部串行版本，说明写入的版本
+    // - 0（默认）代表 JDK 1.1.5 之前的版本
+    // - 1 代表 JDK 1.1.6 的版本，它写入正确的“时间”值以及其他字段的兼容值。这是一种过渡格式。
+    // - 2（尚未实现）未来版本，其中 fields[]、areFieldsSet 和 isTimeSet 变为瞬态，并删除 isSet[]。
+    // 在 JDK 1.1.6 中，我们编写了与版本 2 兼容的格式。
     static final int        currentSerialVersion = 1;
 
     /**
@@ -1132,6 +1144,12 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * When streaming out this class, the most recent format
      * and the highest allowable <code>serialVersionOnStream</code>
      * is written.
+     * 流中序列化数据的版本。 可能的值：
+     * 0或不存在于流中
+     * JDK 1.1.5 或更早版本。
+     * 1
+     * JDK 1.1.6 或更高版本。 写入正确的“时间”值以及其他字段的兼容值。 这是一种过渡格式。
+     * 流式输出此类时，将写入最新的格式和允许的最高serialVersionOnStream 。
      * @serial
      * @since JDK1.1.6
      */
@@ -1164,7 +1182,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * {@code Calendar.Builder} is used for creating a {@code Calendar} from
      * various date-time parameters.
-     *
+     * 1.Calendar.Builder用于从各种日期时间参数创建Calendar
      * <p>There are two ways to set a {@code Calendar} to a date-time value. One
      * is to set the instant parameter to a millisecond offset from the <a
      * href="Calendar.html#Epoch">Epoch</a>. The other is to set individual
@@ -1173,7 +1191,10 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * individual fields will cause an {@link IllegalStateException} to be
      * thrown. However, it is permitted to override previous values of the
      * instant or field parameters.
-     *
+     * 2.有两种方法可以将Calendar设置为日期时间值。
+     * 一种是将 Instant 参数设置为距Epoch的毫秒偏移量。
+     * 另一种方法是将各个字段参数（例如Calendar.YEAR设置为所需的值。这两种方式不能混用。
+     * 尝试同时设置即时字段和单个字段将导致抛出IllegalStateException。然而，允许覆盖瞬时或场参数的先前值
      * <p>If no enough field parameters are given for determining date and/or
      * time, calendar specific default values are used when building a
      * {@code Calendar}. For example, if the {@link Calendar#YEAR YEAR} value
@@ -1181,27 +1202,33 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * any conflicts among field parameters, the <a
      * href="Calendar.html#resolution"> resolution rules</a> are applied.
      * Therefore, the order of field setting matters.
-     *
+     * 3.如果没有提供足够的字段参数来确定日期和/或时间，则在构建Calendar时将使用日历特定的默认值。
+     * 例如，如果没有为公历指定Calendar.YEAR值，则将使用 1970。如果字段参数之间存在任何冲突，
+     * 则应用<a href="Calendar.htmlresolution">解析规则。因此，字段设置的顺序很重要
      * <p>In addition to the date-time parameters,
      * the {@linkplain #setLocale(Locale) locale},
      * {@linkplain #setTimeZone(TimeZone) time zone},
      * {@linkplain #setWeekDefinition(int, int) week definition}, and
      * {@linkplain #setLenient(boolean) leniency mode} parameters can be set.
-     *
+     * 4.除了日期时间参数，setLocale(Locale)、setTimeZone(TimeZone)、setWeekDefinition(int, int) 周定义
+     * 和setLenient( boolean) leniency mode} 参数可以设置。
      * <p><b>Examples</b>
      * <p>The following are sample usages. Sample code assumes that the
      * {@code Calendar} constants are statically imported.
-     *
+     * 5.以下是示例用法。示例代码假定Calendar常量是静态导入的。
      * <p>The following code produces a {@code Calendar} with date 2012-12-31
      * (Gregorian) because Monday is the first day of a week with the <a
      * href="GregorianCalendar.html#iso8601_compatible_setting"> ISO 8601
      * compatible week parameters</a>.
+     * 6.以下代码生成日期为 2012-12-31 (Gregorian) 的Calendar，
+     * 因为星期一是具有ISO 8601 兼容周参数的一周的第一天
      * <pre>
      *   Calendar cal = new Calendar.Builder().setCalendarType("iso8601")
      *                        .setWeekDate(2013, 1, MONDAY).build();</pre>
      * <p>The following code produces a Japanese {@code Calendar} with date
      * 1989-01-08 (Gregorian), assuming that the default {@link Calendar#ERA ERA}
      * is <em>Heisei</em> that started on that day.
+     * 7.以下代码生成日期为 1989-01-08（公历）的日语Calendar，假设默认Calendar.ERA是从那天开始的Heisei
      * <pre>
      *   Calendar cal = new Calendar.Builder().setCalendarType("japanese")
      *                        .setFields(YEAR, 1, DAY_OF_YEAR, 1).build();</pre>
@@ -1239,7 +1266,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          * Sets the instant parameter to the given {@code instant} value that is
          * a millisecond offset from <a href="Calendar.html#Epoch">the
          * Epoch</a>.
-         *
+         * 将 Instant 参数设置为给定的instant值，该值是 <a href="Calendar.htmlEpoch">Epoch<a> 的毫秒偏移量
          * @param instant a millisecond offset from the Epoch
          * @return this {@code Calendar.Builder}
          * @throws IllegalStateException if any of the field parameters have
@@ -1261,7 +1288,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          * Sets the instant parameter to the {@code instant} value given by a
          * {@link Date}. This method is equivalent to a call to
          * {@link #setInstant(long) setInstant(instant.getTime())}.
-         *
+         * 将 Instant 参数设置为Date给出的instant值。
+         * 此方法等效于调用setInstant(instant.getTime())。
          * @param instant a {@code Date} representing a millisecond offset from
          *                the Epoch
          * @return this {@code Calendar.Builder}
@@ -1283,7 +1311,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          * not performed in this method. Any out of range values are either
          * normalized in lenient mode or detected as an invalid value in
          * non-lenient mode when building a {@code Calendar}.
-         *
+         * 将field参数设置为给定的value。field是Calendar.fields的索引，
+         * 例如Calendar.DAY_OF_MONTH。此方法不执行字段值验证。在构建Calendar时，
+         * 任何超出范围的值要么在宽松模式下标准化，要么在非宽松模式下检测为无效值。
          * @param field an index to the {@code Calendar} fields
          * @param value the field value
          * @return this {@code Calendar.Builder}
@@ -1361,7 +1391,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          *   setFields(Calendar.YEAR, year,
          *             Calendar.MONTH, month,
          *             Calendar.DAY_OF_MONTH, dayOfMonth);</pre>
-         *
+         * 将日期字段参数设置为 year、month和dayOfMonth给出的值。此方法等效于调用：
          * @param year       the {@link Calendar#YEAR YEAR} value
          * @param month      the {@link Calendar#MONTH MONTH} value
          *                   (the month numbering is <em>0-based</em>).
@@ -1378,7 +1408,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          * equivalent to a call to:
          * <pre>
          *   setTimeOfDay(hourOfDay, minute, second, 0);</pre>
-         *
+         * 将时间字段参数设置为hourOfDay 、 minute和second给定的值。 此方法等效于调用：
+         *              setTimeOfDay(hourOfDay, minute, second, 0)
          * @param hourOfDay the {@link Calendar#HOUR_OF_DAY HOUR_OF_DAY} value
          *                  (24-hour clock)
          * @param minute    the {@link Calendar#MINUTE MINUTE} value
@@ -1399,6 +1430,11 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          *             Calendar.SECOND, second,
          *             Calendar.MILLISECOND, millis);</pre>
          *
+         将时间字段参数设置为hourOfDay 、 minute 、 second和millis给定的值。 此方法等效于调用：
+         setFields(Calendar.HOUR_OF_DAY, hourOfDay,
+         Calendar.MINUTE, minute,
+         Calendar.SECOND, second,
+         Calendar.MILLISECOND, millis);
          * @param hourOfDay the {@link Calendar#HOUR_OF_DAY HOUR_OF_DAY} value
          *                  (24-hour clock)
          * @param minute    the {@link Calendar#MINUTE MINUTE} value
@@ -1417,7 +1453,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          *
          * <p>If the specified calendar doesn't support week dates, the
          * {@link #build() build} method will throw an {@link IllegalArgumentException}.
-         *
+         * 将基于周的日期参数设置为具有给定日期说明符的值 - 周年、一年中的一周和一周中的某一天。
+         * 如果指定的日历不支持星期日期，build()方法将抛出一个IllegalArgumentException
          * @param weekYear   the week year
          * @param weekOfYear the week number based on {@code weekYear}
          * @param dayOfWeek  the day of week value: one of the constants
@@ -1441,7 +1478,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          * {@linkplain TimeZone#getDefault() default
          * <code>TimeZone</code>} will be used in the {@link #build() build}
          * method.
-         *
+         * 将时区参数设置为给定的zone。如果没有为此Caledar.Builder提供时区参数，
+         * 则TimeZone.getDefault() 默认TimeZone将用于build()方法。
          * @param zone the {@link TimeZone}
          * @return this {@code Calendar.Builder}
          * @throws NullPointerException if {@code zone} is {@code null}
@@ -1459,7 +1497,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          * Sets the lenient mode parameter to the value given by {@code lenient}.
          * If no lenient parameter is given to this {@code Calendar.Builder},
          * lenient mode will be used in the {@link #build() build} method.
-         *
+         * 将 lenient 模式参数设置为lenient给定的值。
+         * 如果没有为此Calendar.Builder提供 lenient 参数，则在build()方法中将使用 lenient 模式
          * @param lenient {@code true} for lenient mode;
          *                {@code false} for non-lenient mode
          * @return this {@code Calendar.Builder}
@@ -1481,6 +1520,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          * method, {@code "gregorian"} and {@code "iso8601"} as aliases of
          * {@code "gregory"} can be used with this method.
          *
+         将日历类型参数设置为给定的type 。 此方法给出的日历类型优先于locale给出的任何显式或隐式日历类型。
+         除了Calendar.getAvailableCalendarTypes方法返回的可用日历类型之外，
+         "gregorian"和"iso8601"作为"gregory"别名也可以与此方法一起使用
          * @param type the calendar type
          * @return this {@code Calendar.Builder}
          * @throws NullPointerException if {@code type} is {@code null}
@@ -1512,16 +1554,18 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          * is given to this {@code Calendar.Builder}, the {@linkplain
          * Locale#getDefault(Locale.Category) default <code>Locale</code>}
          * for {@link Locale.Category#FORMAT} will be used.
-         *
+         * 1.将 locale 参数设置为给定的locale。如果没有为此Calendar.Builder指定语言环境，
+         * 则将使用Locale.CategoryFORMAT的 Locale.getDefault(Locale.Category) 默认Locale。
          * <p>If no calendar type is explicitly given by a call to the
          * {@link #setCalendarType(String) setCalendarType} method,
          * the {@code Locale} value is used to determine what type of
          * {@code Calendar} to be built.
-         *
+         * 2.如果调用setCalendarType(String)方法未明确指定日历类型，
+         * 则使用Locale值来确定要构建的Calendar类型。
          * <p>If no week definition parameters are explicitly given by a call to
          * the {@link #setWeekDefinition(int,int) setWeekDefinition} method, the
          * {@code Locale}'s default values are used.
-         *
+         * 3.如果调用setWeekDefinition(int,int)方法没有明确给出周定义参数，则使用Locale的默认值
          * @param locale the {@link Locale}
          * @throws NullPointerException if {@code locale} is {@code null}
          * @return this {@code Calendar.Builder}
@@ -1542,7 +1586,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
          * week</a> of a year. The parameters given by this method have
          * precedence over the default values given by the
          * {@linkplain #setLocale(Locale) locale}.
-         *
+         * 将周定义参数设置为firstDayOfWeek和minimumDaysInFirstWeek给出的值，
+         * 用于确定一年的<a href="Calendar.htmlFirst_Week">第一周<a>。
+         * 此方法给出的参数优先于setLocale(Locale)给出的默认值
          * @param firstDayOfWeek the first day of a week; one of
          *                       {@link Calendar#SUNDAY} to {@link Calendar#SATURDAY}
          * @param minimalDaysInFirstWeek the minimal number of days in the first
@@ -1715,6 +1761,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Constructs a Calendar with the default time zone
      * and the default {@link java.util.Locale.Category#FORMAT FORMAT}
      * locale.
+     * 使用默认时区和默认java.util.Locale.CategoryFORMAT语言环境构造日历。
      * @see     TimeZone#getDefault
      */
     protected Calendar()
@@ -1725,7 +1772,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Constructs a calendar with the specified time zone and locale.
-     *
+     * 构造具有指定时区和区域设置的日历
      * @param zone the time zone to use
      * @param aLocale the locale for the week data
      */
@@ -1744,7 +1791,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * <code>Calendar</code> returned is based on the current time
      * in the default time zone with the default
      * {@link Locale.Category#FORMAT FORMAT} locale.
-     *
+     * 使用默认时区和区域设置获取日历。返回的Calendar基于具有默认Locale.CategoryFORMAT语言环境的默认时区中的当前时间。
      * @return a Calendar.
      */
     public static Calendar getInstance()
@@ -1757,7 +1804,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * The <code>Calendar</code> returned is based on the current time
      * in the given time zone with the default
      * {@link Locale.Category#FORMAT FORMAT} locale.
-     *
+     * 使用指定的时区和默认区域设置获取日历。返回的Calendar基于给定时区中的当前时间，
+     * 使用默认的Locale.CategoryFORMAT语言环境
      * @param zone the time zone to use
      * @return a Calendar.
      */
@@ -1770,7 +1818,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Gets a calendar using the default time zone and specified locale.
      * The <code>Calendar</code> returned is based on the current time
      * in the default time zone with the given locale.
-     *
+     * 使用默认时区和指定区域设置获取日历。返回的Calendar基于具有给定语言环境的默认时区中的当前时间。
      * @param aLocale the locale for the week data
      * @return a Calendar.
      */
@@ -1783,7 +1831,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Gets a calendar with the specified time zone and locale.
      * The <code>Calendar</code> returned is based on the current time
      * in the given time zone with the given locale.
-     *
+     * 获取具有指定时区和区域设置的日历。返回的Calendar基于给定时区和给定语言环境中的当前时间
      * @param zone the time zone to use
      * @param aLocale the locale for the week data
      * @return a Calendar.
@@ -1833,6 +1881,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
             // a JapaneseImperialCalendar for ja_JP_JP locale, or
             // a GregorianCalendar for any other locales.
             // NOTE: The language, country and variant strings are interned.
+            //如果没有明确指定已知的日历类型，则执行传统方式来创建日历：为 th_TH 语言环境创建一个佛教日历，
+            // 为 ja_JP_JP 语言环境创建一个 JapaneseImperialCalendar，
+            // 或者为任何其他语言环境创建一个 GregorianCalendar。注意：语言、国家和变体字符串是实习的
             if (aLocale.getLanguage() == "th" && aLocale.getCountry() == "TH") {
                 cal = new BuddhistCalendar(zone, aLocale);
             } else if (aLocale.getVariant() == "JP" && aLocale.getLanguage() == "ja"
@@ -1850,7 +1901,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * methods of this class can return localized instances.
      * The array returned must contain at least a <code>Locale</code>
      * instance equal to {@link java.util.Locale#US Locale.US}.
-     *
+     *返回所有语言环境的数组，此类的getInstance方法可以为其返回本地化实例。
+     * 返回的数组必须至少包含一个等于 java.util.LocaleUS的Locale实例。
      * @return An array of locales for which localized
      *         <code>Calendar</code> instances are available.
      */
@@ -1863,7 +1915,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Converts the current calendar field values in {@link #fields fields[]}
      * to the millisecond time value
      * {@link #time}.
-     *
+     * 将fields[]中的当前日历字段值转换为毫秒时间值
      * @see #complete()
      * @see #computeFields()
      */
@@ -1876,7 +1928,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * a new time that is set for the calendar.  The time is <em>not</em>
      * recomputed first; to recompute the time, then the fields, call the
      * {@link #complete()} method.
-     *
+     *将当前毫秒时间值time转换为fields[]中的日历字段值。
+     * 这允许您将日历字段值与为日历设置的新时间同步。
+     * 时间不先重新计算；要重新计算时间，然后是字段，请调用complete()方法。
      * @see #computeTime()
      */
     protected abstract void computeFields();
@@ -1885,7 +1939,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Returns a <code>Date</code> object representing this
      * <code>Calendar</code>'s time value (millisecond offset from the <a
      * href="#Epoch">Epoch</a>").
-     *
+     * 返回一个Date对象，表示此Calendar的时间值（从Epoch开始的毫秒偏移量）。
      * @return a <code>Date</code> representing the time value.
      * @see #setTime(Date)
      * @see #getTimeInMillis()
@@ -1900,7 +1954,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Note: Calling <code>setTime()</code> with
      * <code>Date(Long.MAX_VALUE)</code> or <code>Date(Long.MIN_VALUE)</code>
      * may yield incorrect field values from <code>get()</code>.
-     *
+     * 使用给定的Date设置此日历的时间。
+     * 注意：使用Date(Long.MAX_VALUE)或Date(Long.MIN_VALUE)调用setTime()
+     * 可能会从产生不正确的字段值获取（）
      * @param date the given Date.
      * @see #getTime()
      * @see #setTimeInMillis(long)
@@ -1911,7 +1967,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Returns this Calendar's time value in milliseconds.
-     *
+     * 以毫秒为单位返回此日历的时间值
      * @return the current time as UTC milliseconds from the epoch.
      * @see #getTime()
      * @see #setTimeInMillis(long)
@@ -1925,7 +1981,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Sets this Calendar's current time from the given long value.
-     *
+     * 根据给定的 long 值设置此日历的当前时间
      * @param millis the new time in UTC milliseconds from the epoch.
      * @see #setTime(Date)
      * @see #getTimeInMillis()
@@ -1933,6 +1989,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     public void setTimeInMillis(long millis) {
         // If we don't need to recalculate the calendar field values,
         // do nothing.
+        //如果我们不需要重新计算日历字段值，则什么都不做
         if (time == millis && isTimeSet && areFieldsSet && areAllFieldsSet
             && (zone instanceof ZoneInfo) && !((ZoneInfo)zone).isDirty()) {
             return;
@@ -1952,7 +2009,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * normalization and validation are handled by the
      * {@link #complete()} method, which process is calendar
      * system dependent.
-     *
+     * 返回给定日历字段的值。在宽松模式下，所有日历字段都被标准化。
+     * 在非宽松模式下，所有日历字段都经过验证，如果任何日历字段的值超出范围，则此方法将引发异常。
+     * 规范化和验证由complete()方法处理，该过程取决于日历系统。
      * @param field the given calendar field.
      * @return the value for the given calendar field.
      * @throws ArrayIndexOutOfBoundsException if the specified field is out of range
@@ -1969,7 +2028,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Returns the value of the given calendar field. This method does
      * not involve normalization or validation of the field value.
-     *
+     * 返回给定日历字段的值。此方法不涉及字段值的规范化或验证
      * @param field the given calendar field.
      * @return the value for the given calendar field.
      * @see #get(int)
@@ -1983,7 +2042,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Sets the value of the given calendar field. This method does
      * not affect any setting state of the field in this
      * <code>Calendar</code> instance.
-     *
+     * 设置给定日历字段的值。此方法不影响此Calendar实例中字段的任何设置状态
      * @throws IndexOutOfBoundsException if the specified field is out of range
      *             (<code>field &lt; 0 || field &gt;= FIELD_COUNT</code>).
      * @see #areFieldsSet
@@ -1999,7 +2058,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Sets the given calendar field to the given value. The value is not
      * interpreted by this method regardless of the leniency mode.
-     *
+     * 将给定的日历字段设置为给定的值。无论宽松模式如何，此方法都不会解释该值
      * @param field the given calendar field.
      * @param value the value to be set for the given calendar field.
      * @throws ArrayIndexOutOfBoundsException if the specified field is out of range
@@ -2032,7 +2091,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * <code>MONTH</code>, and <code>DAY_OF_MONTH</code>.
      * Previous values of other calendar fields are retained.  If this is not desired,
      * call {@link #clear()} first.
-     *
+     * 设置日历字段YEAR、MONTH和DAY_OF_MONTH的值。保留其他日历字段的先前值。如果不需要，请先调用clear()
      * @param year the value used to set the <code>YEAR</code> calendar field.
      * @param month the value used to set the <code>MONTH</code> calendar field.
      * Month value is 0-based. e.g., 0 for January.
@@ -2054,7 +2113,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * <code>HOUR_OF_DAY</code>, and <code>MINUTE</code>.
      * Previous values of other fields are retained.  If this is not desired,
      * call {@link #clear()} first.
-     *
+     * 设置日历字段YEAR、MONTH、DAY_OF_MONTH、HOUR_OF_DAY和MINUTE的值。
+     * 保留其他字段的先前值。如果不需要，请先调用clear()。
      * @param year the value used to set the <code>YEAR</code> calendar field.
      * @param month the value used to set the <code>MONTH</code> calendar field.
      * Month value is 0-based. e.g., 0 for January.
@@ -2080,7 +2140,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * <code>SECOND</code>.
      * Previous values of other fields are retained.  If this is not desired,
      * call {@link #clear()} first.
-     *
+     * 设置字段YEAR、MONTH、DAY_OF_MONTH、HOUR_OF_DAY、MINUTE和SECOND。
+     * 保留其他字段的先前值。如果不需要，请先调用clear()
      * @param year the value used to set the <code>YEAR</code> calendar field.
      * @param month the value used to set the <code>MONTH</code> calendar field.
      * Month value is 0-based. e.g., 0 for January.
@@ -2114,7 +2175,10 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * default field values for date/time calculations. For example,
      * <code>GregorianCalendar</code> uses 1970 if the
      * <code>YEAR</code> field value is undefined.
-     *
+     * 设置此Calendar的所有日历字段值和时间值（从Epoch开始的毫秒偏移量）未定义。
+     * 这意味着isSet(int)将为所有日历字段返回false，并且日期和时间计算会将这些字段视为从未设置过。
+     * Calendar实现类可以使用其特定的默认字段值进行日期时间计算。
+     * 例如，如果YEAR字段值未定义，则GregorianCalendar使用 1970。
      * @see #clear(int)
      */
     public final void clear()
@@ -2136,7 +2200,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * had never been set. A <code>Calendar</code> implementation
      * class may use the field's specific default value for date and
      * time calculations.
-     *
+     * 1.设置给定的日历字段值和此Calendar的时间值（从Epoch开始的毫秒偏移量）未定义。
+     * 这意味着isSet(int)将返回false，并且日期和时间计算会将字段视为从未设置过。
+     * Calendar实现类可以使用字段的特定默认值进行日期和时间计算
      * <p>The {@link #HOUR_OF_DAY}, {@link #HOUR} and {@link #AM_PM}
      * fields are handled independently and the <a
      * href="#time_resolution">the resolution rule for the time of
@@ -2144,7 +2210,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * the hour of day value of this <code>Calendar</code>. Use {@link
      * #set(int,int) set(Calendar.HOUR_OF_DAY, 0)} to reset the hour
      * value.
-     *
+     * 2.HOUR_OF_DAY、HOUR和AM_PM字段是独立处理的，并且应用了当天时间的解析规则。
+     * 清除其中一个字段不会重置此Calendar的小时值。使用set(Calendar.HOUR_OF_DAY, 0)重置小时值
      * @param field the calendar field to be cleared.
      * @see #clear()
      */
@@ -2162,7 +2229,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Determines if the given calendar field has a value set,
      * including cases that the value has been set by internal fields
      * calculations triggered by a <code>get</code> method call.
-     *
+     * 确定给定的日历字段是否具有值集，包括该值已由get方法调用触发的内部字段计算设置的情况
      * @param field the calendar field to test
      * @return <code>true</code> if the given calendar field has a value set;
      * <code>false</code> otherwise.
@@ -2180,19 +2247,22 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * {@link Calendar#get(int) get(field)} to get the calendar
      * <code>field</code> value if the string representation is
      * applicable to the given calendar <code>field</code>.
-     *
+     * 1.返回给定style和locale中日历field值的字符串表示形式。如果没有适用的字符串表示，
+     * 则返回null。如果字符串表示适用于给定的日历field，则此方法调用Calendar.get(int)以获取日历field值
      * <p>For example, if this <code>Calendar</code> is a
      * <code>GregorianCalendar</code> and its date is 2005-01-01, then
      * the string representation of the {@link #MONTH} field would be
      * "January" in the long style in an English locale or "Jan" in
      * the short style. However, no string representation would be
      * available for the {@link #DAY_OF_MONTH} field, and this method
-     * would return <code>null</code>.
-     *
+     * would return <code>null</code>
+     * 2.例如，如果这个Calendar是一个GregorianCalendar并且它的日期是 2005-01-01，
+     * 那么MONTH字段的字符串表示在英语语言环境中的长样式或短样式中的“Jan”。
+     * 但是，没有字符串表示可用于 DAY_OF_MONTH字段，并且此方法将返回null
      * <p>The default implementation supports the calendar fields for
      * which a {@link DateFormatSymbols} has names in the given
      * <code>locale</code>.
-     *
+     * 3.默认实现支持DateFormatSymbols在给定locale中具有名称的日历字段
      * @param field
      *        the calendar field for which the string representation
      *        is returned
@@ -2225,6 +2295,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
         String calendarType = getCalendarType();
         int fieldValue = get(field);
         // the standalone and narrow styles are supported only through CalendarDataProviders.
+        //仅通过 CalendarDataProviders 支持独立和窄样式
         if (isStandaloneStyle(style) || isNarrowFormatStyle(style)) {
             String val = CalendarDataUtility.retrieveFieldValueName(calendarType,
                                                                     field, fieldValue,
@@ -2264,11 +2335,13 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * GregorianCalendar}, the returned map would contain "Jan" to
      * {@link #JANUARY}, "Feb" to {@link #FEBRUARY}, and so on, in the
      * {@linkplain #SHORT short} style in an English locale.
-     *
+     * 1.返回一个Map，其中包含给定style和locale中日历field的所有名称及其相应的字段值。
+     * 例如，如果此Calendar是GregorianCalendar，则返回的映射将包含“Jan”到 JANUARY、“Feb”到 FEBRUARY，
+     * 依此类推，在 SHORT short 英语语言环境中的样式。
      * <p>Narrow names may not be unique due to use of single characters,
      * such as "S" for Sunday and Saturday. In that case narrow names are not
      * included in the returned {@code Map}.
-     *
+     * 2.由于使用单个字符，例如“S”代表星期日和星期六，窄名称可能不是唯一的。在这种情况下，返回的Map中不包含窄名称。
      * <p>The values of other calendar fields may be taken into
      * account to determine a set of display names. For example, if
      * this {@code Calendar} is a lunisolar calendar system and
@@ -2276,14 +2349,16 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * month, this method would return month names containing the leap
      * month name, and month names are mapped to their values specific
      * for the year.
-     *
+     * 3.可以考虑其他日历字段的值来确定一组显示名称。
+     * 例如，如果此Calendar是阴阳历系统，并且YEAR字段给出的年份值具有闰月，则此方法将返回包含闰月名称的月份名称，并映射月份名称到其特定年份的值
      * <p>The default implementation supports display names contained in
      * a {@link DateFormatSymbols}. For example, if {@code field}
      * is {@link #MONTH} and {@code style} is {@link
      * #ALL_STYLES}, this method returns a {@code Map} containing
      * all strings returned by {@link DateFormatSymbols#getShortMonths()}
      * and {@link DateFormatSymbols#getMonths()}.
-     *
+     * 4.默认实现支持包含在DateFormatSymbols中的显示名称。例如，如果field为MONTH且style为ALL_STYLES，
+     * 则此方法返回一个Map，其中包含DateFormatSymbolsgetShortMonths()返回的所有字符串和DateFormatSymbolsgetMonths()。
      * @param field
      *        the calendar field for which the display names are returned
      * @param style
@@ -2397,6 +2472,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * from the <a href="#Epoch">Epoch</a>) has not been calculated from
      * calendar field values. Then, the {@link #computeFields()} method is
      * called to calculate all calendar field values.
+     * 填写日历字段中任何未设置的字段。首先，如果尚未根据日历字段值计算时间值（与Epoch的毫秒偏移量），
+     * 则调用computeTime()方法。然后，调用computeFields()方法计算所有日历字段值
      */
     protected void complete()
     {
@@ -2413,7 +2490,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Returns whether the value of the specified calendar field has been set
      * externally by calling one of the setter methods rather than by the
      * internal time calculation.
-     *
+     * 返回是否通过调用 setter 方法之一而不是通过内部时间计算在外部设置了指定日历字段的值
      * @return <code>true</code> if the field has been set externally,
      * <code>false</code> otherwise.
      * @exception IndexOutOfBoundsException if the specified
@@ -2429,7 +2506,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Returns a field mask (bit mask) indicating all calendar fields that
      * have the state of externally or internally set.
-     *
+     * 返回一个字段掩码（位掩码），指示所有具有外部或内部设置状态的日历字段
      * @return a bit mask indicating set state fields
      */
     final int getSetStateFields() {
@@ -2447,7 +2524,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * <em>computed</em>. This state means that the specified calendar fields
      * have valid values that have been set by internal time calculation
      * rather than by calling one of the setter methods.
-     *
+     * 将指定日历字段的状态设置为computed。
+     * 这种状态意味着指定的日历字段具有通过内部时间计算而不是通过调用 setter 方法之一设置的有效值。
      * @param fieldMask the field to be marked as computed.
      * @exception IndexOutOfBoundsException if the specified
      *                <code>field</code> is out of range
@@ -2483,7 +2561,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * specifies all the calendar fields, then the state of this
      * <code>Calendar</code> becomes that all the calendar fields are in sync
      * with the time value (millisecond offset from the Epoch).
-     *
+     * 将not由fieldMask指定的日历字段的状态设置为unset。
+     * 如果fieldMask指定所有日历字段，则此Calendar的状态变为所有日历字段与时间值同步（距 Epoch 的毫秒偏移量）
      * @param fieldMask the field mask indicating which calendar fields are in
      * sync with the time value.
      * @exception IndexOutOfBoundsException if the specified
@@ -2505,6 +2584,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
         // Some or all of the fields are in sync with the
         // milliseconds, but the stamp values are not normalized yet.
+        //部分或全部字段与毫秒同步，但标记值尚未标准化。
         areFieldsSet = true;
         areAllFieldsSet = false;
     }
@@ -2512,6 +2592,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Returns whether the calendar fields are partially in sync with the time
      * value or fully in sync but not stamp values are not normalized yet.
+     * //返回日历字段是与时间值部分同步还是完全同步，但标记值尚未标准化
      */
     final boolean isPartiallyNormalized() {
         return areFieldsSet && !areAllFieldsSet;
@@ -2520,6 +2601,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Returns whether the calendar fields are fully in sync with the time
      * value.
+     * 返回日历字段是否与时间值完全同步。
      */
     final boolean isFullyNormalized() {
         return areFieldsSet && areAllFieldsSet;
@@ -2527,6 +2609,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Marks this Calendar as not sync'd.
+     * 将此日历标记为未同步
      */
     final void setUnnormalized() {
         areFieldsSet = areAllFieldsSet = false;
@@ -2535,6 +2618,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Returns whether the specified <code>field</code> is on in the
      * <code>fieldMask</code>.
+     * 返回指定的field在fieldMask中是否打开
      */
     static boolean isFieldSet(int fieldMask, int field) {
         return (fieldMask & (1 << field)) != 0;
@@ -2736,6 +2820,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * individual pseudo-time-stamps.  If either of the fields
      * is unset, then the aggregate is unset.  Otherwise, the
      * aggregate is the later of the two stamps.
+     * 给定它们各自的伪时间戳，返回两个字段的伪时间戳。如果任一字段未设置，则聚合未设置。否则，合计是两个邮票中较晚的一个
      */
     private static int aggregateStamp(int stamp_a, int stamp_b) {
         if (stamp_a == UNSET || stamp_b == UNSET) {
@@ -2752,7 +2837,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * The {@code Set} returned contains at least {@code "gregory"}. The
      * calendar types don't include aliases, such as {@code "gregorian"} for
      * {@code "gregory"}.
-     *
+     * 返回一个不可修改的Set，其中包含运行时环境中Calendar支持的所有日历类型。
+     * 可用的日历类型可用于Unicode 语言环境扩展。
+     * 返回的Set至少包含"gregory"。日历类型不包括别名，例如"gregory"的 "gregorian"
      * @return an unmodifiable {@code Set} containing all available calendar types
      * @since 1.8
      * @see #getCalendarType()
@@ -2780,12 +2867,12 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Returns the calendar type of this {@code Calendar}. Calendar types are
      * defined by the <em>Unicode Locale Data Markup Language (LDML)</em>
      * specification.
-     *
+     * 1.返回此Calendar的日历类型。日历类型由Unicode 区域设置数据标记语言 (LDML)规范定义。
      * <p>The default implementation of this method returns the class name of
      * this {@code Calendar} instance. Any subclasses that implement
      * LDML-defined calendar systems should override this method to return
      * appropriate calendar types.
-     *
+     * 2.此方法的默认实现返回此Calendar实例的类名。任何实现 LDML 定义的日历系统的子类都应覆盖此方法以返回适当的日历类型
      * @return the LDML-defined calendar type or the class name of this
      *         {@code Calendar} instance
      * @since 1.8
@@ -2804,14 +2891,17 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * system that represents the same time value (millisecond offset from the
      * <a href="#Epoch">Epoch</a>) under the same
      * <code>Calendar</code> parameters as this object.
-     *
+     * 1.将此Calendar与指定的Object进行比较。
+     * 结果是true当且仅当参数是表示相同时间值的同一日历系统的Calendar对象（从 Epoch的毫秒偏移量）)
+     * 在与此对象相同的Calendar参数下
      * <p>The <code>Calendar</code> parameters are the values represented
      * by the <code>isLenient</code>, <code>getFirstDayOfWeek</code>,
      * <code>getMinimalDaysInFirstWeek</code> and <code>getTimeZone</code>
      * methods. If there is any difference in those parameters
      * between the two <code>Calendar</code>s, this method returns
      * <code>false</code>.
-     *
+     * 2.Calendar参数是由isLenient、getFirstDayOfWeek、getMinimalDaysInFirstWeek和getTimeZone方法表示的值。
+     * 如果两个Calendar之间的那些参数有任何差异，则此方法返回false
      * <p>Use the {@link #compareTo(Calendar) compareTo} method to
      * compare only the time values.
      *
@@ -2842,7 +2932,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Returns a hash code for this calendar.
-     *
+     * 返回此日历的哈希码
      * @return a hash code value for this object.
      * @since 1.2
      */
@@ -2866,7 +2956,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * }</pre>
      * if and only if <code>when</code> is a <code>Calendar</code>
      * instance. Otherwise, the method returns <code>false</code>.
-     *
+     * 1.返回此 Calendar是否表示指定Object表示的时间之前的时间。
+     * 此方法等效于：compareTo(when) < 0 当且仅当when是Calendar 实例。否则，该方法返回false。
      * @param when the <code>Object</code> to be compared
      * @return <code>true</code> if the time of this
      * <code>Calendar</code> is before the time represented by
@@ -2887,7 +2978,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * }</pre>
      * if and only if <code>when</code> is a <code>Calendar</code>
      * instance. Otherwise, the method returns <code>false</code>.
-     *
+     * 返回此Calendar是否表示指定Object表示的时间之后的时间。
+     * 此方法等效于：compareTo(when) > 0 当且仅当when是Calendar实例。否则，该方法返回false
      * @param when the <code>Object</code> to be compared
      * @return <code>true</code> if the time of this <code>Calendar</code> is
      * after the time represented by <code>when</code>; <code>false</code>
@@ -2903,7 +2995,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Compares the time values (millisecond offsets from the <a
      * href="#Epoch">Epoch</a>) represented by two
      * <code>Calendar</code> objects.
-     *
+     * 1.比较由两个Calendar对象表示的时间值（与Epoch 的毫秒偏移量）
      * @param anotherCalendar the <code>Calendar</code> to be compared.
      * @return the value <code>0</code> if the time represented by the argument
      * is equal to the time represented by this <code>Calendar</code>; a value
@@ -2928,7 +3020,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * based on the calendar's rules. For example, to subtract 5 days from
      * the current time of the calendar, you can achieve it by calling:
      * <p><code>add(Calendar.DAY_OF_MONTH, -5)</code>.
-     *
+     * 根据日历的规则，向给定的日历字段添加或减去指定的时间量。
+     * 例如，要从日历的当前时间减去5天，可以通过调用add(Calendar.DAY_OF_MONTH, -5)来实现。
      * @param field the calendar field.
      * @param amount the amount of date or time to be added to the field.
      * @see #roll(int,int)
@@ -2949,7 +3042,12 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * rolling the month on the date 01/31/96 will result in 02/29/96.
      * When rolling on the hour-in-day or Calendar.HOUR_OF_DAY field, it will
      * roll the hour value in the range between 0 and 23, which is zero-based.
-     *
+     * 在给定的时间字段上增加或减少（上下）一个时间单位而不改变更大的字段。
+     * 例如，要将当前日期向上滚动一天，您可以通过调用：<p>roll(Calendar.DATE, true) 来实现。
+     * 在年份或 Calendar.YEAR 字段上滚动时，它将在 1 和调用 <code>getMaximum(Calendar.YEAR)
+     * 返回的值之间的范围内滚动年份值。在月份或 Calendar.MONTH 字段上滚动时，日期等其他字段可能会发生冲突，需要更改。
+     * 例如，在日期 013196 上滚动月份将导致 022996。在一天中的小时或 Calendar.HOUR_OF_DAY 字段上滚动时，
+     * 它将在 0 到 23 之间的范围内滚动小时值，这是从零开始的。
      * @param field the time field.
      * @param up indicates if the value of the specified time field is to be
      * rolled up or rolled down. Use true if rolling up, false otherwise.
@@ -2962,14 +3060,16 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Adds the specified (signed) amount to the specified calendar field
      * without changing larger fields.  A negative amount means to roll
      * down.
-     *
+     * 1.将指定（签名）数量添加到指定日历字段而不更改更大的字段。负数意味着向下滚动。
      * <p>NOTE:  This default implementation on <code>Calendar</code> just repeatedly calls the
      * version of {@link #roll(int,boolean) roll()} that rolls by one unit.  This may not
      * always do the right thing.  For example, if the <code>DAY_OF_MONTH</code> field is 31,
      * rolling through February will leave it set to 28.  The <code>GregorianCalendar</code>
      * version of this function takes care of this problem.  Other subclasses
      * should also provide overrides of this function that do the right thing.
-     *
+     * 2.Calendar上的这个默认实现只是重复调用滚动一个单位的roll(int,boolean) roll()版本。
+     * 这可能并不总是正确的做法。例如，如果DAY_OF_MONTH字段为 31，滚动到二月会将其设置为 28。
+     * 此函数的 GregorianCalendar版本解决了这个问题。其他子类也应该提供这个函数的覆盖来做正确的事情
      * @param field the calendar field.
      * @param amount the signed amount to add to the calendar <code>field</code>.
      * @since 1.2
@@ -2991,7 +3091,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Sets the time zone with the given time zone value.
-     *
+     * 使用给定的时区值设置时区
      * @param value the given time zone.
      */
     public void setTimeZone(TimeZone value)
@@ -3035,6 +3135,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Sets the sharedZone flag to <code>shared</code>.
+     * 将 sharedZone 标志设置为shared
      */
     void setZoneShared(boolean shared) {
         sharedZone = shared;
@@ -3046,7 +3147,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * treated as being equivalent to the 941st day after February 1, 1996.
      * With strict (non-lenient) interpretation, such dates will cause an exception to be
      * thrown. The default is lenient.
-     *
+     *指定日期时间解释是否宽松。对于宽松解释，诸如“February 942, 1996”之类的日期将被视为
+     * 等同于 1996 年 2 月 1 日之后的第 941 天。对于严格（非宽松）解释，此类日期将导致抛出异常。默认是宽松的
      * @param lenient <code>true</code> if the lenient mode is to be turned
      * on; <code>false</code> if it is to be turned off.
      * @see #isLenient()
@@ -3059,7 +3161,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Tells whether date/time interpretation is to be lenient.
-     *
+     * 告诉日期时间解释是否宽松
      * @return <code>true</code> if the interpretation mode of this calendar is lenient;
      * <code>false</code> otherwise.
      * @see #setLenient(boolean)
@@ -3072,7 +3174,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Sets what the first day of the week is; e.g., <code>SUNDAY</code> in the U.S.,
      * <code>MONDAY</code> in France.
-     *
+     * 设置一周的第一天是什么；例如，<code>SUNDAY<code> 在美国
      * @param value the given first day of the week.
      * @see #getFirstDayOfWeek()
      * @see #getMinimalDaysInFirstWeek()
@@ -3089,7 +3191,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Gets what the first day of the week is; e.g., <code>SUNDAY</code> in the U.S.,
      * <code>MONDAY</code> in France.
-     *
+     * 获取一周的第一天是什么；例如，SUNDAY在美国,MONDAY=在法国。
      * @return the first day of the week.
      * @see #setFirstDayOfWeek(int)
      * @see #getMinimalDaysInFirstWeek()
@@ -3104,7 +3206,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * For example, if the first week is defined as one that contains the first
      * day of the first month of a year, call this method with value 1. If it
      * must be a full week, use value 7.
-     *
+     * 设置一年中第一周所需的最少天数；例如，如果第一周定义为包含一年第一个月的第一天，则使用值 1 调用此方法。如果它必须是完整的一周，则使用值 7。
      * @param value the given minimal days required in the first week
      * of the year.
      * @see #getMinimalDaysInFirstWeek()
@@ -3124,7 +3226,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * of the first month of a year, this method returns 1. If
      * the minimal days required must be a full week, this method
      * returns 7.
-     *
+     * 获取一年中第一周所需的最少天数；例如，如果第一周定义为包含一年第一个月的第一天，则此方法返回 1。如果所需的最少天数必须是整周，则此方法返回 7
      * @return the minimal days required in the first week of the year.
      * @see #setMinimalDaysInFirstWeek(int)
      */
@@ -3135,9 +3237,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Returns whether this {@code Calendar} supports week dates.
-     *
+     * 1.返回此Calendar是否支持周日期
      * <p>The default implementation of this method returns {@code false}.
-     *
+     * 2.此方法的默认实现返回false。
      * @return {@code true} if this {@code Calendar} supports week dates;
      *         {@code false} otherwise.
      * @see #getWeekYear()
@@ -3154,10 +3256,10 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * week year is in sync with the week cycle. The {@linkplain
      * #getFirstDayOfWeek() first day of the first week} is the first
      * day of the week year.
-     *
+     * 1.返回此Calendar表示的周年。周年与周周期同步。 getFirstDayOfWeek() 第一周的第一天}是一年中的第一天。
      * <p>The default implementation of this method throws an
      * {@link UnsupportedOperationException}.
-     *
+     * 2.此方法的默认实现会引发 UnsupportedOperationException
      * @return the week year of this {@code Calendar}
      * @exception UnsupportedOperationException
      *            if any week year numbering isn't supported
@@ -3174,18 +3276,19 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Sets the date of this {@code Calendar} with the the given date
      * specifiers - week year, week of year, and day of week.
-     *
+     * 1.使用给定的日期说明符设置此 Calendar的日期 - 周年、一年中的一周和一周中的某天
      * <p>Unlike the {@code set} method, all of the calendar fields
      * and {@code time} values are calculated upon return.
-     *
+     * 2.与set方法不同，所有日历字段和time值都是在返回时计算的
      * <p>If {@code weekOfYear} is out of the valid week-of-year range
      * in {@code weekYear}, the {@code weekYear} and {@code
      * weekOfYear} values are adjusted in lenient mode, or an {@code
      * IllegalArgumentException} is thrown in non-lenient mode.
-     *
+     * 3.如果weekOfYear超出weekYear中的有效周数范围，则weekYear和weekOfYear值在宽松模式下进行调整，
+     * 或者 IllegalArgumentException以非宽松模式抛出
      * <p>The default implementation of this method throws an
      * {@code UnsupportedOperationException}.
-     *
+     * 4.此方法的默认实现会引发 UnsupportedOperationException。
      * @param weekYear   the week year
      * @param weekOfYear the week number based on {@code weekYear}
      * @param dayOfWeek  the day of week value: one of the constants
@@ -3210,10 +3313,10 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Returns the number of weeks in the week year represented by this
      * {@code Calendar}.
-     *
+     * 1.返回此Calendar 表示的一周年中的周数。
      * <p>The default implementation of this method throws an
      * {@code UnsupportedOperationException}.
-     *
+     * 3.此方法的默认实现会引发UnsupportedOperationException。
      * @return the number of weeks in the week year.
      * @exception UnsupportedOperationException
      *            if any week year numbering isn't supported in this
@@ -3234,7 +3337,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * the smallest value returned by the {@link #get(int) get} method
      * for any possible time value.  The minimum value depends on
      * calendar system specific parameters of the instance.
-     *
+     * 返回此Calendar实例的给定日历字段的最小值。
+     * 最小值定义为 get(int)方法为任何可能的时间值返回的最小值。最小值取决于实例的日历系统特定参数
      * @param field the calendar field.
      * @return the minimum value for the given calendar field.
      * @see #getMaximum(int)
@@ -3251,7 +3355,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * the largest value returned by the {@link #get(int) get} method
      * for any possible time value. The maximum value depends on
      * calendar system specific parameters of the instance.
-     *
+     * 返回此Calendar实例的给定日历字段的最大值。
+     * 最大值定义为get(int)方法为任何可能的时间值返回的最大值。最大值取决于实例的日历系统特定参数
      * @param field the calendar field.
      * @return the maximum value for the given calendar field.
      * @see #getMinimum(int)
@@ -3269,7 +3374,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * #getActualMinimum(int)} for any possible time value. The
      * greatest minimum value depends on calendar system specific
      * parameters of the instance.
-     *
+     * 返回此Calendar实例的给定日历字段的最高最小值。
+     * 最高最小值定义为getActualMinimum(int)为任何可能的时间值返回的最大值。
+     * 最大最小值取决于实例的日历系统特定参数
      * @param field the calendar field.
      * @return the highest minimum value for the given calendar field.
      * @see #getMinimum(int)
@@ -3291,7 +3398,10 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * <code>DAY_OF_MONTH</code> field, because the 28th is the last
      * day of the shortest month of this calendar, February in a
      * common year.
-     *
+     * 返回此Calendar实例的给定日历字段的最低最大值。
+     * 最低最大值定义为getActualMaximum(int)为任何可能的时间值返回的最小值。
+     * 最小最大值取决于实例的日历系统特定参数。
+     * 例如，公历系统的 Calendar为DAY_OF_MONTH字段返回 28，因为 28 日是该日历最短月份的最后一天，即普通年份的二月
      * @param field the calendar field.
      * @return the lowest maximum value for the given calendar field.
      * @see #getMinimum(int)
@@ -3305,13 +3415,14 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Returns the minimum value that the specified calendar field
      * could have, given the time value of this <code>Calendar</code>.
-     *
+     * 1.给定此Calendar的时间值，返回指定日历字段可能具有的最小值
      * <p>The default implementation of this method uses an iterative
      * algorithm to determine the actual minimum value for the
      * calendar field. Subclasses should, if possible, override this
      * with a more efficient implementation - in many cases, they can
      * simply return <code>getMinimum()</code>.
-     *
+     *2.此方法的默认实现使用迭代算法来确定日历字段的实际最小值。
+     * 如果可能，子类应该使用更有效的实现来覆盖它 - 在许多情况下，它们可以简单地返回getMinimum()
      * @param field the calendar field
      * @return the minimum of the given calendar field for the time
      * value of this <code>Calendar</code>
@@ -3327,18 +3438,22 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
         int endValue = getMinimum(field);
 
         // if we know that the minimum value is always the same, just return it
+        //如果我们知道最小值总是相同的，就返回它
         if (fieldValue == endValue) {
             return fieldValue;
         }
 
         // clone the calendar so we don't mess with the real one, and set it to
         // accept anything for the field values
+        //克隆日历，这样我们就不会弄乱真实的日历，并将其设置为接受字段值的任何内容
         Calendar work = (Calendar)this.clone();
         work.setLenient(true);
 
         // now try each value from getLeastMaximum() to getMaximum() one by one until
         // we get a value that normalizes to another value.  The last value that
         // normalizes to itself is the actual minimum for the current date
+        //现在一个一个地尝试从 getLeastMaximum() 到 getMaximum() 的每个值，
+        // 直到我们得到一个标准化为另一个值的值。归一化为自身的最后一个值是当前日期的实际最小值
         int result = fieldValue;
 
         do {
@@ -3360,12 +3475,13 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * <code>Calendar</code>. For example, the actual maximum value of
      * the <code>MONTH</code> field is 12 in some years, and 13 in
      * other years in the Hebrew calendar system.
-     *
+     * 1.给定此Calendar 的时间值，返回指定日历字段可能具有的最大值。
+     * 例如，在希伯来日历系统中，MONTH字段的实际最大值在某些年份为 12，而在其他年份为 13
      * <p>The default implementation of this method uses an iterative
      * algorithm to determine the actual maximum value for the
      * calendar field. Subclasses should, if possible, override this
      * with a more efficient implementation.
-     *
+     * 2.此方法的默认实现使用迭代算法来确定日历字段的实际最大值。如果可能，子类应该使用更有效的实现来覆盖它。
      * @param field the calendar field
      * @return the maximum of the given calendar field for the time
      * value of this <code>Calendar</code>
@@ -3416,7 +3532,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Creates and returns a copy of this object.
-     *
+     * 创建并返回此对象的副本。
      * @return a copy of this object.
      */
     @Override
@@ -3451,7 +3567,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Returns the name of the specified calendar field.
-     *
+     * 返回指定日历字段的名称。
      * @param field the calendar field
      * @return the calendar field name
      * @exception IndexOutOfBoundsException if <code>field</code> is negative,
@@ -3466,7 +3582,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * is intended to be used only for debugging purposes, and the
      * format of the returned string may vary between implementations.
      * The returned string may be empty but may not be <code>null</code>.
-     *
+     * 返回此日历的字符串表示形式。此方法仅用于调试目的，返回字符串的格式可能因实现而异。返回的字符串可能为空，但可能不是null。
      * @return  a string representation of this calendar.
      */
     @Override
@@ -3507,6 +3623,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Both firstDayOfWeek and minimalDaysInFirstWeek are locale-dependent.
      * They are used to figure out the week count for a specific date for
      * a given locale. These must be set when a Calendar is constructed.
+     * firstDayOfWeek 和 minimumDaysInFirstWeek 都依赖于语言环境。
+     * 它们用于计算给定语言环境的特定日期的周数。这些必须在构造 Calendar 时设置
      * @param desiredLocale the given locale.
      */
     private void setWeekCountData(Locale desiredLocale)
@@ -3527,6 +3645,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * Recomputes the time and updates the status fields isTimeSet
      * and areFieldsSet.  Callers should check isTimeSet and only
      * call this method if isTimeSet is false.
+     * 重新计算时间并更新状态字段 isTimeSet 和 areFieldsSet。调用者应检查 isTimeSet 并且仅在 isTimeSet 为 false 时才调用此方法
      */
     private void updateTime() {
         computeTime();
@@ -3552,6 +3671,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Adjusts the stamp[] values before nextStamp overflow. nextStamp
      * is set to the next stamp value upon the return.
+     * 在nextStamp 溢出之前调整stamp[] 值。 nextStamp 设置为返回时的下一个标记值。
      */
     private void adjustStamp() {
         int max = MINIMUM_USER_STAMP;
@@ -3587,6 +3707,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Sets the WEEK_OF_MONTH and WEEK_OF_YEAR fields to new values with the
      * new parameter value if they have been calculated internally.
+     * 将 WEEK_OF_MONTH 和 WEEK_OF_YEAR 字段设置为具有新参数值的新值（如果它们已在内部计算）
      */
     private void invalidateWeekFields()
     {
@@ -3620,7 +3741,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Save the state of this object to a stream (i.e., serialize it).
-     *
+     * 1.将此对象的状态保存到流中（即序列化它）
      * Ideally, <code>Calendar</code> would only write out its state data and
      * the current time, and not write any field data out, such as
      * <code>fields[]</code>, <code>isTimeSet</code>, <code>areFieldsSet</code>,
@@ -3630,6 +3751,10 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * the field values and state flags.  However, <code>nextStamp</code> can be
      * removed from the serialization stream; this will probably happen in the
      * near future.
+     * 2.理想情况下，Calendar只会写出它的状态数据和当前时间，而不会写出任何字段数据，
+     * 例如fields[],isTimeSet,areFieldsSet和isSet[]。
+     * nextStamp也不应该是持久状态的一部分。不幸的是，这在 JDK 1.1 发布之前没有发生。为了与 JDK 1.1 兼容，
+     * 我们将始终必须写出字段值和状态标志。但是，nextStamp可以从序列化流中移除；这可能会在不久的将来发生
      */
     private synchronized void writeObject(ObjectOutputStream stream)
          throws IOException
@@ -3684,6 +3809,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     /**
      * Reconstitutes this object from a stream (i.e., deserialize it).
+     * 从流中重建这个对象（即反序列化它）
      */
     private void readObject(ObjectInputStream stream)
          throws IOException, ClassNotFoundException

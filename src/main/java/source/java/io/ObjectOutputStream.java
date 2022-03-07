@@ -481,7 +481,8 @@ public class ObjectOutputStream
      * this stream.  This may only be called from the writeObject method of the
      * class being serialized. It will throw the NotActiveException if it is
      * called otherwise.
-     *
+     * 将当前类的非静态和非瞬态字段写入此流。这只能从正在序列化的类的 writeObject 方法中调用。
+     * 如果以其他方式调用，它将抛出 NotActiveExceptio
      * @throws  IOException if I/O errors occur while writing to the underlying
      *          <code>OutputStream</code>
      */
@@ -851,7 +852,7 @@ public class ObjectOutputStream
 
     /**
      * Writes a 32 bit int.
-     *
+     * 写入 32 位 int
      * @param   val the integer value to be written
      * @throws  IOException if I/O errors occur while writing to the underlying
      *          stream
